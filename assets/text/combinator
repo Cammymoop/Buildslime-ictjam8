@@ -1,5 +1,6 @@
 tree any > log log
 log log > plank plank
+log nothing > plank nothing
 plank plank > nothing wood_wall
 plank nothing > stick nothing
 stick nothing > plank nothing
@@ -7,6 +8,7 @@ stick stick > nothing sticks
 sticks nothing > stick stick
 
 sheep any > sheered cloth
+grass sheered > nothing sheep
 
 R stick cloth > nothing tent
 R plank log > nothing table
