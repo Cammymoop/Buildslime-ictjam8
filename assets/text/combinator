@@ -1,3 +1,21 @@
 tree any > log log
 log log > plank plank
 plank plank > nothing wood_wall
+plank nothing > stick nothing
+stick nothing > plank nothing
+stick stick > nothing sticks
+sticks nothing > stick stick
+
+sheep any > sheered cloth
+
+R stick cloth > nothing tent
+R plank log > nothing table
+R plank table > nothing chair
+sticks sticks > fence fence
+
+puddle seed > puddle sapling
+puddle sapling > puddle tree
+
+R seed cloth > nothing seed_bag
+seed_bag nothing > seed_bag seed
+

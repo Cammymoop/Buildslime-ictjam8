@@ -38,10 +38,15 @@ func add_name(old_line):
 
 func get_combinator_result(tile1, tile2):
 	for rule in rules:
+		var reversed = false
 		var ingredients = rule['ingredients']
-		if ingredients[1] != -2 and not ingredients[1] == tile1:
-			continue
-		if ingredients[2] != -2 and not ingredients[2] == tile2:
+		if ingredients[1] != -2 and ingredients[1] != tile1:
+			if rule['reversable'] and (ingredients[2] == -2 or ingredients[2] == tile1):
+				reversed = true
+			else:
+				continue
+		var ingredient = ingredients[2] if not reversed else ingredients[1]
+		if ingredient != -2 and ingredient != tile2:
 			continue
 		var results = rule['results']
 		return [results[1], results[2]]
@@ -55,11 +60,20 @@ func process_line(old_line):
 	if line.length() < 1 or parts.size() < 1: #empty line
 		return
 	
+	var reversable = false
+	if parts[0] == 'R':
+		reversable = true
+		parts.remove(0)
+	
 	if parts.size() < 7:
 		if parts[2] != ">":
 			print("invalid rule: " + old_line)
 		if not (names.has(parts[0]) and names.has(parts[1]) and names.has(parts[3]) and names.has(parts[4])):
 			print("invalid name in rule: " + old_line)
-		var rule = {'ingredients': {1: names[parts[0]], 2: names[parts[1]]}, 'results': {1: names[parts[3]], 2: names[parts[4]]}}
+		var rule = {
+			'ingredients': {1: names[parts[0]], 2: names[parts[1]]}, 
+			'results': {1: names[parts[3]], 2: names[parts[4]]},
+			'reversable': reversable
+		}
 		rules.append(rule)
 
