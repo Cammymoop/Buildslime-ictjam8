@@ -52,10 +52,10 @@ func _get_facing_ydelta() -> int:
 		return 0
 	return 1 if facing == 'down' else -1
 
-func get_facing_tile_coord() -> Vector2:
+func get_facing_tile_coord(amount : int = 1) -> Vector2:
 	var facing_c = Vector2(tile_position.x, tile_position.y)
-	facing_c.x += _get_facing_xdelta()
-	facing_c.y += _get_facing_ydelta()
+	facing_c.x += _get_facing_xdelta() * amount
+	facing_c.y += _get_facing_ydelta() * amount
 	return facing_c
 
 func move_tile(direction) -> void:
@@ -85,6 +85,18 @@ func _move(xdelta, ydelta) -> void:
 	position.x += xdelta * TILE
 	position.y += ydelta * TILE
 
+func smack() -> void:
+	var facing_t = get_facing_tile_coord()
+	var facing_t_2 = get_facing_tile_coord(2)
+	
+	var first = r_tile_map.get_cellv(facing_t)
+	var second = r_tile_map.get_cellv(facing_t_2)
+	
+	var result = r_combinator.get_combinator_result(first, second)
+	print(str(result))
+	r_tile_map.set_cellv(facing_t, result[0])
+	r_tile_map.set_cellv(facing_t_2, result[1])
+
 
 func _process(delta) -> void:
 	var move = false
@@ -104,7 +116,6 @@ func _process(delta) -> void:
 		if Input.is_action_just_pressed("action_grab"):
 			var facing_t = get_facing_tile_coord()
 			var ind = r_tile_map.get_cellv(facing_t)
-			print("Looking at object " + str(ind) + " at " + str(facing_t.x) + ", " + str(facing_t.y))
 			if ind > 0:
 				if holding_tile_ind == 0:
 					holding_tile_ind = ind
@@ -117,3 +128,5 @@ func _process(delta) -> void:
 				holding_tile_ind = 0
 				print("placed object " + str(ind))
 				r_tile_map.set_cellv(facing_t, ind)
+		elif Input.is_action_just_pressed("action_smack"):
+			smack()
