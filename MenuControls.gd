@@ -28,7 +28,7 @@ func set_home_options() -> void:
 	clear_options()
 	add_menu_item("return", "Return")
 	add_menu_item("job", "Get job")
-	add_menu_item("quit", "Quit")
+	#add_menu_item("quit", "Quit")
 	print('set home options')
 
 func set_job_options() -> void:
@@ -42,11 +42,12 @@ func set_job_options2() -> void:
 	clear_options()
 	add_menu_item("return", "Return")
 	add_menu_item("finish-job", "Turn in job")
+	print('set job options 2')
 
 func job_validated() -> void:
 	job_validated = true
 	set_job_options2()
-	pause()
+	call_deferred('pause')
 	
 func add_menu_item(val : String, text : String) -> void:
 	var item = menu_item_scn.instance()
@@ -60,16 +61,19 @@ func select_current() -> void:
 	if not current_item:
 		return
 	current_item.select()
+	print('selecting : ' + str(menu_item_selected) + '   >>   ' + str(current_item.is_active()))
 
 func deselect_current() -> void:
 	var current_item = pause_menu.get_child(menu_item_selected)
 	if not current_item:
 		return
+	print('deactivating : ' + str(menu_item_selected))
 	current_item.deselect()
 	
 func deselect_all() -> void:
 	for child in pause_menu.get_children():
 		child.deselect()
+	print('deactivating all')
 	menu_item_selected = 0
 
 func activate_current() -> void:
@@ -82,7 +86,7 @@ func pause() -> void:
 	paused = true
 	get_tree().paused = true
 	pause_screen.visible = true
-	deselect_all()
+	#deselect_all()
 	select_current()
 func unpause() -> void:
 	if job_validated:

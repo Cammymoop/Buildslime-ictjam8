@@ -9,6 +9,7 @@ sticks nothing > stick stick
 
 sheep any > sheered cloth
 grass sheered > nothing sheep
+cabbage sheered > nothing sheep
 
 grass nothing > grass grass
 
@@ -27,3 +28,21 @@ R seed cloth > nothing seed_bag
 seed_bag nothing > seed_bag seed
 
 rock nothing > gravel nothing
+
+R rock stick > nothing fire_starter
+fire_starter sticks > nothing fire
+fire sticks > fire fire
+
+gravel fire > metal fire
+
+metal metal > nothing anvil
+metal anvil > sword anvil
+R stick metal > nothing hammer
+hammer metal > hammer chisel
+sword rock > nothing sword_in_stone
+
+hammer tree > hammer apple
+chisel rock > chisel statue
+
+
+R apple rock > nothing computer

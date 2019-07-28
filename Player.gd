@@ -30,7 +30,7 @@ var MAX_TILE = 40
 
 var TILE = 16
 
-var NON_WALKABLE = ['tree', 'wood_wall', 'sheep', 'sheered', 'fence', 'tent', 'bed']
+var NON_WALKABLE = ['tree', 'wood_wall', 'sheep', 'sheered', 'fence', 'tent', 'bed', 'fire']
 var NON_GRABABLE = ['tree', 'gravel']
 
 var modification_queue = []
@@ -482,12 +482,16 @@ func evaluate_job() -> void:
 	var tx = 0
 	var ty = 0
 	
+	var safety = 200000
+	
 	while ty < MAX_TILE:
-		print(str(ty))
 		if verified:
 			break
 		tx = 0
 		while tx < MAX_TILE:
+			safety -= 1
+			if safety < 0:
+				return
 			var this_tile = r_tile_map.get_cell(tx, ty)
 			if searching:
 				var x_offset = tx + (first_x - search_origin_x)

@@ -38,6 +38,7 @@ script = ExtResource( 3 )
 script = ExtResource( 4 )
 
 [node name="Player" type="Node2D" parent="."]
+editor/display_folded = true
 position = Vector2( 64, 64 )
 script = ExtResource( 5 )
 
@@ -81,6 +82,7 @@ position = Vector2( -64, -64 )
 stream = ExtResource( 9 )
 
 [node name="BG" type="CanvasLayer" parent="."]
+editor/display_folded = true
 layer = -1
 
 [node name="ColorRect" type="ColorRect" parent="BG"]
@@ -102,6 +104,7 @@ theme = ExtResource( 10 )
 
 [node name="Overlay" type="CanvasLayer" parent="."]
 pause_mode = 2
+editor/display_folded = true
 
 [node name="MapPopup" type="Node2D" parent="Overlay"]
 visible = false

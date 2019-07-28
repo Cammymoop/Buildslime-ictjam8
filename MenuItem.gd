@@ -13,3 +13,6 @@ func select() -> void:
 
 func deselect() -> void:
 	find_node("Cursor").visible = false
+
+func is_active() -> bool:
+	return find_node("Cursor").visible
