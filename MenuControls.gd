@@ -121,3 +121,11 @@ func _process(delta) -> void:
 		elif Input.is_action_just_pressed("action_grab"):
 			activate_current()
 			unpause()
+		
+		var something = false
+		for i in range(menu_item_count):
+			if pause_menu.get_child(menu_item_selected).is_active():
+				something = true
+		if not something:
+			menu_item_selected = 0
+			select_current()
