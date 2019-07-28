@@ -138,6 +138,12 @@ func change_to_home_map() -> void:
 	r_tile_map = get_parent().get_node("HomeMap")
 	r_tile_map.visible = true
 	get_parent().find_node("MenuControls").call_deferred('set_home_options')
+	call_deferred('clear_popup')
+
+func clear_popup():
+	var popup = get_parent().find_node("MapPopup")
+	for child in popup.get_children():
+		child.queue_free()
 
 func set_spawn_params(params, forest : bool, name_to_id : bool = true) -> void:
 	spawn_params = params

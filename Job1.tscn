@@ -218,7 +218,7 @@
 [node name="Job1" type="Node2D"]
 script = ExtResource( 1 )
 spawn_objects = [ "sheep", "tree", "rock", "puddle" ]
-spawn_frequencies = [ 3, 12, 8, 2 ]
+spawn_frequencies = [ 3, 12, 8, 3 ]
 spawn_mirrorable = [ true, false, false, true ]
 rewards = [ "tree", "puddle" ]
 forest = false
