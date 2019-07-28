@@ -10,14 +10,20 @@ sticks nothing > stick stick
 sheep any > sheered cloth
 grass sheered > nothing sheep
 
+grass nothing > grass grass
+
 R stick cloth > nothing tent
 R plank log > nothing table
 R plank table > nothing chair
 sticks sticks > fence fence
 
+R cloth chair > nothing bed
+
 puddle seed > puddle sapling
 puddle sapling > puddle tree
+puddle grass > puddle cabbage
 
 R seed cloth > nothing seed_bag
 seed_bag nothing > seed_bag seed
 
+rock nothing > gravel nothing

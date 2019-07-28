@@ -30,8 +30,8 @@ var MAX_TILE = 40
 
 var TILE = 16
 
-var NON_WALKABLE = ['tree', 'wood_wall', 'sheep', 'sheered', 'fence', 'tent']
-var NON_GRABABLE = ['tree']
+var NON_WALKABLE = ['tree', 'wood_wall', 'sheep', 'sheered', 'fence', 'tent', 'bed']
+var NON_GRABABLE = ['tree', 'gravel']
 
 var modification_queue = []
 
@@ -131,6 +131,7 @@ func change_to_job_map() -> void:
 	r_tile_map = get_parent().get_node("JobMap")
 	r_tile_map.visible = true
 	get_parent().find_node("MenuControls").call_deferred('set_job_options')
+	get_parent().find_node("ColorRectJob").visible = true
 func change_to_home_map() -> void:
 	clear_modifications()
 	at_home = true
@@ -138,6 +139,7 @@ func change_to_home_map() -> void:
 	r_tile_map = get_parent().get_node("HomeMap")
 	r_tile_map.visible = true
 	get_parent().find_node("MenuControls").call_deferred('set_home_options')
+	get_parent().find_node("ColorRectJob").visible = false
 	call_deferred('clear_popup')
 
 func clear_popup():
@@ -443,6 +445,9 @@ func evaluate_job() -> void:
 		get_parent().find_node("MapPopup").print_tree_pretty()
 		return
 	
+	var search_width = 0
+	var max_j = -1
+	
 	for ty in range(JOB_WIDTH):
 		for tx in range(JOB_WIDTH):
 			var this_tile = r_job_map.get_cell(tx, ty)
@@ -453,16 +458,27 @@ func evaluate_job() -> void:
 					first_tile = this_tile
 				last_x = tx
 				last_y = ty
+				max_j = max(max_j, tx)
+	
+	var width = max_j - first_x + 1
 	
 	var verified = false
+	
 	
 	var search_origin_x = -1
 	var search_origin_y = -1
 	var searching = false
-	for ty in range(MAX_TILE):
+	var return_coord = false
+	
+	var tx = 0
+	var ty = 0
+	
+	while ty < MAX_TILE:
+		print(str(ty))
 		if verified:
 			break
-		for tx in range(MAX_TILE):
+		tx = 0
+		while tx < MAX_TILE:
 			var this_tile = r_tile_map.get_cell(tx, ty)
 			if searching:
 				var x_offset = tx + (first_x - search_origin_x)
@@ -472,12 +488,21 @@ func evaluate_job() -> void:
 					if x_offset == last_x and y_offset == last_y:
 						verified = true
 						break
+					
+					if that_tile < 1 and this_tile == first_tile and not return_coord:
+						return_coord = Vector2(tx, ty)
 				else:
 					searching = false
-			if not searching and this_tile == first_tile:
+					if return_coord:
+						ty = return_coord.y
+						tx = return_coord.x - 1
+						continue
+			if not searching and this_tile == first_tile and not (tx + width > MAX_TILE):
 				search_origin_x = tx
 				search_origin_y = ty
 				searching = true
+			tx += 1
+		ty += 1
 	
 	if verified:
 		call_deferred("verified_menu")
