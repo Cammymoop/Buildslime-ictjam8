@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/smack.ogg-fe3c2d1dae667cefa450a4bacb936b53.oggstr"
+
+[deps]
+
+source_file="res://assets/sound/smack.ogg"
+dest_files=[ "res://.import/smack.ogg-fe3c2d1dae667cefa450a4bacb936b53.oggstr" ]
+
+[params]
+
+loop=false
+loop_offset=0

@@ -277,10 +277,17 @@ func smack() -> void:
 	var facing_t_2 = get_facing_tile_coord(2)
 	
 	var first = r_tile_map.get_cellv(facing_t)
+	if first < 0:
+		first = 0
 	var second = r_tile_map.get_cellv(facing_t_2)
+	if second < 0:
+		second = 0
 	
 	var result = r_combinator.get_combinator_result(first, second)
-	#print(str(result))
+	if not result:
+		return
+	
+	$SmackSound.play()
 	r_tile_map.set_cellv(facing_t, result[0])
 	r_tile_map.set_cellv(facing_t_2, result[1])
 	
@@ -294,6 +301,7 @@ func pick_up(index) -> void:
 	holding_tile_ind = index
 	hold_count += 1
 	$PlayerSprite.region_rect.position.x += 16
+	$PickupSound.play()
 
 #check if you're holding something first
 func drop() -> int:
@@ -303,6 +311,7 @@ func drop() -> int:
 	hold_3 = 0
 	hold_count -= 1
 	$PlayerSprite.region_rect.position.x -= 16
+	$PutdownSound.play()
 	return drop_me
 
 func restore_inv(inv) -> void:

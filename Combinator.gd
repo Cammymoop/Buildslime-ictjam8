@@ -50,7 +50,7 @@ func get_combinator_result(tile1, tile2):
 			continue
 		var results = rule['results']
 		return [results[1], results[2]]
-	return [tile1, tile2]
+	return false
 
 
 func process_line(old_line):
