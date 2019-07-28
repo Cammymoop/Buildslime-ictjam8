@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://assets/tileset/Main.tres" type="TileSet" id=1]
 [ext_resource path="res://Combinator.gd" type="Script" id=2]
@@ -12,6 +12,8 @@
 [ext_resource path="res://assets/ui/UITheme.tres" type="Theme" id=10]
 [ext_resource path="res://MapPopup.gd" type="Script" id=11]
 [ext_resource path="res://MenuControls.gd" type="Script" id=12]
+[ext_resource path="res://assets/images/logo.png" type="Texture" id=13]
+[ext_resource path="res://Logo.gd" type="Script" id=14]
 
 [node name="Node2D" type="Node2D"]
 
@@ -104,7 +106,6 @@ theme = ExtResource( 10 )
 
 [node name="Overlay" type="CanvasLayer" parent="."]
 pause_mode = 2
-editor/display_folded = true
 
 [node name="MapPopup" type="Node2D" parent="Overlay"]
 visible = false
@@ -112,6 +113,24 @@ script = ExtResource( 11 )
 
 [node name="MenuControls" type="Node" parent="Overlay"]
 script = ExtResource( 12 )
+
+[node name="CenterContainer2" type="CenterContainer" parent="Overlay"]
+margin_right = 300.0
+margin_bottom = 200.0
+
+[node name="Tutorial" type="PanelContainer" parent="Overlay/CenterContainer2"]
+margin_left = 61.0
+margin_top = 88.0
+margin_right = 238.0
+margin_bottom = 111.0
+rect_min_size = Vector2( 0, 20 )
+
+[node name="Label" type="Label" parent="Overlay/CenterContainer2/Tutorial"]
+margin_left = 4.0
+margin_top = 2.0
+margin_right = 173.0
+margin_bottom = 21.0
+text = "Open menu to get a job"
 
 [node name="PauseMenu" type="Control" parent="Overlay"]
 visible = false
@@ -171,5 +190,19 @@ margin_left = 4.0
 margin_top = 2.0
 margin_right = 4.0
 margin_bottom = 18.0
+
+[node name="Logo" type="Sprite" parent="Overlay"]
+pause_mode = 2
+z_index = 2
+texture = ExtResource( 13 )
+centered = false
+script = ExtResource( 14 )
+
+[node name="Timer" type="Timer" parent="Overlay/Logo"]
+pause_mode = 2
+wait_time = 1.5
+one_shot = true
+autostart = true
 [connection signal="timeout" from="Player/MoveTimer" to="Player" method="_on_MoveTimer_timeout"]
 [connection signal="timeout" from="Player/InitialMoveTimer" to="Player" method="_on_InitialMoveTimer_timeout"]
+[connection signal="timeout" from="Overlay/Logo/Timer" to="Overlay/Logo" method="_on_Timer_timeout"]

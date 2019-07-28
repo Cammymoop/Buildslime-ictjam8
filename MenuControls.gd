@@ -6,6 +6,7 @@ var paused = false
 
 var pause_screen : Control = null
 var pause_menu : VBoxContainer = null
+var tutorial : Control = null
 
 var menu_item_selected = 0
 var menu_item_count = 0
@@ -15,6 +16,8 @@ var job_validated = false
 func _ready() -> void:
 	pause_screen = find_parent("Overlay").get_node("PauseMenu")
 	pause_menu = pause_screen.find_node("MenuContainer")
+	
+	tutorial = find_parent("Overlay").find_node("Tutorial")
 	
 	set_home_options()
 
@@ -86,6 +89,7 @@ func pause() -> void:
 	paused = true
 	get_tree().paused = true
 	pause_screen.visible = true
+	tutorial.visible = false
 	#deselect_all()
 	select_current()
 func unpause() -> void:
