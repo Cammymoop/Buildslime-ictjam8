@@ -30,8 +30,8 @@ var MAX_TILE = 40
 
 var TILE = 16
 
-var NON_WALKABLE = ['tree', 'wood_wall', 'sheep', 'sheered', 'fence', 'tent', 'bed', 'fire']
-var NON_GRABABLE = ['tree', 'gravel']
+var NON_WALKABLE = ['tree', 'wood_wall', 'metal_wall', 'sheep', 'sheered', 'fence', 'tent', 'bed', 'fire', 'anvil']
+var NON_GRABABLE = ['tree', 'gravel', 'metal_wall', ]
 
 var modification_queue = []
 

@@ -7,6 +7,8 @@ stick nothing > plank nothing
 stick stick > nothing sticks
 sticks nothing > stick stick
 
+sheep flag > nothing baba
+
 sheep any > sheered cloth
 grass sheered > nothing sheep
 cabbage sheered > nothing sheep
@@ -33,16 +35,43 @@ R rock stick > nothing fire_starter
 fire_starter sticks > nothing fire
 fire sticks > fire fire
 
+apple fire > pie fire
 gravel fire > metal fire
 
+R plank rock > nothing hammer
+
+R stick metal > nothing chisel
 metal metal > nothing anvil
 metal anvil > sword anvil
-R stick metal > nothing hammer
-hammer metal > hammer chisel
+hammer metal > hammer plate
 sword rock > nothing sword_in_stone
 
-hammer tree > hammer apple
+hammer plank > hammer wood_wall
+
+fish cat > coin cat
+
+sword tree > sword apple
 chisel rock > chisel statue
 
+sword grass > sword heart
+sword statue > sword skull
+sword stick > sword pole
 
-R apple rock > nothing computer
+R apple metal > nothing computer
+
+cloth pole > nothing flag
+sheered flag > nothing baba
+
+grass puddle > seaweed puddle
+
+pole puddle > fish puddle
+R fish seaweed > nothing sushi
+
+metal wood_wall > nothing metal_wall
+
+plank tree > nothing birdhouse
+
+rock rock > nothing pillar
+
+R rock log > nothing bucket
+bucket nothing > bucket rock
