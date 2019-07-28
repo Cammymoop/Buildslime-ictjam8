@@ -32,6 +32,7 @@ func set_home_options() -> void:
 	add_menu_item("return", "Return")
 	add_menu_item("job", "Get job")
 	#add_menu_item("quit", "Quit")
+	add_menu_item("restart-game", "Quit")
 	print('set home options')
 
 func set_job_options() -> void:
@@ -40,6 +41,7 @@ func set_job_options() -> void:
 	add_menu_item("view-job", "Show job")
 	add_menu_item("eval-job", "Evaluate job")
 	add_menu_item("leave-job", "Cancel job")
+	add_menu_item("restart-game", "Quit")
 	print('set job options')
 func set_job_options2() -> void:
 	clear_options()

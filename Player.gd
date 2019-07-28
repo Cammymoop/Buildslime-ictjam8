@@ -549,6 +549,8 @@ func menu_selection(value : String) -> void:
 			job_complete()
 		"eval-job":
 			evaluate_job()
+		"restart-game":
+			get_tree().reload_current_scene()
 		_:
 			print("Unkown menu option: " + value)
 
