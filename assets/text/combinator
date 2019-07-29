@@ -32,7 +32,8 @@ seed_bag nothing > seed_bag seed
 rock nothing > gravel nothing
 
 R rock stick > nothing fire_starter
-fire_starter sticks > nothing fire
+fire_starter sticks > fire_starter fire
+sticks fire_starter > fire fire_starter
 fire sticks > fire fire
 
 apple fire > pie fire
@@ -48,7 +49,7 @@ sword rock > nothing sword_in_stone
 
 hammer plank > hammer wood_wall
 
-fish cat > coin cat
+R fish cat > coin cat
 
 sword tree > sword apple
 chisel rock > chisel statue
@@ -59,19 +60,19 @@ sword stick > sword pole
 
 R apple metal > nothing computer
 
-cloth pole > nothing flag
-sheered flag > nothing baba
+R cloth pole > nothing flag
+R sheered flag > nothing baba
 
 grass puddle > seaweed puddle
 
 pole puddle > fish puddle
 R fish seaweed > nothing sushi
 
-metal wood_wall > nothing metal_wall
+R metal wood_wall > nothing metal_wall
 
 plank tree > nothing birdhouse
 
 rock rock > nothing pillar
 
-R rock log > nothing bucket
-bucket nothing > bucket rock
+R rock log > nothing bucket_of_rocks
+bucket_of_rocks nothing > bucket_of_rocks rock

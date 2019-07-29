@@ -5,9 +5,12 @@ var jobs = [preload("res://Job1.tscn"), preload("res://Job1_2.tscn"), preload("r
 var max_jobs = 5
 
 func get_job(number) -> Node:
-	if number > max_jobs:
-		print('not that many jobs')
+	if number > max_jobs or number < 1:
+		print('invalid job number')
 		return null
 	
-	var job_instance = jobs[number].instance()
+	var job_instance = jobs[number - 1].instance()
 	return job_instance
+
+func num_jobs() -> int:
+	return max_jobs

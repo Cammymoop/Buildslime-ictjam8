@@ -7,8 +7,9 @@ var facing = "down"
 var r_tile_map : TileMap = null
 var r_combinator = null
 var r_job_manager = null
+var r_save_manager = null
 
-var holding_tile_ind : int = 0
+var hold_1 : int = 0
 var hold_2 : int = 0
 var hold_3 : int = 0
 var hold_count : int = 0
@@ -30,7 +31,7 @@ var MAX_TILE = 40
 
 var TILE = 16
 
-var NON_WALKABLE = ['tree', 'wood_wall', 'metal_wall', 'sheep', 'sheered', 'fence', 'tent', 'bed', 'fire', 'anvil']
+var NON_WALKABLE = ['tree', 'wood_wall', 'metal_wall', 'sheep', 'sheered', 'fence', 'tent', 'bed', 'fire', 'anvil', 'bucket_of_rocks']
 var NON_GRABABLE = ['tree', 'gravel', 'metal_wall', ]
 
 var modification_queue = []
@@ -38,6 +39,7 @@ var modification_queue = []
 var job_rewards : Array = []
 
 export var jobs_finished = 0
+var current_job_num = 0
 
 var make_mp = false
 
@@ -64,6 +66,10 @@ func _ready():
 	r_tile_map = get_parent().get_node("HomeMap")
 	r_combinator = get_parent().get_node("Combinator")
 	r_job_manager = get_parent().get_node("JobManager")
+	r_save_manager = get_parent().get_node("SaveManager")
+	
+	if OS.has_feature('release'):
+		jobs_finished = 0
 	
 	call_deferred("post_ready")
 
@@ -79,16 +85,25 @@ func regen_map() -> void:
 		return
 	get_parent().get_node("MapGenerator").generate(r_tile_map, MAX_TILE, spawn_params, spawn_a_forest)
 
-func get_a_job() -> void:
-	var job = r_job_manager.get_job(jobs_finished)
+func get_a_job(job_num : int) -> void:
+	current_job_num = job_num
+	var job = r_job_manager.get_job(job_num)
 	change_to_job_map()
 	set_my_position(4, 4)
 	set_spawn_params(job.get_spawn_params(), job.has_forest())
 	regen_map()
-	get_parent().find_node("MapPopup").add_child(job)
+	load_job_popup(job_num)
 	show_map_popup()
-	
+	load_job_rewards(job_num)
+
+func load_job_rewards(job_num : int) -> void:
+	var job = r_job_manager.get_job(job_num)
 	job_rewards = job.get_rewards()
+
+func load_job_popup(job_num : int):
+	var job = r_job_manager.get_job(job_num)
+	clear_popup()
+	find_parent("Root").find_node("MapPopup").add_child(job)
 
 func place_rewards() -> void:
 	var home_map = get_parent().find_node("HomeMap")
@@ -138,7 +153,8 @@ func change_to_home_map() -> void:
 	r_tile_map.visible = false
 	r_tile_map = get_parent().get_node("HomeMap")
 	r_tile_map.visible = true
-	get_parent().find_node("MenuControls").call_deferred('set_home_options')
+	var allow_job = true if jobs_finished < r_job_manager.num_jobs() else false
+	get_parent().find_node("MenuControls").call_deferred('set_home_options', allow_job)
 	get_parent().find_node("ColorRectJob").visible = false
 	call_deferred('clear_popup')
 
@@ -172,20 +188,26 @@ func post_ready() -> void:
 	r_tile_map.set_cellv(tile_position, 0)
 
 func change_facing(direction) -> void:
+	var y_tex_offset = 0
 	match direction:
 		'up':
 			facing_angle = UP_ANGLE
+			y_tex_offset = 16
 		'down':
 			facing_angle = DOWN_ANGLE
+			y_tex_offset = 0
 		'left':
 			facing_angle = LEFT_ANGLE
+			y_tex_offset = 48
 		'right':
 			facing_angle = RIGHT_ANGLE
+			y_tex_offset = 32
 		_:
 			print('not a direction: ' + direction)
 			return
 	facing = direction
-	$PlayerSprite.rotation = facing_angle
+	#$PlayerSprite.rotation = facing_angle
+	$PlayerSprite.region_rect.position.y = y_tex_offset
 
 func rotate_a_thing(tile_coord, counterclockwise = false) -> void:
 	var ind = r_tile_map.get_cellv(tile_coord)
@@ -297,16 +319,16 @@ func smack() -> void:
 # check if you're holding too many first
 func pick_up(index) -> void:
 	hold_3 = hold_2
-	hold_2 = holding_tile_ind
-	holding_tile_ind = index
+	hold_2 = hold_1
+	hold_1 = index
 	hold_count += 1
 	$PlayerSprite.region_rect.position.x += 16
 	$PickupSound.play()
 
 #check if you're holding something first
 func drop() -> int:
-	var drop_me = holding_tile_ind
-	holding_tile_ind = hold_2
+	var drop_me = hold_1
+	hold_1 = hold_2
 	hold_2 = hold_3
 	hold_3 = 0
 	hold_count -= 1
@@ -320,10 +342,10 @@ func restore_inv(inv) -> void:
 		if a > 0:
 			count += 1
 	hold_count = count
-	holding_tile_ind = inv[0]
+	hold_1 = inv[0]
 	hold_2 = inv[1]
 	hold_3 = inv[2]
-	$PlayerSprite.region_rect.position.x = 16 + (count*16)
+	$PlayerSprite.region_rect.position.x = (count*16)
 	
 
 func restore_pos_facing(pos, res_facing) -> void:
@@ -346,7 +368,7 @@ func pop_modification() -> void:
 	
 
 func add_modification(tile_was_pos : Vector2, tile_was : int, tile_was_2_pos = false, tile_was_2 : int = -1) -> void:
-	var modification = {'inventory': [holding_tile_ind, hold_2, hold_3], 'pos': tile_position, 'facing': facing}
+	var modification = {'inventory': [hold_1, hold_2, hold_3], 'pos': tile_position, 'facing': facing}
 	
 	modification['tile1'] = {'index': tile_was, 'position': tile_was_pos}
 	if tile_was_2 > -1:
@@ -447,8 +469,8 @@ func evaluate_job() -> void:
 	var last_x = -1
 	var last_y = -1
 	
-	#var r_job_map : TileMap = get_parent().find_node("MapPopup").find_node("TileMap")
-	var r_job_map : TileMap = get_parent().find_node("MapPopup").get_child(0).get_node("TileMap")
+	var r_job_map : TileMap = get_parent().find_node("MapPopup").find_node("TileMap", true, false)
+	#var r_job_map : TileMap = get_parent().find_node("MapPopup").get_child(0).get_node("TileMap")
 	if not r_job_map:
 		print("no job to check")
 		get_parent().find_node("MapPopup").print_tree_pretty()
@@ -513,6 +535,9 @@ func evaluate_job() -> void:
 			if not searching and this_tile == first_tile and not (tx + width > MAX_TILE):
 				search_origin_x = tx
 				search_origin_y = ty
+				if first_x == last_x and first_y == last_y: # job is only 1 tile
+					verified = true
+					break
 				searching = true
 			tx += 1
 		ty += 1
@@ -524,18 +549,18 @@ func verified_menu() -> void:
 	get_parent().find_node("MenuControls").job_validated()
 
 func clear_inventory() -> void:
-	holding_tile_ind = 0
+	hold_1 = 0
 	hold_2 = 0
 	hold_3 = 0
 	hold_count = 0
-	$PlayerSprite.region_rect.position.x = 16
+	$PlayerSprite.region_rect.position.x = 0
 
 func menu_selection(value : String) -> void:
 	match value:
 		"return":
 			pass
 		"job":
-			get_a_job()
+			get_a_job(jobs_finished + 1)
 		"view-job":
 			make_map_popup()
 		"leave-job":
@@ -544,16 +569,60 @@ func menu_selection(value : String) -> void:
 			set_my_position(4, 4)
 		"finish-job":
 			place_rewards()
+			job_complete()
 			change_to_home_map()
 			set_my_position(4, 4)
-			job_complete()
 		"eval-job":
 			evaluate_job()
+		"save-game":
+			r_save_manager.save_game()
+		"load-game":
+			r_save_manager.load_game()
 		"restart-game":
 			get_tree().reload_current_scene()
 		_:
 			print("Unkown menu option: " + value)
 
+func serialize_for_save() -> Dictionary:
+	var serialized = {
+		"name": get_name(),
+		"mode": 'restore',
+		
+		"tile_pos_x": tile_position.x,
+		"tile_pos_y": tile_position.y,
+		"pos_x": position.x,
+		"pos_y": position.y,
+		"facing": facing,
+		
+		"at_home": at_home,
+		
+		"hold_count": hold_count,
+		"hold_1": hold_1,
+		"hold_2": hold_2,
+		"hold_3": hold_3,
+		
+		"jobs_finished": jobs_finished,
+		"current_job_num": current_job_num,
+	}
+	return serialized
+
+func restore_save(serialized) -> void:
+	jobs_finished =  serialized['jobs_finished']
+	
+	if serialized['at_home']:
+		change_to_home_map()
+		clear_popup()
+	else:
+		change_to_job_map()
+		current_job_num = serialized['current_job_num']
+		load_job_popup(current_job_num)
+		load_job_rewards(current_job_num)
+	
+	clear_inventory()
+	restore_inv([serialized['hold_1'], serialized['hold_2'], serialized['hold_3']])
+	
+	change_facing(serialized['facing'])
+	set_my_position(serialized['tile_pos_x'], serialized['tile_pos_y'])
 
 func _on_MoveTimer_timeout():
 	if not holding_move:

@@ -19,7 +19,7 @@ func _ready() -> void:
 	
 	tutorial = find_parent("Overlay").find_node("Tutorial")
 	
-	set_home_options()
+	set_home_options(true)
 
 func clear_options() -> void:
 	for child in pause_menu.get_children():
@@ -27,13 +27,16 @@ func clear_options() -> void:
 	menu_item_count = 0
 	menu_item_selected = 0
 
-func set_home_options() -> void:
+func set_home_options(allow_job : bool) -> void:
 	clear_options()
 	add_menu_item("return", "Return")
-	add_menu_item("job", "Get job")
+	if allow_job:
+		add_menu_item("job", "Get job")
 	#add_menu_item("quit", "Quit")
-	add_menu_item("restart-game", "Quit")
-	print('set home options')
+	add_menu_item("save-game", "Save")
+	add_menu_item("load-game", "Load")
+	add_menu_item("restart-game", "Reset Game")
+	#print('set home options')
 
 func set_job_options() -> void:
 	clear_options()
@@ -41,13 +44,15 @@ func set_job_options() -> void:
 	add_menu_item("view-job", "Show job")
 	add_menu_item("eval-job", "Evaluate job")
 	add_menu_item("leave-job", "Cancel job")
-	add_menu_item("restart-game", "Quit")
-	print('set job options')
+	add_menu_item("save-game", "Save")
+	add_menu_item("load-game", "Load")
+	add_menu_item("restart-game", "Reset Game")
+	#print('set job options')
 func set_job_options2() -> void:
 	clear_options()
 	add_menu_item("return", "Return")
 	add_menu_item("finish-job", "Turn in job")
-	print('set job options 2')
+	#print('set job options 2')
 
 func job_validated() -> void:
 	job_validated = true
@@ -66,26 +71,25 @@ func select_current() -> void:
 	if not current_item:
 		return
 	current_item.select()
-	print('selecting : ' + str(menu_item_selected) + '   >>   ' + str(current_item.is_active()))
 
 func deselect_current() -> void:
 	var current_item = pause_menu.get_child(menu_item_selected)
 	if not current_item:
 		return
-	print('deactivating : ' + str(menu_item_selected))
+	#print('deactivating : ' + str(menu_item_selected))
 	current_item.deselect()
 	
 func deselect_all() -> void:
 	for child in pause_menu.get_children():
 		child.deselect()
-	print('deactivating all')
+	#print('deactivating all')
 	menu_item_selected = 0
 
 func activate_current() -> void:
 	var current_item = pause_menu.get_child(menu_item_selected)
 	if not current_item:
 		return
-	find_parent("Node2D").find_node("Player").menu_selection(current_item.get_value())
+	find_parent("Root").find_node("Player").menu_selection(current_item.get_value())
 
 func pause() -> void:
 	paused = true
@@ -107,7 +111,7 @@ func _process(delta) -> void:
 		if paused:
 			unpause()
 		else:
-			var popup_open = find_parent("Node2D").find_node("MapPopup").visible
+			var popup_open = find_parent("Root").find_node("MapPopup").visible
 			if not popup_open:
 				pause()
 	
