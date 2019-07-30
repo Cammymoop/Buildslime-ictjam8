@@ -1,8 +1,13 @@
 extends Node
 
-var jobs = [preload("res://Job1.tscn"), preload("res://Job1_2.tscn"), preload("res://Job2.tscn"), preload("res://Job3.tscn"), preload("res://Job4.tscn")]
+var jobs = [
+	preload("res://Job1.tscn"), preload("res://Job1_2.tscn"), 
+	preload("res://Job2.tscn"), 
+	preload("res://Job3.tscn"), preload("res://Job3_2.tscn"), 
+	preload("res://Job4.tscn")
+]
 
-var max_jobs = 5
+var max_jobs = 6
 
 func get_job(number) -> Node:
 	if number > max_jobs or number < 1:

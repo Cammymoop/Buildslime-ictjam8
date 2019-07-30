@@ -31,8 +31,12 @@ var MAX_TILE = 40
 
 var TILE = 16
 
-var NON_WALKABLE = ['tree', 'wood_wall', 'metal_wall', 'sheep', 'sheered', 'fence', 'tent', 'bed', 'fire', 'anvil', 'bucket_of_rocks']
-var NON_GRABABLE = ['tree', 'gravel', 'metal_wall', ]
+var NON_WALKABLE = [
+	'tree', 'wood_wall', 'metal_wall', 'sheep', 'sheered', 'fence', 'tent', 'bed', 'fire', 'anvil', 'bucket_of_rocks',
+	'bucket', 'water_bucket', 'puddle', 'pillar',
+]
+var NON_GRABABLE = ['tree', 'gravel', 'metal_wall', 'puddle']
+var AUTOTILES : Array = ['puddle']
 
 var modification_queue = []
 
@@ -70,6 +74,8 @@ func _ready():
 	
 	if OS.has_feature('release'):
 		jobs_finished = 0
+	if OS.has_feature('debug'):
+		NON_GRABABLE = []
 	
 	call_deferred("post_ready")
 
@@ -84,6 +90,24 @@ func regen_map() -> void:
 		print('dont overwrite home!!!')
 		return
 	get_parent().get_node("MapGenerator").generate(r_tile_map, MAX_TILE, spawn_params, spawn_a_forest)
+	set_map_cell(3, 4, 0)
+	set_map_cell(4, 3, 0)
+	set_map_cell(4, 4, 0)
+	set_map_cell(4, 5, 0)
+	set_map_cell(5, 4, 0)
+	auto_tile_whole_map()
+
+func set_map_cellv(coord : Vector2, index : int) -> void:
+	set_map_cell(coord.x, coord.y, index)
+
+func set_map_cell(x : int, y : int, index : int) -> void:
+	var old = r_tile_map.get_cell(x, y)
+	r_tile_map.set_cell(x, y, index)
+	if AUTOTILES.has(index) or AUTOTILES.has(old):
+		r_tile_map.update_bitmask_area(Vector2(x, y))
+
+func auto_tile_whole_map() -> void:
+	r_tile_map.update_bitmask_region(Vector2(-1, -1), Vector2(41, 41))
 
 func get_a_job(job_num : int) -> void:
 	current_job_num = job_num
@@ -123,6 +147,7 @@ func place_rewards() -> void:
 			break
 		if safety < 0:
 			print ('couldnt find a spot to spawn reward: ' + reward)
+	home_map.update_bitmask_region()
 
 func job_complete() -> void:
 	jobs_finished += 1
@@ -153,8 +178,9 @@ func change_to_home_map() -> void:
 	r_tile_map.visible = false
 	r_tile_map = get_parent().get_node("HomeMap")
 	r_tile_map.visible = true
-	var allow_job = true if jobs_finished < r_job_manager.num_jobs() else false
-	get_parent().find_node("MenuControls").call_deferred('set_home_options', allow_job)
+	if jobs_finished >= r_job_manager.num_jobs():
+		get_parent().find_node("MenuControls").set_allow_job(false)
+	get_parent().find_node("MenuControls").call_deferred('set_home_options')
 	get_parent().find_node("ColorRectJob").visible = false
 	call_deferred('clear_popup')
 
@@ -183,6 +209,10 @@ func post_ready() -> void:
 		temp.append(names[name_t])
 	NON_GRABABLE = temp
 	
+	temp = []
+	for name_t in AUTOTILES:
+		temp.append(names[name_t])
+	AUTOTILES = temp
 	
 	#test_mapgen()
 	r_tile_map.set_cellv(tile_position, 0)
@@ -310,8 +340,8 @@ func smack() -> void:
 		return
 	
 	$SmackSound.play()
-	r_tile_map.set_cellv(facing_t, result[0])
-	r_tile_map.set_cellv(facing_t_2, result[1])
+	set_map_cellv(facing_t, result[0])
+	set_map_cellv(facing_t_2, result[1])
 	
 	# add old tiles to the undo queue
 	add_modification(facing_t, first, facing_t_2, second)
@@ -353,7 +383,7 @@ func restore_pos_facing(pos, res_facing) -> void:
 	set_my_position(pos.x, pos.y)
 
 func restore_tile_mod(mod) -> void:
-	r_tile_map.set_cellv(mod['position'], mod['index'])
+	set_map_cellv(mod['position'], mod['index'])
 
 func pop_modification() -> void:
 	if modification_queue.size() < 1:
@@ -442,7 +472,7 @@ func _process(delta) -> void:
 			if ind > 0:
 				if NON_GRABABLE.find(ind) == -1 and hold_count < 3:
 					#print("got object " + str(ind))
-					r_tile_map.set_cellv(facing_t, 0)
+					set_map_cellv(facing_t, 0)
 					add_modification(facing_t, ind)
 					pick_up(ind)
 				else:
@@ -452,7 +482,7 @@ func _process(delta) -> void:
 					add_modification(facing_t, 0)
 					ind = drop()
 					#print("placed object " + str(ind))
-					r_tile_map.set_cellv(facing_t, ind)
+					set_map_cellv(facing_t, ind)
 		elif Input.is_action_just_pressed("action_smack"):
 			smack()
 		elif Input.is_action_just_pressed("action_d_regen"):

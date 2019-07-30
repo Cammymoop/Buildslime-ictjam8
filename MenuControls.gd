@@ -13,13 +13,18 @@ var menu_item_count = 0
 
 var job_validated = false
 
+var allow_job = true
+var loadable = false
+
+var cur_menu = 'home'
+
 func _ready() -> void:
 	pause_screen = find_parent("Overlay").get_node("PauseMenu")
 	pause_menu = pause_screen.find_node("MenuContainer")
 	
 	tutorial = find_parent("Overlay").find_node("Tutorial")
 	
-	set_home_options(true)
+	set_home_options()
 
 func clear_options() -> void:
 	for child in pause_menu.get_children():
@@ -27,25 +32,32 @@ func clear_options() -> void:
 	menu_item_count = 0
 	menu_item_selected = 0
 
-func set_home_options(allow_job : bool) -> void:
+func set_allow_job(val : bool) -> void:
+	allow_job = val
+
+func set_home_options() -> void:
+	cur_menu = 'home'
 	clear_options()
 	add_menu_item("return", "Return")
 	if allow_job:
 		add_menu_item("job", "Get job")
 	#add_menu_item("quit", "Quit")
 	add_menu_item("save-game", "Save")
-	add_menu_item("load-game", "Load")
+	if loadable:
+		add_menu_item("load-game", "Load")
 	add_menu_item("restart-game", "Reset Game")
 	#print('set home options')
 
 func set_job_options() -> void:
+	cur_menu = 'job'
 	clear_options()
 	add_menu_item("return", "Return")
 	add_menu_item("view-job", "Show job")
 	add_menu_item("eval-job", "Evaluate job")
 	add_menu_item("leave-job", "Cancel job")
 	add_menu_item("save-game", "Save")
-	add_menu_item("load-game", "Load")
+	if loadable:
+		add_menu_item("load-game", "Load")
 	add_menu_item("restart-game", "Reset Game")
 	#print('set job options')
 func set_job_options2() -> void:
@@ -92,12 +104,21 @@ func activate_current() -> void:
 	find_parent("Root").find_node("Player").menu_selection(current_item.get_value())
 
 func pause() -> void:
+	if not loadable:
+		var f = File.new()
+		if f.file_exists("user://savegame.save"):
+			loadable = true
+			if cur_menu == 'home':
+				set_home_options()
+			elif cur_menu == 'job':
+				set_job_options()
 	paused = true
 	get_tree().paused = true
 	pause_screen.visible = true
 	tutorial.visible = false
 	#deselect_all()
 	select_current()
+
 func unpause() -> void:
 	if job_validated:
 		job_validated = false
