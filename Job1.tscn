@@ -8,7 +8,7 @@ script = ExtResource( 1 )
 spawn_objects = [ "sheep", "tree", "rock", "puddle", "stick" ]
 spawn_frequencies = [ 3, 17, 11, 3, 4 ]
 spawn_mirrorable = [ true, false, false, false, true ]
-rewards = [ "tree", "tree", "puddle", "rock" ]
+rewards = [ "tree", "tree", "tree", "puddle", "puddle", "rock" ]
 forest = false
 
 [node name="TileMap" type="TileMap" parent="."]

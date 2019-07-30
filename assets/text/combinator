@@ -15,12 +15,15 @@ cabbage sheered > nothing sheep
 
 grass nothing > grass grass
 
+grass grass > nothing twine
+
 R stick cloth > nothing tent
 R plank log > nothing table
 R plank table > nothing chair
 sticks sticks > fence fence
 
-R cloth chair > nothing bed
+cloth cloth > nothing pillow
+R pillow table > nothing bed
 
 puddle seed > puddle sapling
 puddle sapling > puddle tree
@@ -45,11 +48,14 @@ gravel puddle > nothing nothing
 R stick rock > nothing hammer
 
 R stick metal > nothing chisel
-metal metal > nothing anvil
-metal anvil > sword anvil
+metal metal > nothing ingot
+ingot ingot > nothing anvil
+ingot anvil > sword anvil
 hammer metal > hammer plate
 hammer plate > hammer ring
 sword rock > nothing sword_in_stone
+
+R plate pie > nothing piece_of_pie
 
 hammer plank > hammer wood_wall
 
@@ -60,7 +66,14 @@ chisel rock > chisel statue
 
 sword grass > sword heart
 sword statue > sword skull
-sword stick > sword pole
+sword stick > sword rod
+
+twine rod > nothing fishing_rod
+
+metal anvil > pole anvil
+
+pole pole > nothing poles
+R poles cloth > nothing tent_2
 
 apple nothing > seed nothing
 R apple metal > nothing computer
@@ -70,10 +83,11 @@ R sheered flag > nothing baba
 
 grass puddle > seaweed puddle
 
-pole puddle > fish puddle
+fishing_rod puddle > fish puddle
 R fish seaweed > nothing sushi
 
-R metal wood_wall > nothing metal_wall
+R ingot wood_wall > nothing metal_wall
+metal_wall nothing > nothing metal_wall
 
 plank tree > nothing birdhouse
 
@@ -88,3 +102,5 @@ water_bucket bucket > water_bucket water_bucket
 
 R rock bucket > nothing bucket_of_rocks
 bucket_of_rocks nothing > bucket_of_rocks rock
+
+heart skull > nothing sheered

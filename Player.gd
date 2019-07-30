@@ -431,12 +431,14 @@ func _process(delta) -> void:
 		elif Input.is_action_just_pressed("move_right"):
 			move = "right"
 	else:
-		if Input.is_action_just_pressed("move_up") or Input.is_action_just_pressed("move_down"):
-			flip_a_thing(get_facing_tile_coord())
-		if Input.is_action_just_pressed("move_right"):
-			rotate_a_thing(get_facing_tile_coord())
-		if Input.is_action_just_pressed("move_left"):
-			rotate_a_thing(get_facing_tile_coord(), true)
+		var tile = r_tile_map.get_cellv(get_facing_tile_coord())
+		if not AUTOTILES.has(tile):
+			if Input.is_action_just_pressed("move_up") or Input.is_action_just_pressed("move_down"):
+				flip_a_thing(get_facing_tile_coord())
+			if Input.is_action_just_pressed("move_right"):
+				rotate_a_thing(get_facing_tile_coord())
+			if Input.is_action_just_pressed("move_left"):
+				rotate_a_thing(get_facing_tile_coord(), true)
 	
 	if holding_move:
 		var hold_dir = false

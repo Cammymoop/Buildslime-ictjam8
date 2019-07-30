@@ -22,7 +22,7 @@ func generate(map : TileMap, map_width : int, spawns : Array, forest : bool = fa
 			map.set_cell(x, y, this_tile, mirrorable and mirror_me)
 	
 	if forest:
-		print('making forest')
+		#print('making forest')
 		var inv_x = false
 		var inv_y = false
 		

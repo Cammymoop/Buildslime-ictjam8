@@ -35,8 +35,6 @@ func restore_save(serialized) -> void:
 	for y in range(MAP_HEIGHT):
 		for x in range(MAP_WIDTH):
 			set_cell(x, y, tiles[i], hf[i], vf[i], ts[i])
-			if tiles[i] > 0:
-				print('placing ' + str(tiles[i]))
 			i += 1
 	
 	visible = serialized['visible']
