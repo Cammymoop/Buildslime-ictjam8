@@ -601,9 +601,10 @@ func menu_selection(value : String, extra) -> void:
 		"view-job":
 			make_map_popup()
 		"leave-job":
-			clear_inventory()
-			change_to_home_map()
-			set_my_position(4, 4)
+			if extra == 1:
+				clear_inventory()
+				change_to_home_map()
+				set_my_position(4, 4)
 		"finish-job":
 			place_rewards()
 			job_complete()
@@ -612,11 +613,14 @@ func menu_selection(value : String, extra) -> void:
 		"eval-job":
 			evaluate_job()
 		"save-game":
-			r_save_manager.save_game()
+			if extra == 1:
+				r_save_manager.save_game()
 		"load-game":
-			r_save_manager.load_game()
+			if extra == 1:
+				r_save_manager.load_game()
 		"restart-game":
-			get_tree().reload_current_scene()
+			if extra == 1:
+				get_tree().reload_current_scene()
 		_:
 			print("Unkown menu option: " + value)
 

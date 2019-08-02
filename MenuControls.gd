@@ -21,8 +21,8 @@ var loadable = false
 var cur_menu = 'home'
 
 var submenu_open = false
-var submenu_val = 1
-var submenu_max_val = 1
+
+var confirm_options = ['restart-game', 'load-game', 'save-game', 'leave-job']
 
 func _ready() -> void:
 	pause_screen = find_parent("Overlay").get_node("PauseMenu")
@@ -112,30 +112,29 @@ func activate_current() -> bool:
 	var current_item = pause_menu.get_child(menu_item_selected)
 	if not current_item:
 		return true
-	if not submenu_open and current_item.get_value() == 'job' and next_job > 1:
-		submenu_val = next_job
-		submenu_max_val = next_job
-		current_item.set_extra(submenu_val)
-		open_submenu()
-		return false #dont unpause
+	if not submenu_open:
+		var cur_val = current_item.get_value()
+		if cur_val == 'job' and next_job > 1:
+			r_submenu.set_numbers_mode(next_job, next_job)
+			open_submenu('Choose a job:')
+			return false #dont unpause
+		if confirm_options.has(cur_val):
+			r_submenu.set_confirm_mode()
+			open_submenu('Are you sure?  ')
+			return false #dont unpause
 	else:
+		if submenu_open:
+			current_item.set_extra(r_submenu.get_value())
 		current_item.activate()
-		return true
+	return true
 
-func open_submenu():
+func open_submenu(prefix : String):
 	submenu_open = true
-	r_submenu.visible = true
-	update_submenu_text()
-
-func update_submenu_text() -> void:
-	var text = ("<" if submenu_val > 1 else " ") + " "
-	text += str(submenu_val) + " "
-	text += (">" if submenu_val < submenu_max_val else " ")
-	r_submenu.get_node("Label").text = text
+	r_submenu.open(prefix)
 
 func close_submenu():
 	submenu_open = false
-	r_submenu.visible = false
+	r_submenu.close()
 
 func pause() -> void:
 	if not loadable:
@@ -162,26 +161,15 @@ func unpause() -> void:
 	pause_screen.visible = false
 	close_submenu()
 
-func submenu_changed() -> void:
-	var current_item = pause_menu.get_child(menu_item_selected)
-	update_submenu_text()
-	current_item.set_extra(submenu_val)
-
-func submenu_process() -> void:
-	if Input.is_action_just_pressed("move_left"):
-		if submenu_val > 1:
-			submenu_val -= 1
-			submenu_changed()
-	if Input.is_action_just_pressed("move_right"):
-		if submenu_val < submenu_max_val:
-			submenu_val += 1
-			submenu_changed()
 
 # warning-ignore:unused_argument
 func _process(delta) -> void:
 	if Input.is_action_just_pressed("action_menu_open"):
 		if paused:
-			unpause()
+			if submenu_open:
+				close_submenu()
+			else:
+				unpause()
 		else:
 			var popup_open = find_parent("Root").find_node("MapPopup").visible
 			if not popup_open:
@@ -217,4 +205,4 @@ func _process(delta) -> void:
 			select_current()
 	
 	if paused and submenu_open:
-		submenu_process()
+		r_submenu.sub_process()

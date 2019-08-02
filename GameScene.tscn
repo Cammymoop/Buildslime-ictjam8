@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://assets/tileset/Main.tres" type="TileSet" id=1]
 [ext_resource path="res://WorldMap.gd" type="Script" id=2]
@@ -14,8 +14,9 @@
 [ext_resource path="res://assets/ui/UITheme.tres" type="Theme" id=12]
 [ext_resource path="res://MapPopup.gd" type="Script" id=13]
 [ext_resource path="res://MenuControls.gd" type="Script" id=14]
-[ext_resource path="res://assets/images/logo.png" type="Texture" id=15]
-[ext_resource path="res://Logo.gd" type="Script" id=16]
+[ext_resource path="res://Submenu.gd" type="Script" id=15]
+[ext_resource path="res://assets/images/logo.png" type="Texture" id=16]
+[ext_resource path="res://Logo.gd" type="Script" id=17]
 
 [node name="Root" type="Node2D"]
 
@@ -157,7 +158,6 @@ margin_bottom = 17.0
 text = "Open menu to get a job"
 
 [node name="PauseMenu" type="Control" parent="Overlay"]
-editor/display_folded = true
 visible = false
 anchor_right = 1.0
 margin_bottom = 40.0
@@ -226,6 +226,7 @@ margin_top = 140.0
 margin_right = 154.0
 margin_bottom = 160.0
 rect_min_size = Vector2( 0, 20 )
+script = ExtResource( 15 )
 
 [node name="Label" type="Label" parent="Overlay/PauseMenu/CenterContainer/Submenu"]
 margin_left = 4.0
@@ -255,8 +256,8 @@ margin_bottom = 300.0
 [node name="Logo" type="TextureRect" parent="Overlay/LogoContainer/CenterContainer"]
 margin_right = 300.0
 margin_bottom = 300.0
-texture = ExtResource( 15 )
-script = ExtResource( 16 )
+texture = ExtResource( 16 )
+script = ExtResource( 17 )
 
 [node name="Timer" type="Timer" parent="Overlay/LogoContainer/CenterContainer/Logo"]
 pause_mode = 2
