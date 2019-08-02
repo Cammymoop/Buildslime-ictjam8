@@ -76,7 +76,6 @@ pole pole > nothing poles
 R poles cloth > nothing tent_2
 
 apple nothing > seed nothing
-R apple metal > nothing computer
 
 R cloth pole > nothing flag
 R sheered flag > nothing baba
@@ -104,3 +103,7 @@ R rock bucket > nothing bucket_of_rocks
 bucket_of_rocks nothing > bucket_of_rocks rock
 
 heart skull > nothing sheered
+
+R rock metal > nothing chip
+chip chip > nothing circuit_board
+R apple circuit_board > nothing computer

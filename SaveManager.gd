@@ -4,7 +4,7 @@ func save_game() -> void:
 	var save_file = File.new()
 	save_file.open("user://savegame.save", File.WRITE)
 	
-	save_file.store_line('buildslime_save_version 1')
+	save_file.store_line('buildslime_save_version 2')
 	
 	var saveables = get_tree().get_nodes_in_group("saveable")
 	
@@ -23,7 +23,7 @@ func load_game() -> void:
 	
 	var first_line = save_file.get_line()
 	var save_version = int(first_line.split(" ", false)[1])
-	if save_version > 1:
+	if save_version > 2:
 		print('unsupported save version!')
 		return
 	print('loading save version ' + str(save_version))
@@ -45,4 +45,4 @@ func load_game() -> void:
 		
 		var existing_node = root_node.find_node(load_node['name'])
 		print('calling restore on: ' + existing_node.get_path())
-		existing_node.call('restore_save', load_node)
+		existing_node.call('restore_save', load_node, save_version)

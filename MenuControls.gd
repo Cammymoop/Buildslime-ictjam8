@@ -6,23 +6,31 @@ var paused = false
 
 var pause_screen : Control = null
 var pause_menu : VBoxContainer = null
-var tutorial : Control = null
+var r_tutorial : Control = null
+var r_submenu : Control = null
 
 var menu_item_selected = 0
 var menu_item_count = 0
 
-var job_validated = false
+var is_job_validated = false
 
 var allow_job = true
+var next_job = 1
 var loadable = false
 
 var cur_menu = 'home'
+
+var submenu_open = false
+var submenu_val = 1
+var submenu_max_val = 1
 
 func _ready() -> void:
 	pause_screen = find_parent("Overlay").get_node("PauseMenu")
 	pause_menu = pause_screen.find_node("MenuContainer")
 	
-	tutorial = find_parent("Overlay").find_node("Tutorial")
+	r_tutorial = find_parent("Overlay").find_node("Tutorial")
+	r_submenu = find_parent("Overlay").find_node("Submenu")
+	close_submenu()
 	
 	set_home_options()
 
@@ -34,6 +42,9 @@ func clear_options() -> void:
 
 func set_allow_job(val : bool) -> void:
 	allow_job = val
+
+func set_next_available_job(next : int) -> void:
+	next_job = next
 
 func set_home_options() -> void:
 	cur_menu = 'home'
@@ -67,7 +78,7 @@ func set_job_options2() -> void:
 	#print('set job options 2')
 
 func job_validated() -> void:
-	job_validated = true
+	is_job_validated = true
 	set_job_options2()
 	call_deferred('pause')
 	
@@ -97,11 +108,34 @@ func deselect_all() -> void:
 	#print('deactivating all')
 	menu_item_selected = 0
 
-func activate_current() -> void:
+func activate_current() -> bool:
 	var current_item = pause_menu.get_child(menu_item_selected)
 	if not current_item:
-		return
-	find_parent("Root").find_node("Player").menu_selection(current_item.get_value())
+		return true
+	if not submenu_open and current_item.get_value() == 'job' and next_job > 1:
+		submenu_val = next_job
+		submenu_max_val = next_job
+		current_item.set_extra(submenu_val)
+		open_submenu()
+		return false #dont unpause
+	else:
+		current_item.activate()
+		return true
+
+func open_submenu():
+	submenu_open = true
+	r_submenu.visible = true
+	update_submenu_text()
+
+func update_submenu_text() -> void:
+	var text = ("<" if submenu_val > 1 else " ") + " "
+	text += str(submenu_val) + " "
+	text += (">" if submenu_val < submenu_max_val else " ")
+	r_submenu.get_node("Label").text = text
+
+func close_submenu():
+	submenu_open = false
+	r_submenu.visible = false
 
 func pause() -> void:
 	if not loadable:
@@ -115,18 +149,35 @@ func pause() -> void:
 	paused = true
 	get_tree().paused = true
 	pause_screen.visible = true
-	tutorial.visible = false
+	r_tutorial.visible = false
 	#deselect_all()
 	select_current()
 
 func unpause() -> void:
-	if job_validated:
-		job_validated = false
+	if is_job_validated:
+		is_job_validated = false
 		set_job_options()
 	paused = false
 	get_tree().paused = false
 	pause_screen.visible = false
+	close_submenu()
 
+func submenu_changed() -> void:
+	var current_item = pause_menu.get_child(menu_item_selected)
+	update_submenu_text()
+	current_item.set_extra(submenu_val)
+
+func submenu_process() -> void:
+	if Input.is_action_just_pressed("move_left"):
+		if submenu_val > 1:
+			submenu_val -= 1
+			submenu_changed()
+	if Input.is_action_just_pressed("move_right"):
+		if submenu_val < submenu_max_val:
+			submenu_val += 1
+			submenu_changed()
+
+# warning-ignore:unused_argument
 func _process(delta) -> void:
 	if Input.is_action_just_pressed("action_menu_open"):
 		if paused:
@@ -137,6 +188,13 @@ func _process(delta) -> void:
 				pause()
 	
 	if paused:
+		if Input.is_action_just_pressed("action_grab"):
+			var unpause = activate_current()
+			if unpause:
+				unpause()
+				return
+	
+	if paused and not submenu_open:
 		if Input.is_action_just_pressed("move_down"):
 			deselect_current()
 			menu_item_selected += 1
@@ -149,9 +207,6 @@ func _process(delta) -> void:
 			if menu_item_selected < 0:
 				menu_item_selected = menu_item_count - 1
 			select_current()
-		elif Input.is_action_just_pressed("action_grab"):
-			activate_current()
-			unpause()
 		
 		var something = false
 		for i in range(menu_item_count):
@@ -160,3 +215,6 @@ func _process(delta) -> void:
 		if not something:
 			menu_item_selected = 0
 			select_current()
+	
+	if paused and submenu_open:
+		submenu_process()

@@ -36,7 +36,7 @@ var NON_WALKABLE = [
 	'bucket', 'water_bucket', 'puddle', 'pillar',
 ]
 var NON_GRABABLE = ['tree', 'gravel', 'metal_wall', 'puddle']
-var AUTOTILES : Array = ['puddle']
+var AUTOTILES : Array = ['puddle', 'wood_wall']
 
 var modification_queue = []
 
@@ -49,16 +49,19 @@ var make_mp = false
 
 var names
 
-var spawn_params = [
-	{'object': 'tree', 'frequency': 16},
-	{'object': 'sheep', 'frequency': 4, 'mirrorable': true},
-	{'object': 'rock', 'frequency': 8},
-	{'object': 'grass', 'frequency': 18, 'mirrorable': true},
-	{'object': 'stick', 'frequency': 6, 'mirrorable': true},
-	{'object': 'puddle', 'frequency': 3, 'mirrorable': true},
-	{'object': 'seed', 'frequency': 1, 'mirrorable': true},
-]
-var spawn_a_forest = false
+var spawn_params : Dictionary = {
+	'spawns': [
+		{'object': 'tree', 'frequency': 16},
+		{'object': 'sheep', 'frequency': 4, 'mirrorable': true},
+		{'object': 'rock', 'frequency': 8},
+		{'object': 'grass', 'frequency': 18, 'mirrorable': true},
+		{'object': 'stick', 'frequency': 6, 'mirrorable': true},
+		{'object': 'puddle', 'frequency': 3, 'mirrorable': true},
+		{'object': 'seed', 'frequency': 1, 'mirrorable': true},
+	],
+	'has_forest': false,
+	'map_width': 40
+}
 
 func _ready():
 	randomize()
@@ -77,6 +80,8 @@ func _ready():
 	if OS.has_feature('debug'):
 		NON_GRABABLE = []
 	
+	get_parent().find_node("MenuControls").set_next_available_job(min(jobs_finished + 1, r_job_manager.num_jobs()))
+	
 	call_deferred("post_ready")
 
 func set_my_position(xpos : int, ypos : int) -> void:
@@ -89,16 +94,11 @@ func regen_map() -> void:
 	if r_tile_map.name == "HomeMap":
 		print('dont overwrite home!!!')
 		return
-	get_parent().get_node("MapGenerator").generate(r_tile_map, MAX_TILE, spawn_params, spawn_a_forest)
-	set_map_cell(3, 4, 0)
-	set_map_cell(4, 3, 0)
-	set_map_cell(4, 4, 0)
-	set_map_cell(4, 5, 0)
-	set_map_cell(5, 4, 0)
+	get_parent().get_node("MapGenerator").generate(r_tile_map, spawn_params)
 	auto_tile_whole_map()
 
 func set_map_cellv(coord : Vector2, index : int) -> void:
-	set_map_cell(coord.x, coord.y, index)
+	set_map_cell(int(coord.x), int(coord.y), index)
 
 func set_map_cell(x : int, y : int, index : int) -> void:
 	var old = r_tile_map.get_cell(x, y)
@@ -114,7 +114,7 @@ func get_a_job(job_num : int) -> void:
 	var job = r_job_manager.get_job(job_num)
 	change_to_job_map()
 	set_my_position(4, 4)
-	set_spawn_params(job.get_spawn_params(), job.has_forest())
+	set_spawn_params(job.get_spawn_params())
 	regen_map()
 	load_job_popup(job_num)
 	show_map_popup()
@@ -127,7 +127,11 @@ func load_job_rewards(job_num : int) -> void:
 func load_job_popup(job_num : int):
 	var job = r_job_manager.get_job(job_num)
 	clear_popup()
-	find_parent("Root").find_node("MapPopup").add_child(job)
+	var popup = find_parent("Root").find_node("MapPopup")
+	var goal = job.get_node("JobGoal")
+	job.remove_child(goal)
+	popup.add_child(goal)
+	goal.visible = true
 
 func place_rewards() -> void:
 	var home_map = get_parent().find_node("HomeMap")
@@ -178,8 +182,7 @@ func change_to_home_map() -> void:
 	r_tile_map.visible = false
 	r_tile_map = get_parent().get_node("HomeMap")
 	r_tile_map.visible = true
-	if jobs_finished >= r_job_manager.num_jobs():
-		get_parent().find_node("MenuControls").set_allow_job(false)
+	get_parent().find_node("MenuControls").set_next_available_job(min(jobs_finished + 1, r_job_manager.num_jobs()))
 	get_parent().find_node("MenuControls").call_deferred('set_home_options')
 	get_parent().find_node("ColorRectJob").visible = false
 	call_deferred('clear_popup')
@@ -189,11 +192,11 @@ func clear_popup():
 	for child in popup.get_children():
 		child.queue_free()
 
-func set_spawn_params(params, forest : bool, name_to_id : bool = true) -> void:
-	spawn_params = params
-	spawn_a_forest = forest
+func set_spawn_params(new_params : Dictionary, name_to_id : bool = true) -> void:
+	spawn_params = new_params
+	#print(spawn_params)
 	if name_to_id:
-		for sp in spawn_params:
+		for sp in spawn_params['spawns']:
 			sp['object'] = names[sp['object']]
 
 func post_ready() -> void:
@@ -411,6 +414,7 @@ func add_modification(tile_was_pos : Vector2, tile_was : int, tile_was_2_pos = f
 func clear_modifications() -> void:
 	modification_queue = []
 
+# warning-ignore:unused_argument
 func _process(delta) -> void:
 	if make_mp:
 		make_mp = false
@@ -501,14 +505,12 @@ func evaluate_job() -> void:
 	var last_x = -1
 	var last_y = -1
 	
-	var r_job_map : TileMap = get_parent().find_node("MapPopup").find_node("TileMap", true, false)
-	#var r_job_map : TileMap = get_parent().find_node("MapPopup").get_child(0).get_node("TileMap")
+	var r_job_map : TileMap = get_parent().find_node("MapPopup").find_node("JobGoal", true, false)
 	if not r_job_map:
 		print("no job to check")
 		get_parent().find_node("MapPopup").print_tree_pretty()
 		return
 	
-	var search_width = 0
 	var max_j = -1
 	
 	for ty in range(JOB_WIDTH):
@@ -538,11 +540,11 @@ func evaluate_job() -> void:
 	
 	var safety = 200000
 	
-	while ty < MAX_TILE:
+	while ty <= MAX_TILE:
 		if verified:
 			break
 		tx = 0
-		while tx < MAX_TILE:
+		while tx <= MAX_TILE:
 			safety -= 1
 			if safety < 0:
 				return
@@ -587,12 +589,15 @@ func clear_inventory() -> void:
 	hold_count = 0
 	$PlayerSprite.region_rect.position.x = 0
 
-func menu_selection(value : String) -> void:
+func menu_selection(value : String, extra) -> void:
 	match value:
 		"return":
 			pass
 		"job":
-			get_a_job(jobs_finished + 1)
+			if not extra:
+				get_a_job(jobs_finished + 1)
+			else:
+				get_a_job(extra)
 		"view-job":
 			make_map_popup()
 		"leave-job":
@@ -638,7 +643,7 @@ func serialize_for_save() -> Dictionary:
 	}
 	return serialized
 
-func restore_save(serialized) -> void:
+func restore_save(serialized, save_version) -> void:
 	jobs_finished =  serialized['jobs_finished']
 	
 	if serialized['at_home']:

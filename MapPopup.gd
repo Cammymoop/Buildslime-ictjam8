@@ -16,6 +16,7 @@ func hide():
 	find_parent("Root").find_node("Player").hide_map_popup()
 
 
+# warning-ignore:unused_argument
 func _process(delta):
 	if not active:
 		return

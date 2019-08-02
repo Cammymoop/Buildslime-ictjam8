@@ -2,7 +2,7 @@ extends Node
 
 var jobs = [
 	preload("res://Job1.tscn"), preload("res://Job1_2.tscn"), 
-	preload("res://Job2.tscn"), 
+	preload("res://Job2.tscn"),
 	preload("res://Job3.tscn"), preload("res://Job3_2.tscn"), preload("res://Job3_3.tscn"), 
 	preload("res://Job4.tscn")
 ]

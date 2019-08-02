@@ -50,6 +50,7 @@ func get_combinator_result(tile1, tile2):
 			continue
 		var results = rule['results']
 		return [results[1], results[2]]
+# warning-ignore:unreachable_code
 	return false
 
 

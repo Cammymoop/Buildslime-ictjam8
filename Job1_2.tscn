@@ -11,7 +11,7 @@ spawn_mirrorable = [ true, false, false, false, true ]
 rewards = [ "tree", "stick", "puddle", "rock", "sticks", "grass", "cloth" ]
 forest = false
 
-[node name="TileMap" type="TileMap" parent="."]
+[node name="JobGoal" type="TileMap" parent="."]
 tile_set = ExtResource( 2 )
 cell_size = Vector2( 16, 16 )
 format = 1
