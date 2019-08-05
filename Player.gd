@@ -48,6 +48,7 @@ var current_job_num = 0
 var make_mp = false
 
 var names
+var inv_names
 
 var spawn_params : Dictionary = {
 	'spawns': [
@@ -159,10 +160,13 @@ func job_complete() -> void:
 func make_map_popup() -> void:
 	make_mp = true
 
-func show_map_popup() -> void:
+func show_map_popup(quick_mode : bool = false) -> void:
 	r_tile_map.visible = false
 	visible = false
-	get_parent().find_node("MapPopup").show()
+	if quick_mode:
+		get_parent().find_node("MapPopup").show_quick()
+	else:
+		get_parent().find_node("MapPopup").show()
 
 func hide_map_popup() -> void:
 	r_tile_map.visible = true
@@ -201,6 +205,7 @@ func set_spawn_params(new_params : Dictionary, name_to_id : bool = true) -> void
 
 func post_ready() -> void:
 	names = r_combinator.names
+	inv_names = r_combinator.inv_names
 	
 	var temp = []
 	for name_t in NON_WALKABLE:
@@ -342,12 +347,22 @@ func smack() -> void:
 	if not result:
 		return
 	
+	if typeof(result[0]) == TYPE_STRING and result[0] == "special":
+		handle_special_smack(first, second, result)
+	
 	$SmackSound.play()
 	set_map_cellv(facing_t, result[0])
 	set_map_cellv(facing_t_2, result[1])
 	
 	# add old tiles to the undo queue
 	add_modification(facing_t, first, facing_t_2, second)
+
+func handle_special_smack(first_t : int, second_t : int, special : Array):
+	match special[1]:
+		'craft_help':
+			# lookup all recipe results for the object that isnt the crafting manual
+			var lookup_tile = second_t if inv_names[first_t] == 'crafting_manual' else first_t
+			var possible_results = r_combinator.get_all_results_for(lookup_tile)
 
 # check if you're holding too many first
 func pick_up(index) -> void:
@@ -495,6 +510,9 @@ func _process(delta) -> void:
 			regen_map()
 		elif Input.is_action_just_pressed("action_rewind"):
 			pop_modification()
+		elif Input.is_action_just_pressed("action_quick_job_view"):
+			if not at_home:
+				show_map_popup(true)
 
 func evaluate_job() -> void:
 	var JOB_WIDTH = 19

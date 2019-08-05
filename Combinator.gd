@@ -9,6 +9,7 @@ var inv_names = {}
 
 func _ready():
 	names['any'] = -2
+	names['special'] = -3
 	var nfile = open_text_file(names_filename)
 	while not nfile.eof_reached():
 		add_name(nfile.get_line())
@@ -40,19 +41,36 @@ func get_combinator_result(tile1, tile2):
 	for rule in rules:
 		var reversed = false
 		var ingredients = rule['ingredients']
-		if ingredients[1] != -2 and ingredients[1] != tile1:
-			if rule['reversable'] and (ingredients[2] == -2 or ingredients[2] == tile1):
+		if ingredients[0] != -2 and ingredients[0] != tile1:
+			if rule['reversable'] and (ingredients[1] == -2 or ingredients[1] == tile1):
 				reversed = true
 			else:
 				continue
-		var ingredient = ingredients[2] if not reversed else ingredients[1]
+		var ingredient = ingredients[1] if not reversed else ingredients[0]
 		if ingredient != -2 and ingredient != tile2:
 			continue
-		var results = rule['results']
-		return [results[1], results[2]]
+		if rule['is_special']:
+			return rule['special_results']
+		else:
+			return rule['results']
 # warning-ignore:unreachable_code
 	return false
 
+func get_all_recipes_for(tile_index : int) -> Array:
+	var recipes = []
+	for rule in rules:
+		if rule['ingredients'].has(tile_index):
+			recipes.append(rule)
+	return recipes
+
+func get_all_results_for(tile_index : int) -> Array:
+	var recipes = get_all_recipes_for(tile_index)
+	var possible_results = []
+	for r in recipes:
+		for r2 in r['results']:
+			if not possible_results.has(r2):
+				possible_results.append(r2)
+	return possible_results
 
 func process_line(old_line):
 	var line : String = old_line.strip_edges()
@@ -69,12 +87,19 @@ func process_line(old_line):
 	if parts.size() < 7:
 		if parts[2] != ">":
 			print("invalid rule: " + old_line)
-		if not (names.has(parts[0]) and names.has(parts[1]) and names.has(parts[3]) and names.has(parts[4])):
+		var is_special = parts[3] == 'special'
+		if not (names.has(parts[0]) and names.has(parts[1])): 
+			print("invalid name in rule: " + old_line)
+		if not is_special and not (names.has(parts[3]) and names.has(parts[4])):
 			print("invalid name in rule: " + old_line)
 		var rule = {
-			'ingredients': {1: names[parts[0]], 2: names[parts[1]]}, 
-			'results': {1: names[parts[3]], 2: names[parts[4]]},
-			'reversable': reversable
+			'ingredients': [names[parts[0]], names[parts[1]]], 
+			'reversable': reversable,
+			'is_special': is_special,
 		}
+		if is_special:
+			rule['special_results'] = ['special', parts[4]]
+		else:
+			rule['results'] = [names[parts[3]], names[parts[4]]]
 		rules.append(rule)
 

@@ -59,6 +59,11 @@ R plate pie > nothing piece_of_pie
 
 hammer plank > hammer wood_wall
 
+hammer log > hammer paper
+paper paper > nothing crafting_manual
+
+R crafting_manual any > special craft_help
+
 R fish cat > coin cat
 
 sword tree > sword apple
@@ -107,3 +112,4 @@ heart skull > nothing sheered
 R rock metal > nothing chip
 chip chip > nothing circuit_board
 R apple circuit_board > nothing computer
+
