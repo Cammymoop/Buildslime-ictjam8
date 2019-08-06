@@ -28,4 +28,4 @@ margin_top = 2.0
 margin_right = 54.0
 margin_bottom = 16.0
 text = "Return"
-[connection signal="focused" from="." to="." method="_on_MenuItem_focused"]
+[connection signal="gui_input" from="." to="." method="_on_MenuItem_gui_input"]

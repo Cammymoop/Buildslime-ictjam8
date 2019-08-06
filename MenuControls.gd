@@ -87,7 +87,20 @@ func add_menu_item(val : String, text : String) -> void:
 	item.find_node("Label").text = text
 	item.set_value(val)
 	pause_menu.add_child(item)
+	item.set_menu(self)
 	menu_item_count += 1
+
+func item_clicked(item : Node):
+	deselect_current()
+	menu_item_selected = item.get_index()
+	select_current()
+	do_item_action()
+
+func do_item_action():
+	var unpause = activate_current()
+	if unpause:
+		unpause()
+		return
 
 func select_current() -> void:
 	var current_item = pause_menu.get_child(menu_item_selected)
@@ -177,10 +190,7 @@ func _process(delta) -> void:
 	
 	if paused:
 		if Input.is_action_just_pressed("action_grab"):
-			var unpause = activate_current()
-			if unpause:
-				unpause()
-				return
+			do_item_action()
 	
 	if paused and not submenu_open:
 		if Input.is_action_just_pressed("move_down"):
