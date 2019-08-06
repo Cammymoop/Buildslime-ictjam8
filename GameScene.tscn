@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://assets/tileset/Main.tres" type="TileSet" id=1]
 [ext_resource path="res://WorldMap.gd" type="Script" id=2]
@@ -13,13 +13,15 @@
 [ext_resource path="res://assets/sound/pickup.ogg" type="AudioStream" id=11]
 [ext_resource path="res://assets/sound/putdown.ogg" type="AudioStream" id=12]
 [ext_resource path="res://assets/ui/UITheme.tres" type="Theme" id=13]
-[ext_resource path="res://MapPopup.gd" type="Script" id=14]
-[ext_resource path="res://MenuControls.gd" type="Script" id=15]
-[ext_resource path="res://Submenu.gd" type="Script" id=16]
-[ext_resource path="res://assets/images/logo.png" type="Texture" id=17]
-[ext_resource path="res://Logo.gd" type="Script" id=18]
-[ext_resource path="res://SaveFileScreenVP.gd" type="Script" id=19]
-[ext_resource path="res://icon.png" type="Texture" id=20]
+[ext_resource path="res://LoadMenu.gd" type="Script" id=14]
+[ext_resource path="res://ScreenshotPanel.tscn" type="PackedScene" id=15]
+[ext_resource path="res://ThickButton.tscn" type="PackedScene" id=16]
+[ext_resource path="res://assets/images/black_arrow_right.png" type="Texture" id=17]
+[ext_resource path="res://MenuControls.gd" type="Script" id=18]
+[ext_resource path="res://Submenu.gd" type="Script" id=19]
+[ext_resource path="res://MapPopup.gd" type="Script" id=20]
+[ext_resource path="res://assets/images/logo.png" type="Texture" id=21]
+[ext_resource path="res://Logo.gd" type="Script" id=22]
 
 [node name="Root" type="Node2D"]
 
@@ -60,7 +62,7 @@ script = ExtResource( 7 )
 [node name="Player" type="Node2D" parent="." groups=[
 "saveable",
 ]]
-position = Vector2( 96, 128 )
+position = Vector2( 304, 304 )
 script = ExtResource( 8 )
 jobs_finished = 6
 
@@ -103,17 +105,18 @@ position = Vector2( -64, -64 )
 stream = ExtResource( 12 )
 
 [node name="BG" type="CanvasLayer" parent="."]
+editor/display_folded = true
 layer = -1
 
 [node name="ColorRect" type="ColorRect" parent="BG"]
 anchor_right = 1.0
-margin_bottom = 304.0
+anchor_bottom = 1.0
 color = Color( 0.0392157, 0.109804, 0.0745098, 1 )
 
 [node name="ColorRectJob" type="ColorRect" parent="BG"]
 visible = false
 anchor_right = 1.0
-margin_bottom = 304.0
+anchor_bottom = 1.0
 color = Color( 0, 0, 0, 1 )
 
 [node name="PanelBG" type="Panel" parent="BG"]
@@ -129,80 +132,205 @@ theme = ExtResource( 13 )
 [node name="Overlay" type="CanvasLayer" parent="."]
 pause_mode = 2
 
-[node name="CenterContainer" type="CenterContainer" parent="Overlay"]
+[node name="ThemeMaster" type="Control" parent="Overlay"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+theme = ExtResource( 13 )
 
-[node name="Control" type="Control" parent="Overlay/CenterContainer"]
-margin_right = 300.0
-margin_bottom = 300.0
-rect_min_size = Vector2( 300, 300 )
-
-[node name="MapPopup" type="Node2D" parent="Overlay/CenterContainer/Control"]
-visible = false
-script = ExtResource( 14 )
-
-[node name="MenuControls" type="Node" parent="Overlay"]
-script = ExtResource( 15 )
-
-[node name="CenterContainer2" type="CenterContainer" parent="Overlay"]
+[node name="CenterContainer2" type="CenterContainer" parent="Overlay/ThemeMaster"]
 anchor_right = 1.0
 margin_bottom = 200.0
 
-[node name="Tutorial" type="PanelContainer" parent="Overlay/CenterContainer2"]
+[node name="Tutorial" type="PanelContainer" parent="Overlay/ThemeMaster/CenterContainer2"]
 margin_left = 78.0
 margin_top = 90.0
 margin_right = 222.0
 margin_bottom = 110.0
 rect_min_size = Vector2( 0, 20 )
 
-[node name="Label" type="Label" parent="Overlay/CenterContainer2/Tutorial"]
-margin_left = 4.0
-margin_top = 4.0
-margin_right = 140.0
-margin_bottom = 17.0
+[node name="Label" type="Label" parent="Overlay/ThemeMaster/CenterContainer2/Tutorial"]
+margin_left = 6.0
+margin_top = 5.0
+margin_right = 138.0
+margin_bottom = 14.0
 text = "Open menu to get a job"
 
-[node name="PauseMenu" type="Control" parent="Overlay"]
+[node name="LoadMenu" type="Control" parent="Overlay/ThemeMaster"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 14 )
+
+[node name="CenterContainer" type="CenterContainer" parent="Overlay/ThemeMaster/LoadMenu"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="PanelContainer" type="PanelContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer"]
+margin_left = 7.0
+margin_top = 44.0
+margin_right = 293.0
+margin_bottom = 256.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer"]
+margin_left = 6.0
+margin_top = 5.0
+margin_right = 280.0
+margin_bottom = 207.0
+
+[node name="Label" type="Label" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer"]
+margin_right = 274.0
+margin_bottom = 9.0
+text = "Load Save File"
+align = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer"]
+margin_top = 13.0
+margin_right = 274.0
+margin_bottom = 169.0
+custom_constants/margin_right = 5
+custom_constants/margin_left = 5
+custom_constants/margin_bottom = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer"]
 editor/display_folded = true
+margin_left = 5.0
+margin_right = 269.0
+margin_bottom = 151.0
+
+[node name="LeftFile" type="MarginContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer"]
+margin_right = 130.0
+margin_bottom = 151.0
+
+[node name="BGColor" type="ColorRect" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/LeftFile"]
+margin_right = 130.0
+margin_bottom = 151.0
+rect_min_size = Vector2( 130, 0 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color( 0, 0, 0, 1 )
+
+[node name="Margins" type="MarginContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/LeftFile"]
+margin_right = 130.0
+margin_bottom = 151.0
+custom_constants/margin_right = 4
+custom_constants/margin_top = 4
+custom_constants/margin_left = 4
+custom_constants/margin_bottom = 4
+
+[node name="CenterContainer" type="CenterContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/LeftFile/Margins"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 126.0
+margin_bottom = 147.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/LeftFile/Margins/CenterContainer"]
+margin_left = 8.0
+margin_right = 114.0
+margin_bottom = 143.0
+
+[node name="ScreenshotPanel" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/LeftFile/Margins/CenterContainer/VBoxContainer" instance=ExtResource( 15 )]
+
+[node name="Label" type="Label" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/LeftFile/Margins/CenterContainer/VBoxContainer"]
+margin_top = 110.0
+margin_right = 106.0
+margin_bottom = 143.0
+text = "Key Lime
+5/8/2019
+Jobs Done: 7"
+align = 1
+
+[node name="RightFile" type="MarginContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer"]
+margin_left = 134.0
+margin_right = 264.0
+margin_bottom = 151.0
+
+[node name="BGColor" type="ColorRect" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/RightFile"]
+margin_right = 130.0
+margin_bottom = 151.0
+rect_min_size = Vector2( 130, 0 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color( 0, 0, 0, 1 )
+
+[node name="Margins" type="MarginContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/RightFile"]
+margin_right = 130.0
+margin_bottom = 151.0
+custom_constants/margin_right = 4
+custom_constants/margin_top = 4
+custom_constants/margin_left = 4
+custom_constants/margin_bottom = 4
+
+[node name="CenterContainer" type="CenterContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/RightFile/Margins"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 126.0
+margin_bottom = 147.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/RightFile/Margins/CenterContainer"]
+margin_left = 8.0
+margin_top = 12.0
+margin_right = 114.0
+margin_bottom = 131.0
+
+[node name="ScreenshotPanel" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/RightFile/Margins/CenterContainer/VBoxContainer" instance=ExtResource( 15 )]
+
+[node name="Label" type="Label" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/RightFile/Margins/CenterContainer/VBoxContainer"]
+margin_top = 110.0
+margin_right = 106.0
+margin_bottom = 119.0
+text = "2019-8-5"
+align = 1
+
+[node name="MarginContainer2" type="MarginContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer"]
+margin_top = 173.0
+margin_right = 274.0
+margin_bottom = 202.0
+custom_constants/margin_right = 5
+custom_constants/margin_left = 5
+custom_constants/margin_bottom = 4
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer2"]
+margin_left = 5.0
+margin_right = 269.0
+margin_bottom = 25.0
+
+[node name="Button" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer2/HBoxContainer" instance=ExtResource( 16 )]
+
+[node name="Control" type="Control" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer2/HBoxContainer"]
+margin_left = 28.0
+margin_right = 236.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+
+[node name="Button2" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer2/HBoxContainer" instance=ExtResource( 16 )]
+margin_left = 240.0
+margin_right = 264.0
+icon = ExtResource( 17 )
+
+[node name="MenuControls" type="Node" parent="Overlay/ThemeMaster"]
+script = ExtResource( 18 )
+
+[node name="PauseMenu" type="Control" parent="Overlay/ThemeMaster"]
 visible = false
 anchor_right = 1.0
-margin_bottom = 40.0
+anchor_bottom = 1.0
+margin_bottom = -300.0
 theme = ExtResource( 13 )
 
-[node name="Panel" type="Panel" parent="Overlay/PauseMenu"]
-visible = false
-margin_right = 40.0
-margin_bottom = 40.0
-
-[node name="CenterContainer" type="CenterContainer" parent="Overlay/PauseMenu"]
+[node name="CenterContainer" type="CenterContainer" parent="Overlay/ThemeMaster/PauseMenu"]
+editor/display_folded = true
 anchor_right = 1.0
 margin_bottom = 300.0
 
-[node name="PanelContainer" type="PanelContainer" parent="Overlay/PauseMenu/CenterContainer"]
+[node name="Thought" type="PanelContainer" parent="Overlay/ThemeMaster/PauseMenu/CenterContainer"]
+editor/display_folded = true
 visible = false
-margin_left = 146.0
+margin_left = 144.0
 margin_top = 140.0
-margin_right = 154.0
+margin_right = 156.0
 margin_bottom = 160.0
 rect_min_size = Vector2( 0, 20 )
 
-[node name="Label" type="Label" parent="Overlay/PauseMenu/CenterContainer/PanelContainer"]
-margin_left = 4.0
-margin_top = 5.0
-margin_right = 71.0
-margin_bottom = 15.0
-text = "Test test test"
-
-[node name="Thought" type="PanelContainer" parent="Overlay/PauseMenu/CenterContainer"]
-visible = false
-margin_left = 146.0
-margin_top = 140.0
-margin_right = 154.0
-margin_bottom = 160.0
-rect_min_size = Vector2( 0, 20 )
-
-[node name="Label" type="Label" parent="Overlay/PauseMenu/CenterContainer/Thought"]
+[node name="Label" type="Label" parent="Overlay/ThemeMaster/PauseMenu/CenterContainer/Thought"]
 margin_left = 4.0
 margin_top = 4.0
 margin_right = 230.0
@@ -213,34 +341,49 @@ out of
 Maybe if I help other people they'll 
 give me stuff"
 
-[node name="Main" type="PanelContainer" parent="Overlay/PauseMenu/CenterContainer"]
-margin_left = 146.0
+[node name="Main" type="PanelContainer" parent="Overlay/ThemeMaster/PauseMenu/CenterContainer"]
+margin_left = 144.0
 margin_top = 140.0
-margin_right = 154.0
+margin_right = 156.0
 margin_bottom = 160.0
 rect_min_size = Vector2( 0, 20 )
 
-[node name="MenuContainer" type="VBoxContainer" parent="Overlay/PauseMenu/CenterContainer/Main"]
+[node name="MenuContainer" type="VBoxContainer" parent="Overlay/ThemeMaster/PauseMenu/CenterContainer/Main"]
 margin_left = 4.0
 margin_top = 4.0
 margin_right = 4.0
-margin_bottom = 18.0
+margin_bottom = 16.0
 
-[node name="Submenu" type="PanelContainer" parent="Overlay/PauseMenu/CenterContainer"]
+[node name="Submenu" type="PanelContainer" parent="Overlay/ThemeMaster/PauseMenu/CenterContainer"]
 visible = false
-margin_left = 146.0
+margin_left = 144.0
 margin_top = 140.0
-margin_right = 154.0
+margin_right = 156.0
 margin_bottom = 160.0
 rect_min_size = Vector2( 0, 20 )
-script = ExtResource( 16 )
+script = ExtResource( 19 )
 
-[node name="Label" type="Label" parent="Overlay/PauseMenu/CenterContainer/Submenu"]
+[node name="Label" type="Label" parent="Overlay/ThemeMaster/PauseMenu/CenterContainer/Submenu"]
 margin_left = 4.0
 margin_top = 4.0
 margin_right = 38.0
 margin_bottom = 17.0
 text = "  1  "
+
+[node name="CenterContainer" type="CenterContainer" parent="Overlay"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Control" type="Control" parent="Overlay/CenterContainer"]
+margin_right = 300.0
+margin_bottom = 300.0
+rect_min_size = Vector2( 300, 300 )
+mouse_filter = 2
+
+[node name="MapPopup" type="Node2D" parent="Overlay/CenterContainer/Control"]
+visible = false
+script = ExtResource( 20 )
 
 [node name="LogoContainer" type="MarginContainer" parent="Overlay"]
 editor/display_folded = true
@@ -264,43 +407,16 @@ margin_bottom = 300.0
 [node name="Logo" type="TextureRect" parent="Overlay/LogoContainer/CenterContainer"]
 margin_right = 300.0
 margin_bottom = 300.0
-texture = ExtResource( 17 )
-script = ExtResource( 18 )
+texture = ExtResource( 21 )
+script = ExtResource( 22 )
 
 [node name="Timer" type="Timer" parent="Overlay/LogoContainer/CenterContainer/Logo"]
 pause_mode = 2
 wait_time = 1.8
 one_shot = true
 autostart = true
-
-[node name="ScreenshotViewer" type="Panel" parent="Overlay"]
-editor/display_folded = true
-visible = false
-margin_right = 110.0
-margin_bottom = 110.0
-rect_min_size = Vector2( 110, 110 )
-
-[node name="SaveFileScreen" type="ViewportContainer" parent="Overlay/ScreenshotViewer"]
-margin_left = 5.0
-margin_top = 5.0
-margin_right = 305.0
-margin_bottom = 305.0
-rect_scale = Vector2( 0.333, 0.333 )
-stretch = true
-
-[node name="SaveFileScreenVP" type="Viewport" parent="Overlay/ScreenshotViewer/SaveFileScreen"]
-size = Vector2( 300, 300 )
-handle_input_locally = false
-render_target_update_mode = 0
-script = ExtResource( 19 )
-
-[node name="Sprite" type="Sprite" parent="Overlay/ScreenshotViewer/SaveFileScreen/SaveFileScreenVP"]
-centered = false
-
-[node name="Sprite2" type="Sprite" parent="Overlay/ScreenshotViewer/SaveFileScreen/SaveFileScreenVP"]
-visible = false
-texture = ExtResource( 20 )
-centered = false
 [connection signal="timeout" from="Player/MoveTimer" to="Player" method="_on_MoveTimer_timeout"]
 [connection signal="timeout" from="Player/InitialMoveTimer" to="Player" method="_on_InitialMoveTimer_timeout"]
+[connection signal="pressed" from="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer2/HBoxContainer/Button" to="Overlay/ThemeMaster/LoadMenu" method="scroll_left"]
+[connection signal="pressed" from="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer2/HBoxContainer/Button2" to="Overlay/ThemeMaster/LoadMenu" method="scroll_right"]
 [connection signal="timeout" from="Overlay/LogoContainer/CenterContainer/Logo/Timer" to="Overlay/LogoContainer/CenterContainer/Logo" method="_on_Timer_timeout"]

@@ -6,6 +6,6 @@
 
 [node name="FontMaker" type="Node" parent="."]
 script = ExtResource( 1 )
-font_name = "img_font_black.png"
-out_name = "my_font_black"
-symbols = "<>_.,!+-=()[]'\":;?*^"
+font_name = "img_font_white.png"
+out_name = "my_font_white"
+symbols = "<>_.,!+-=()[]'\":;?*^/\\"

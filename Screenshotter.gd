@@ -1,6 +1,5 @@
 extends Node
 
-var vp_size
 
 func _ready():
 	var d :Directory = Directory.new()

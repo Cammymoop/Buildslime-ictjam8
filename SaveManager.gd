@@ -1,10 +1,21 @@
 extends Node
 
-func save_game() -> void:
+func _ready():
+	var d :Directory = Directory.new()
+	if not d.dir_exists("user://saves"):
+		d.make_dir("user://saves")
+
+func save_game(filename : String) -> void:
 	var save_file = File.new()
-	save_file.open("user://savegame.save", File.WRITE)
+	save_file.open("user://saves/" + filename + ".bs", File.WRITE)
 	
-	save_file.store_line('buildslime_save_version 2')
+	save_file.store_line('buildslime_save_version 3')
+	
+	var date = OS.get_date()
+	
+	var date_str = str(date['year']) + '-' + str(date['month']) + '-' + str(date['day'])
+	
+	save_file.store_line('date ' + date_str)
 	
 	var saveables = get_tree().get_nodes_in_group("saveable")
 	
@@ -13,20 +24,26 @@ func save_game() -> void:
 		save_file.store_line(to_json(serialized))
 	save_file.close()
 
-func load_game() -> void:
+func load_game(filename : String = '') -> void:
+	var save_file_path = "user://savegame.save" if filename == '' else "user://saves/" + filename + ".bs"
+	
 	var save_file = File.new()
-	if not save_file.file_exists("user://savegame.save"):
+	if not save_file.file_exists(save_file_path):
 		print('save file doesnt exist')
 		return
 	
-	save_file.open("user://savegame.save", File.READ)
+	save_file.open(save_file_path, File.READ)
 	
 	var first_line = save_file.get_line()
 	var save_version = int(first_line.split(" ", false)[1])
-	if save_version > 2:
+	if save_version > 3:
 		print('unsupported save version!')
 		return
 	print('loading save version ' + str(save_version))
+	
+	if save_version > 2:
+		var second_line = save_file.get_line() # just the date for now
+		print(second_line)
 	
 	var root_node = find_parent("Root")
 	while not save_file.eof_reached():

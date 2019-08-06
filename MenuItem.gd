@@ -1,5 +1,7 @@
 extends HBoxContainer
 
+signal focused
+
 var value = ''
 
 var extra = 0

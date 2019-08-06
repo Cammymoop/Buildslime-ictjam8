@@ -17,6 +17,9 @@ _global_script_class_icons={
 
 config/name="Buildslime"
 run/main_scene="res://GameScene.tscn"
+boot_splash/image="res://assets/images/hourglass.png"
+boot_splash/fullsize=false
+boot_splash/bg_color=Color( 0, 0, 0, 1 )
 config/icon="res://icon.png"
 
 [debug]
@@ -30,11 +33,7 @@ window/size/height=300
 window/size/test_width=900
 window/size/test_height=900
 window/stretch/mode="2d"
-window/stretch/aspect="keep_height"
-
-[gui]
-
-theme/custom="res://assets/ui/UITheme.tres"
+window/stretch/aspect="expand"
 
 [importer_defaults]
 
@@ -173,6 +172,10 @@ temp_screenshot={
 
 [rendering]
 
+quality/driver/driver_name="GLES2"
+quality/intended_usage/framebuffer_allocation=0
+quality/intended_usage/framebuffer_allocation.mobile=1
 quality/2d/use_pixel_snap=true
 environment/default_clear_color=Color( 0.0313726, 0.101961, 0.172549, 1 )
 environment/default_environment="res://default_env.tres"
+quality/dynamic_fonts/use_oversampling=false

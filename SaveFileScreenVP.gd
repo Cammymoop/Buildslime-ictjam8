@@ -6,3 +6,5 @@ func show_screenshot(name : String):
 		var texture = ImageTexture.new()
 		texture.create_from_image(img)
 		$Sprite.texture = texture
+		
+		$LogoSprite.queue_free()

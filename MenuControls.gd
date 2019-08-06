@@ -25,7 +25,7 @@ var submenu_open = false
 var confirm_options = ['restart-game', 'load-game', 'save-game', 'leave-job']
 
 func _ready() -> void:
-	pause_screen = find_parent("Overlay").get_node("PauseMenu")
+	pause_screen = find_parent("Overlay").find_node("PauseMenu")
 	pause_menu = pause_screen.find_node("MenuContainer")
 	
 	r_tutorial = find_parent("Overlay").find_node("Tutorial")

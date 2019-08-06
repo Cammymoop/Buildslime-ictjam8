@@ -4,6 +4,9 @@ var showing = true
 
 func _ready():
 	find_parent("LogoContainer").visible = true
+	if OS.has_feature('debug'):
+		hide()
+		$Timer.stop()
 
 func _on_Timer_timeout():
 	hide()
