@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://assets/ui/UITheme.tres" type="Theme" id=1]
+[ext_resource path="res://TextPopup.gd" type="Script" id=2]
+
+[node name="TextPopup" type="PanelContainer"]
+margin_left = 144.0
+margin_top = 140.0
+margin_right = 192.0
+margin_bottom = 160.0
+rect_min_size = Vector2( 0, 20 )
+theme = ExtResource( 1 )
+script = ExtResource( 2 )
+
+[node name="Label" type="Label" parent="."]
+margin_left = 6.0
+margin_top = 5.0
+margin_right = 42.0
+margin_bottom = 14.0
+text = "Hiya"

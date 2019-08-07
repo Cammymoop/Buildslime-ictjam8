@@ -10,9 +10,6 @@ func new_game():
 	max_job_completed = 0
 	current_job_num = 0
 
-func _enter_tree():
-	print('global enter tree')
-
 func get_max_job_completed() -> int:
 	return max_job_completed
 func set_max_job_completed(v : int):

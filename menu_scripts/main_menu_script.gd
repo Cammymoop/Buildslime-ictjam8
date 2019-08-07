@@ -27,10 +27,22 @@ func handle_item_selected(value, extra) -> bool:
 				if extra == 1:
 					get_tree().reload_current_scene()
 		'eval-job':
+			if extra == 1:
+				return true
 			var the_map = find_parent('Root').find_node('JobMap') # TODO refactor
 			var global = get_node("/root/GlobalData")
 			var job_passed = get_node("/root/JobManager").check_job_completion(global.get_current_job_num(), the_map)
-			print('yay job done' if job_passed else 'that\'s not quite it')
+			if job_passed:
+				r_menu.add_child_confirm_prompt('finish-job', 'Great! That\'s perfect! Are you done here?')
+			else:
+				print('adding popup')
+				r_menu.add_text_popup("Hm, that's not quite right", 'eval-job', 1, true)
+		'finish-job':
+			if extra == 1:
+				find_parent('Root').find_node('Player').menu_selection('finish-job', 1) # TODO refactor
+				return true
+			else:
+				return true
 	
 	# dont close menu
 	return false

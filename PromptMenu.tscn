@@ -1,8 +1,11 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://assets/ui/UITheme.tres" type="Theme" id=1]
 [ext_resource path="res://PromptMenu.gd" type="Script" id=2]
 [ext_resource path="res://MenuItem.tscn" type="PackedScene" id=3]
+[ext_resource path="res://ThickButton.tscn" type="PackedScene" id=4]
+[ext_resource path="res://assets/ui/fake_box_thick.tres" type="StyleBox" id=5]
+[ext_resource path="res://assets/images/black_arrow_right.png" type="Texture" id=6]
 
 [node name="PromptMenu" type="PanelContainer"]
 margin_left = 144.0
@@ -25,7 +28,7 @@ text = "  1  "
 margin_left = 6.0
 margin_top = 5.0
 margin_right = 84.0
-margin_bottom = 27.0
+margin_bottom = 85.0
 
 [node name="Prefix" type="Label" parent="Contents"]
 margin_right = 78.0
@@ -73,10 +76,49 @@ margin_top = 0.0
 margin_right = 24.0
 margin_bottom = 9.0
 text = "No"
+
+[node name="Numbers" type="VBoxContainer" parent="Contents"]
+margin_top = 26.0
+margin_right = 78.0
+margin_bottom = 80.0
+
+[node name="NumberButtons" type="HBoxContainer" parent="Contents/Numbers"]
+margin_right = 78.0
+margin_bottom = 25.0
+
+[node name="LeftButton" parent="Contents/Numbers/NumberButtons" instance=ExtResource( 4 )]
+custom_styles/disabled = ExtResource( 5 )
+
+[node name="NumberLabel" type="Label" parent="Contents/Numbers/NumberButtons"]
+margin_left = 28.0
+margin_top = 8.0
+margin_right = 50.0
+margin_bottom = 17.0
+size_flags_horizontal = 3
+text = "1"
+align = 1
+
+[node name="RightButton" parent="Contents/Numbers/NumberButtons" instance=ExtResource( 4 )]
+margin_left = 54.0
+margin_right = 78.0
+custom_styles/disabled = ExtResource( 5 )
+icon = ExtResource( 6 )
+
+[node name="OkButton" parent="Contents/Numbers" instance=ExtResource( 4 )]
+margin_left = 25.0
+margin_top = 29.0
+margin_right = 53.0
+margin_bottom = 54.0
+size_flags_horizontal = 4
+text = "Ok"
+icon = null
 [connection signal="mouse_entered_item" from="Contents/ConfirmButtons/YesOption" to="." method="_on_mouse_entered_item"]
 [connection signal="selected" from="Contents/ConfirmButtons/YesOption" to="." method="_on_option_selected"]
 [connection signal="mouse_entered_item" from="Contents/ConfirmButtons/NoOption" to="." method="_on_mouse_entered_item"]
 [connection signal="selected" from="Contents/ConfirmButtons/NoOption" to="." method="_on_option_selected"]
+[connection signal="pressed" from="Contents/Numbers/NumberButtons/LeftButton" to="." method="_on_LeftButton_pressed"]
+[connection signal="pressed" from="Contents/Numbers/NumberButtons/RightButton" to="." method="_on_RightButton_pressed"]
+[connection signal="pressed" from="Contents/Numbers/OkButton" to="." method="_on_OkButton_pressed"]
 
 [editable path="Contents/ConfirmButtons/YesOption"]
 

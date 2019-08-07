@@ -63,7 +63,6 @@ script = ExtResource( 6 )
 editor/display_folded = true
 position = Vector2( 304, 304 )
 script = ExtResource( 7 )
-enable_debug = false
 
 [node name="PlayerSprite" type="Sprite" parent="Player"]
 position = Vector2( 8, 8 )
@@ -104,7 +103,6 @@ position = Vector2( -64, -64 )
 stream = ExtResource( 11 )
 
 [node name="BG" type="CanvasLayer" parent="."]
-editor/display_folded = true
 layer = -1
 
 [node name="ColorRect" type="ColorRect" parent="BG"]
@@ -127,6 +125,15 @@ margin_top = 5.0
 margin_right = -5.0
 margin_bottom = -5.0
 theme = ExtResource( 12 )
+
+[node name="Label" type="Label" parent="BG/PanelBG"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -33.0
+margin_top = 8.0
+margin_right = 33.0
+margin_bottom = 9.0
+text = "Build This:"
 
 [node name="Overlay" type="CanvasLayer" parent="."]
 pause_mode = 2

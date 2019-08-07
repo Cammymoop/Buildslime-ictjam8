@@ -36,6 +36,7 @@ func set_numbers_mode(main_value : String, n_start : int, n_max : int, n_min : i
 	max_number = n_max
 	prompt_value = n_start
 	find_node('ConfirmButtons').visible = false
+	find_node('Numbers').visible = true
 	update_prompt()
 
 func set_confirm_mode(main_value : String, default : int = 0):
@@ -44,6 +45,8 @@ func set_confirm_mode(main_value : String, default : int = 0):
 	prompt_value = 0 if default == 0 else 1
 	var buttons = find_node('ConfirmButtons')
 	buttons.visible = true
+	find_node('Numbers').visible = false
+	
 	var yes = buttons.get_node('YesOption')
 	yes.set_value(main_value)
 	yes.set_extra(1)
@@ -63,17 +66,38 @@ func close():
 func update_prompt() -> void:
 	var val_text = ''
 	if mode == "numbers":
-		val_text = ("<" if prompt_value > min_number else " ") + " "
-		val_text += str(prompt_value) + " "
-		val_text += (">" if prompt_value < max_number else " ")
-		
-		find_node('Prefix').text = prefix + '\n' + val_text
+		var left_button = find_node("LeftButton")
+		if prompt_value > min_number:
+			left_button.disabled = false
+		else:
+			left_button.disabled = true
+		var right_button = find_node("RightButton")
+		if prompt_value < max_number:
+			right_button.disabled = false
+		else:
+			right_button.disabled = true
+#		val_text = ("<" if prompt_value > min_number else " ") + " "
+#		val_text += str(prompt_value) + " "
+#		val_text += (">" if prompt_value < max_number else " ")
+#
+#		find_node('Prefix').text = prefix + '\n' + val_text
+		find_node('NumberLabel').text = str(prompt_value)
 
 	if mode == "confirm":
 		var active = 'YesOption' if prompt_value > 0 else 'NoOption'
 		var inactive = 'NoOption' if prompt_value > 0 else 'YesOption'
 		find_node(active).set_active()
 		find_node(inactive).set_inactive()
+
+func number_decrease():
+	if prompt_value > min_number:
+		prompt_value -= 1
+		update_prompt()
+
+func number_increase():
+	if prompt_value < max_number:
+		prompt_value += 1
+		update_prompt()
 
 
 func _process(delta) -> void:
@@ -91,13 +115,9 @@ func _process(delta) -> void:
 	
 	if mode == "numbers":
 		if Input.is_action_just_pressed("move_left"):
-			if prompt_value > min_number:
-				prompt_value -= 1
-				update_prompt()
+			number_decrease()
 		if Input.is_action_just_pressed("move_right"):
-			if prompt_value < max_number:
-				prompt_value += 1
-				update_prompt()
+			number_increase()
 
 	if mode == "confirm":
 		if Input.is_action_just_pressed("move_right") and prompt_value > 0:
@@ -118,3 +138,14 @@ func _on_mouse_entered_item(item):
 	find_node('NoOption').set_inactive()
 	item.set_active()
 	prompt_value = item.get_extra()
+
+
+func _on_LeftButton_pressed():
+	number_decrease()
+
+func _on_RightButton_pressed():
+	number_increase()
+
+func _on_OkButton_pressed():
+	emit_signal("item_selected", main_value, prompt_value)
+	close()

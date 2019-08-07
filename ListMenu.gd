@@ -7,6 +7,7 @@ export (Script) var item_script = null
 
 var menu_item_scn : PackedScene = preload("res://MenuItem.tscn")
 var prompt_menu_scn : PackedScene = preload("res://PromptMenu.tscn")
+var text_popup_scn : PackedScene = preload("res://TextPopup.tscn")
 
 var menu_item_count = 0
 
@@ -64,11 +65,28 @@ func show_child_prompt(prompt):
 	connect("menu_closed", prompt, "close")
 	deactivate_menu()
 
+func add_text_popup(text, item_value, item_extra, error : bool):
+	var popup = text_popup_scn.instance()
+	get_parent().add_child(popup)
+	popup.show_text(text, item_value, item_extra, error)
+	popup.connect("selected", self, "on_item_selected")
+	popup.connect("dismissed", self, "activate_menu")
+	connect("menu_closed", popup, "close")
+	deactivate_menu()
+
+func mouse_deactivate() -> void:
+	for item in $MenuContainer.get_children():
+		item.mouse_filter = MOUSE_FILTER_IGNORE
+func mouse_activate() -> void:
+	for item in $MenuContainer.get_children():
+		item.mouse_filter = MOUSE_FILTER_STOP
 
 func activate_menu() -> void:
 	menu_active = true
+	mouse_activate()
 func deactivate_menu() -> void:
 	menu_active = false
+	mouse_deactivate()
 
 func hide_menu():
 	visible = false
