@@ -32,3 +32,7 @@ func get_spawn_params() -> Array:
 		spawn_params['prebuilt_map'] = prebuilt_tilemap
 	
 	return spawn_params
+
+func get_goal() -> TileMap:
+	var goal : TileMap = get_node("JobGoal")
+	return goal

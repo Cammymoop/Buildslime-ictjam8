@@ -1,27 +1,28 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=24 format=2]
 
 [ext_resource path="res://assets/tileset/Main.tres" type="TileSet" id=1]
 [ext_resource path="res://WorldMap.gd" type="Script" id=2]
 [ext_resource path="res://Combinator.gd" type="Script" id=3]
 [ext_resource path="res://MapGenerator.gd" type="Script" id=4]
-[ext_resource path="res://JobManager.gd" type="Script" id=5]
-[ext_resource path="res://SaveManager.gd" type="Script" id=6]
-[ext_resource path="res://Screenshotter.gd" type="Script" id=7]
-[ext_resource path="res://Player.gd" type="Script" id=8]
-[ext_resource path="res://assets/images/buildslime.png" type="Texture" id=9]
-[ext_resource path="res://assets/sound/smack.ogg" type="AudioStream" id=10]
-[ext_resource path="res://assets/sound/pickup.ogg" type="AudioStream" id=11]
-[ext_resource path="res://assets/sound/putdown.ogg" type="AudioStream" id=12]
-[ext_resource path="res://assets/ui/UITheme.tres" type="Theme" id=13]
-[ext_resource path="res://LoadMenu.gd" type="Script" id=14]
-[ext_resource path="res://ScreenshotPanel.tscn" type="PackedScene" id=15]
-[ext_resource path="res://ThickButton.tscn" type="PackedScene" id=16]
-[ext_resource path="res://assets/images/black_arrow_right.png" type="Texture" id=17]
-[ext_resource path="res://MenuControls.gd" type="Script" id=18]
-[ext_resource path="res://Submenu.gd" type="Script" id=19]
-[ext_resource path="res://MapPopup.gd" type="Script" id=20]
-[ext_resource path="res://assets/images/logo.png" type="Texture" id=21]
-[ext_resource path="res://Logo.gd" type="Script" id=22]
+[ext_resource path="res://SaveManager.gd" type="Script" id=5]
+[ext_resource path="res://Screenshotter.gd" type="Script" id=6]
+[ext_resource path="res://Player.gd" type="Script" id=7]
+[ext_resource path="res://assets/images/buildslime.png" type="Texture" id=8]
+[ext_resource path="res://assets/sound/smack.ogg" type="AudioStream" id=9]
+[ext_resource path="res://assets/sound/pickup.ogg" type="AudioStream" id=10]
+[ext_resource path="res://assets/sound/putdown.ogg" type="AudioStream" id=11]
+[ext_resource path="res://assets/ui/UITheme.tres" type="Theme" id=12]
+[ext_resource path="res://LoadMenu.gd" type="Script" id=13]
+[ext_resource path="res://FileDialogOption.tscn" type="PackedScene" id=14]
+[ext_resource path="res://ThickButton.tscn" type="PackedScene" id=15]
+[ext_resource path="res://assets/images/black_arrow_right.png" type="Texture" id=16]
+[ext_resource path="res://MenuControls.gd" type="Script" id=17]
+[ext_resource path="res://PauseScreen.gd" type="Script" id=18]
+[ext_resource path="res://ListMenu.tscn" type="PackedScene" id=19]
+[ext_resource path="res://menu_scripts/main_menu_script.gd" type="Script" id=20]
+[ext_resource path="res://MapPopup.gd" type="Script" id=21]
+[ext_resource path="res://assets/images/logo.png" type="Texture" id=22]
+[ext_resource path="res://Logo.gd" type="Script" id=23]
 
 [node name="Root" type="Node2D"]
 
@@ -50,25 +51,23 @@ script = ExtResource( 3 )
 [node name="MapGenerator" type="Node" parent="."]
 script = ExtResource( 4 )
 
-[node name="JobManager" type="Node" parent="."]
+[node name="SaveManager" type="Node" parent="."]
 script = ExtResource( 5 )
 
-[node name="SaveManager" type="Node" parent="."]
-script = ExtResource( 6 )
-
 [node name="Screenshotter" type="Node" parent="."]
-script = ExtResource( 7 )
+script = ExtResource( 6 )
 
 [node name="Player" type="Node2D" parent="." groups=[
 "saveable",
 ]]
+editor/display_folded = true
 position = Vector2( 304, 304 )
-script = ExtResource( 8 )
-jobs_finished = 6
+script = ExtResource( 7 )
+enable_debug = false
 
 [node name="PlayerSprite" type="Sprite" parent="Player"]
 position = Vector2( 8, 8 )
-texture = ExtResource( 9 )
+texture = ExtResource( 8 )
 region_enabled = true
 region_rect = Rect2( 0, 0, 16, 16 )
 
@@ -93,16 +92,16 @@ one_shot = true
 
 [node name="SmackSound" type="AudioStreamPlayer2D" parent="Player"]
 position = Vector2( -64, -64 )
-stream = ExtResource( 10 )
+stream = ExtResource( 9 )
 volume_db = -8.077
 
 [node name="PickupSound" type="AudioStreamPlayer2D" parent="Player"]
 position = Vector2( -64, -64 )
-stream = ExtResource( 11 )
+stream = ExtResource( 10 )
 
 [node name="PutdownSound" type="AudioStreamPlayer2D" parent="Player"]
 position = Vector2( -64, -64 )
-stream = ExtResource( 12 )
+stream = ExtResource( 11 )
 
 [node name="BG" type="CanvasLayer" parent="."]
 editor/display_folded = true
@@ -127,7 +126,7 @@ margin_left = 5.0
 margin_top = 5.0
 margin_right = -5.0
 margin_bottom = -5.0
-theme = ExtResource( 13 )
+theme = ExtResource( 12 )
 
 [node name="Overlay" type="CanvasLayer" parent="."]
 pause_mode = 2
@@ -135,7 +134,7 @@ pause_mode = 2
 [node name="ThemeMaster" type="Control" parent="Overlay"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme = ExtResource( 13 )
+theme = ExtResource( 12 )
 
 [node name="CenterContainer2" type="CenterContainer" parent="Overlay/ThemeMaster"]
 anchor_right = 1.0
@@ -160,7 +159,7 @@ editor/display_folded = true
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-script = ExtResource( 14 )
+script = ExtResource( 13 )
 
 [node name="CenterContainer" type="CenterContainer" parent="Overlay/ThemeMaster/LoadMenu"]
 anchor_right = 1.0
@@ -192,97 +191,19 @@ custom_constants/margin_right = 5
 custom_constants/margin_left = 5
 custom_constants/margin_bottom = 5
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer"]
-editor/display_folded = true
+[node name="FileContainer" type="HBoxContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer"]
 margin_left = 5.0
 margin_right = 269.0
 margin_bottom = 151.0
 
-[node name="LeftFile" type="MarginContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer"]
-margin_right = 130.0
-margin_bottom = 151.0
+[node name="LeftFile" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/FileContainer" instance=ExtResource( 14 )]
 
-[node name="BGColor" type="ColorRect" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/LeftFile"]
-margin_right = 130.0
-margin_bottom = 151.0
-rect_min_size = Vector2( 130, 0 )
-size_flags_horizontal = 3
-size_flags_vertical = 3
-color = Color( 0, 0, 0, 1 )
-
-[node name="Margins" type="MarginContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/LeftFile"]
-margin_right = 130.0
-margin_bottom = 151.0
-custom_constants/margin_right = 4
-custom_constants/margin_top = 4
-custom_constants/margin_left = 4
-custom_constants/margin_bottom = 4
-
-[node name="CenterContainer" type="CenterContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/LeftFile/Margins"]
-margin_left = 4.0
-margin_top = 4.0
-margin_right = 126.0
-margin_bottom = 147.0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/LeftFile/Margins/CenterContainer"]
-margin_left = 8.0
-margin_right = 114.0
-margin_bottom = 143.0
-
-[node name="ScreenshotPanel" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/LeftFile/Margins/CenterContainer/VBoxContainer" instance=ExtResource( 15 )]
-
-[node name="Label" type="Label" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/LeftFile/Margins/CenterContainer/VBoxContainer"]
-margin_top = 110.0
-margin_right = 106.0
-margin_bottom = 143.0
-text = "Key Lime
-5/8/2019
-Jobs Done: 7"
-align = 1
-
-[node name="RightFile" type="MarginContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer"]
+[node name="RightFile" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/FileContainer" instance=ExtResource( 14 )]
 margin_left = 134.0
 margin_right = 264.0
-margin_bottom = 151.0
 
-[node name="BGColor" type="ColorRect" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/RightFile"]
-margin_right = 130.0
-margin_bottom = 151.0
-rect_min_size = Vector2( 130, 0 )
-size_flags_horizontal = 3
-size_flags_vertical = 3
-color = Color( 0, 0, 0, 1 )
-
-[node name="Margins" type="MarginContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/RightFile"]
-margin_right = 130.0
-margin_bottom = 151.0
-custom_constants/margin_right = 4
-custom_constants/margin_top = 4
-custom_constants/margin_left = 4
-custom_constants/margin_bottom = 4
-
-[node name="CenterContainer" type="CenterContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/RightFile/Margins"]
-margin_left = 4.0
-margin_top = 4.0
-margin_right = 126.0
-margin_bottom = 147.0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/RightFile/Margins/CenterContainer"]
-margin_left = 8.0
-margin_top = 12.0
-margin_right = 114.0
-margin_bottom = 131.0
-
-[node name="ScreenshotPanel" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/RightFile/Margins/CenterContainer/VBoxContainer" instance=ExtResource( 15 )]
-
-[node name="Label" type="Label" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer/RightFile/Margins/CenterContainer/VBoxContainer"]
-margin_top = 110.0
-margin_right = 106.0
-margin_bottom = 119.0
-text = "2019-8-5"
-align = 1
-
-[node name="MarginContainer2" type="MarginContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer"]
+[node name="ButtonRow" type="MarginContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer"]
+editor/display_folded = true
 margin_top = 173.0
 margin_right = 274.0
 margin_bottom = 202.0
@@ -290,40 +211,40 @@ custom_constants/margin_right = 5
 custom_constants/margin_left = 5
 custom_constants/margin_bottom = 4
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer2"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/ButtonRow"]
 margin_left = 5.0
 margin_right = 269.0
 margin_bottom = 25.0
 
-[node name="Button" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer2/HBoxContainer" instance=ExtResource( 16 )]
+[node name="Button" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/ButtonRow/HBoxContainer" instance=ExtResource( 15 )]
 
-[node name="Control" type="Control" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer2/HBoxContainer"]
+[node name="Control" type="Control" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/ButtonRow/HBoxContainer"]
 margin_left = 28.0
 margin_right = 236.0
 margin_bottom = 25.0
 size_flags_horizontal = 3
 
-[node name="Button2" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer2/HBoxContainer" instance=ExtResource( 16 )]
+[node name="Button2" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/ButtonRow/HBoxContainer" instance=ExtResource( 15 )]
 margin_left = 240.0
 margin_right = 264.0
-icon = ExtResource( 17 )
+icon = ExtResource( 16 )
 
 [node name="MenuControls" type="Node" parent="Overlay/ThemeMaster"]
-script = ExtResource( 18 )
+script = ExtResource( 17 )
 
-[node name="PauseMenu" type="Control" parent="Overlay/ThemeMaster"]
+[node name="PauseScreen" type="Control" parent="Overlay/ThemeMaster"]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_bottom = -300.0
-theme = ExtResource( 13 )
+theme = ExtResource( 12 )
+script = ExtResource( 18 )
 
-[node name="CenterContainer" type="CenterContainer" parent="Overlay/ThemeMaster/PauseMenu"]
-editor/display_folded = true
+[node name="CenterContainer" type="CenterContainer" parent="Overlay/ThemeMaster/PauseScreen"]
 anchor_right = 1.0
 margin_bottom = 300.0
 
-[node name="Thought" type="PanelContainer" parent="Overlay/ThemeMaster/PauseMenu/CenterContainer"]
+[node name="Thought" type="PanelContainer" parent="Overlay/ThemeMaster/PauseScreen/CenterContainer"]
 editor/display_folded = true
 visible = false
 margin_left = 144.0
@@ -332,7 +253,7 @@ margin_right = 156.0
 margin_bottom = 160.0
 rect_min_size = Vector2( 0, 20 )
 
-[node name="Label" type="Label" parent="Overlay/ThemeMaster/PauseMenu/CenterContainer/Thought"]
+[node name="Label" type="Label" parent="Overlay/ThemeMaster/PauseScreen/CenterContainer/Thought"]
 margin_left = 4.0
 margin_top = 4.0
 margin_right = 230.0
@@ -343,34 +264,9 @@ out of
 Maybe if I help other people they'll 
 give me stuff"
 
-[node name="Main" type="PanelContainer" parent="Overlay/ThemeMaster/PauseMenu/CenterContainer"]
-margin_left = 144.0
-margin_top = 140.0
-margin_right = 156.0
-margin_bottom = 160.0
-rect_min_size = Vector2( 0, 20 )
-
-[node name="MenuContainer" type="VBoxContainer" parent="Overlay/ThemeMaster/PauseMenu/CenterContainer/Main"]
-margin_left = 4.0
-margin_top = 4.0
-margin_right = 4.0
-margin_bottom = 16.0
-
-[node name="Submenu" type="PanelContainer" parent="Overlay/ThemeMaster/PauseMenu/CenterContainer"]
-visible = false
-margin_left = 144.0
-margin_top = 140.0
-margin_right = 156.0
-margin_bottom = 160.0
-rect_min_size = Vector2( 0, 20 )
-script = ExtResource( 19 )
-
-[node name="Label" type="Label" parent="Overlay/ThemeMaster/PauseMenu/CenterContainer/Submenu"]
-margin_left = 4.0
-margin_top = 4.0
-margin_right = 38.0
-margin_bottom = 17.0
-text = "  1  "
+[node name="MainMenu" parent="Overlay/ThemeMaster/PauseScreen/CenterContainer" instance=ExtResource( 19 )]
+visible = true
+item_script = ExtResource( 20 )
 
 [node name="CenterContainer" type="CenterContainer" parent="Overlay"]
 anchor_right = 1.0
@@ -385,7 +281,7 @@ mouse_filter = 2
 
 [node name="MapPopup" type="Node2D" parent="Overlay/CenterContainer/Control"]
 visible = false
-script = ExtResource( 20 )
+script = ExtResource( 21 )
 
 [node name="LogoContainer" type="MarginContainer" parent="Overlay"]
 editor/display_folded = true
@@ -409,8 +305,8 @@ margin_bottom = 300.0
 [node name="Logo" type="TextureRect" parent="Overlay/LogoContainer/CenterContainer"]
 margin_right = 300.0
 margin_bottom = 300.0
-texture = ExtResource( 21 )
-script = ExtResource( 22 )
+texture = ExtResource( 22 )
+script = ExtResource( 23 )
 
 [node name="Timer" type="Timer" parent="Overlay/LogoContainer/CenterContainer/Logo"]
 pause_mode = 2
@@ -419,6 +315,6 @@ one_shot = true
 autostart = true
 [connection signal="timeout" from="Player/MoveTimer" to="Player" method="_on_MoveTimer_timeout"]
 [connection signal="timeout" from="Player/InitialMoveTimer" to="Player" method="_on_InitialMoveTimer_timeout"]
-[connection signal="pressed" from="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer2/HBoxContainer/Button" to="Overlay/ThemeMaster/LoadMenu" method="scroll_left"]
-[connection signal="pressed" from="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer2/HBoxContainer/Button2" to="Overlay/ThemeMaster/LoadMenu" method="scroll_right"]
+[connection signal="pressed" from="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/ButtonRow/HBoxContainer/Button" to="Overlay/ThemeMaster/LoadMenu" method="scroll_left"]
+[connection signal="pressed" from="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/ButtonRow/HBoxContainer/Button2" to="Overlay/ThemeMaster/LoadMenu" method="scroll_right"]
 [connection signal="timeout" from="Overlay/LogoContainer/CenterContainer/Logo/Timer" to="Overlay/LogoContainer/CenterContainer/Logo" method="_on_Timer_timeout"]

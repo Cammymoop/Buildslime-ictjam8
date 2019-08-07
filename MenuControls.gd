@@ -25,11 +25,12 @@ var submenu_open = false
 var confirm_options = ['restart-game', 'load-game', 'save-game', 'leave-job']
 
 func _ready() -> void:
-	pause_screen = find_parent("Overlay").find_node("PauseMenu")
+	return
+	pause_screen = find_parent("Overlay").find_node("PauseScreen")
 	pause_menu = pause_screen.find_node("MenuContainer")
 	
 	r_tutorial = find_parent("Overlay").find_node("Tutorial")
-	r_submenu = find_parent("Overlay").find_node("Submenu")
+	r_submenu = find_parent("Overlay").find_node("PromptMenu")
 	close_submenu()
 	
 	set_home_options()
@@ -60,6 +61,7 @@ func set_home_options() -> void:
 	#print('set home options')
 
 func set_job_options() -> void:
+	return
 	cur_menu = 'job'
 	clear_options()
 	add_menu_item("return", "Return")
@@ -87,7 +89,6 @@ func add_menu_item(val : String, text : String) -> void:
 	item.find_node("Label").text = text
 	item.set_value(val)
 	pause_menu.add_child(item)
-	item.set_menu(self)
 	menu_item_count += 1
 
 func item_clicked(item : Node):
@@ -106,18 +107,18 @@ func select_current() -> void:
 	var current_item = pause_menu.get_child(menu_item_selected)
 	if not current_item:
 		return
-	current_item.select()
+	current_item.set_active()
 
 func deselect_current() -> void:
 	var current_item = pause_menu.get_child(menu_item_selected)
 	if not current_item:
 		return
 	#print('deactivating : ' + str(menu_item_selected))
-	current_item.deselect()
+	current_item.set_inactive()
 	
 func deselect_all() -> void:
 	for child in pause_menu.get_children():
-		child.deselect()
+		child.set_inactive()
 	#print('deactivating all')
 	menu_item_selected = 0
 
@@ -138,7 +139,7 @@ func activate_current() -> bool:
 	else:
 		if submenu_open:
 			current_item.set_extra(r_submenu.get_value())
-		current_item.activate()
+	current_item.activate()
 	return true
 
 func open_submenu(prefix : String):
@@ -177,6 +178,7 @@ func unpause() -> void:
 
 # warning-ignore:unused_argument
 func _process(delta) -> void:
+	return
 	if Input.is_action_just_pressed("action_menu_open"):
 		if paused:
 			if submenu_open:

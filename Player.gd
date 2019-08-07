@@ -1,5 +1,7 @@
 extends Node2D
 
+export var enable_debug = true
+
 var tile_position = Vector2(0, 0)
 var facing_angle = 0
 var facing = "down"
@@ -42,7 +44,6 @@ var modification_queue = []
 
 var job_rewards : Array = []
 
-export var jobs_finished = 0
 var current_job_num = 0
 
 var make_mp = false
@@ -69,19 +70,21 @@ func _ready():
 	tile_position.x = round(position.x/TILE)
 	tile_position.y = round(position.y/TILE)
 	
-	print("spawned at " + str(tile_position))
+	#print("spawned at " + str(tile_position))
 	
 	r_tile_map = get_parent().get_node("HomeMap")
 	r_combinator = get_parent().get_node("Combinator")
-	r_job_manager = get_parent().get_node("JobManager")
 	r_save_manager = get_parent().get_node("SaveManager")
 	
-	if OS.has_feature('release'):
-		jobs_finished = 0
-	if OS.has_feature('debug'):
+	r_job_manager = get_node("/root/JobManager")
+	
+	get_node("/root/GlobalData").new_game()
+	
+	if OS.has_feature('debug') and enable_debug:
+		get_node("/root/GlobalData").max_job_completed = r_job_manager.num_jobs()
 		NON_GRABABLE = []
 	
-	get_parent().find_node("MenuControls").set_next_available_job(min(jobs_finished + 1, r_job_manager.num_jobs()))
+	#get_parent().find_node("MenuControls").set_next_available_job(min(jobs_finished + 1, r_job_manager.num_jobs()))
 	
 	call_deferred("post_ready")
 
@@ -155,7 +158,8 @@ func place_rewards() -> void:
 	home_map.update_bitmask_region()
 
 func job_complete() -> void:
-	jobs_finished += 1
+	var global = get_node("/root/GlobalData")
+	global.max_job_completed = max(global.max_job_completed, current_job_num)
 
 func make_map_popup() -> void:
 	make_mp = true
@@ -175,19 +179,21 @@ func hide_map_popup() -> void:
 func change_to_job_map() -> void:
 	clear_modifications()
 	at_home = false
+	get_node("/root/GlobalData").set_to_map_job(current_job_num)
 	r_tile_map.visible = false
 	r_tile_map = get_parent().get_node("JobMap")
 	r_tile_map.visible = true
-	get_parent().find_node("MenuControls").call_deferred('set_job_options')
+	#get_parent().find_node("MenuControls").call_deferred('set_job_options')
 	get_parent().find_node("ColorRectJob").visible = true
 func change_to_home_map() -> void:
 	clear_modifications()
 	at_home = true
+	get_node("/root/GlobalData").set_to_map_home()
 	r_tile_map.visible = false
 	r_tile_map = get_parent().get_node("HomeMap")
 	r_tile_map.visible = true
-	get_parent().find_node("MenuControls").set_next_available_job(min(jobs_finished + 1, r_job_manager.num_jobs()))
-	get_parent().find_node("MenuControls").call_deferred('set_home_options')
+	#get_parent().find_node("MenuControls").set_next_available_job(min(jobs_finished + 1, r_job_manager.num_jobs()))
+	#get_parent().find_node("MenuControls").call_deferred('set_home_options')
 	get_parent().find_node("ColorRectJob").visible = false
 	call_deferred('clear_popup')
 
@@ -594,11 +600,11 @@ func evaluate_job() -> void:
 			tx += 1
 		ty += 1
 	
-	if verified:
-		call_deferred("verified_menu")
+#	if verified:
+#		call_deferred("verified_menu")
 
-func verified_menu() -> void:
-	get_parent().find_node("MenuControls").job_validated()
+#func verified_menu() -> void:
+#	get_parent().find_node("MenuControls").job_validated()
 
 func clear_inventory() -> void:
 	hold_1 = 0
@@ -613,7 +619,7 @@ func menu_selection(value : String, extra) -> void:
 			pass
 		"job":
 			if not extra:
-				get_a_job(jobs_finished + 1)
+				get_a_job(get_node("/root/GlobalData").max_job_completed + 1)
 			else:
 				get_a_job(extra)
 		"view-job":
@@ -660,20 +666,21 @@ func serialize_for_save() -> Dictionary:
 		"hold_2": hold_2,
 		"hold_3": hold_3,
 		
-		"jobs_finished": jobs_finished,
 		"current_job_num": current_job_num,
 	}
 	return serialized
 
 func restore_save(serialized, save_version) -> void:
-	jobs_finished =  serialized['jobs_finished']
+	clear_modifications()
+	if save_version < 3:
+		get_node("/root/GlobalData").max_job_completed = serialized['jobs_finished']
 	
 	if serialized['at_home']:
 		change_to_home_map()
 		clear_popup()
 	else:
-		change_to_job_map()
 		current_job_num = serialized['current_job_num']
+		change_to_job_map()
 		load_job_popup(current_job_num)
 		load_job_rewards(current_job_num)
 	

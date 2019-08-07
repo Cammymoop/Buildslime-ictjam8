@@ -29,3 +29,4 @@ margin_right = 54.0
 margin_bottom = 16.0
 text = "Return"
 [connection signal="gui_input" from="." to="." method="_on_MenuItem_gui_input"]
+[connection signal="mouse_entered" from="." to="." method="_on_MenuItem_mouse_entered"]
