@@ -64,7 +64,6 @@ func close():
 	queue_free()
 
 func update_prompt() -> void:
-	var val_text = ''
 	if mode == "numbers":
 		var left_button = find_node("LeftButton")
 		if prompt_value > min_number:
@@ -100,6 +99,7 @@ func number_increase():
 		update_prompt()
 
 
+# warning-ignore:unused_argument
 func _process(delta) -> void:
 	if Input.is_action_just_pressed("menu_back"):
 		close()

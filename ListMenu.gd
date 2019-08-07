@@ -7,6 +7,7 @@ export (Script) var item_script = null
 
 var menu_item_scn : PackedScene = preload("res://MenuItem.tscn")
 var prompt_menu_scn : PackedScene = preload("res://PromptMenu.tscn")
+var file_menu_scn : PackedScene = preload("res://FileMenu.tscn")
 var text_popup_scn : PackedScene = preload("res://TextPopup.tscn")
 
 var menu_item_count = 0
@@ -64,6 +65,16 @@ func show_child_prompt(prompt):
 	prompt.connect("menu_closed", self, "activate_menu")
 	connect("menu_closed", prompt, "close")
 	deactivate_menu()
+
+func add_child_file_menu(main_value : String) -> void:
+	var fm : = file_menu_scn.instance()
+	get_parent().add_child(fm)
+	fm.set_main_value(main_value)
+	fm.connect("file_selected", self, "on_item_selected")
+	fm.connect("menu_closed", self, "activate_menu")
+	connect("menu_closed", fm, "close")
+	deactivate_menu()
+	
 
 func add_text_popup(text, item_value, item_extra, error : bool):
 	var popup = text_popup_scn.instance()

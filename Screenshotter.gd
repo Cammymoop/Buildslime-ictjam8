@@ -11,16 +11,15 @@ func _process(delta):
 	if Input.is_action_just_pressed("temp_screenshot"):
 		take_shot()
 
-func get_screenshot_name() -> String:
+func get_screenshot_name(base_name : String = 'screenshot') -> String:
 	var f = File.new()
-	var try_name = "screenshot"
 	var number = 1
 	
-	while f.file_exists("user://screenshots/" + try_name + str(number) + '.png'):
+	while f.file_exists("user://screenshots/" + base_name + str(number) + '.png'):
 		number += 1
 		if number > 10000:
 			return 'toomany'
-	return try_name + str(number)
+	return base_name + str(number)
 	
 
 func take_shot(name : String = ''):
@@ -28,6 +27,9 @@ func take_shot(name : String = ''):
 	var shot = vp.get_texture().get_data()
 	shot.flip_y()
 	shot.resize(300, 300, Image.INTERPOLATE_NEAREST)
+	
 	if len(name) < 1:
 		name = get_screenshot_name()
-	shot.save_png("user://screenshots/" + name + ".png")
+	if len(name) > 3 and name.substr(len(name) - 4, 4) != '.png':
+		name += '.png'
+	shot.save_png("user://screenshots/" + name)

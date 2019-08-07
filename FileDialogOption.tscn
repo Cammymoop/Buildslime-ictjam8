@@ -1,16 +1,18 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://FileDialogOption.gd" type="Script" id=1]
-[ext_resource path="res://ScreenshotPanel.tscn" type="PackedScene" id=2]
+[ext_resource path="res://assets/ui/UITheme.tres" type="Theme" id=1]
+[ext_resource path="res://FileDialogOption.gd" type="Script" id=2]
+[ext_resource path="res://ScreenshotPanel.tscn" type="PackedScene" id=3]
 
 [node name="LeftFile" type="MarginContainer"]
 margin_right = 130.0
 margin_bottom = 151.0
-script = ExtResource( 1 )
+theme = ExtResource( 1 )
+script = ExtResource( 2 )
 
 [node name="BGColor" type="ColorRect" parent="."]
 margin_right = 130.0
-margin_bottom = 166.0
+margin_bottom = 151.0
 rect_min_size = Vector2( 130, 0 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -18,7 +20,8 @@ color = Color( 0, 0, 0, 1 )
 
 [node name="Margins" type="MarginContainer" parent="."]
 margin_right = 130.0
-margin_bottom = 166.0
+margin_bottom = 151.0
+mouse_filter = 1
 custom_constants/margin_right = 4
 custom_constants/margin_top = 4
 custom_constants/margin_left = 4
@@ -28,21 +31,23 @@ custom_constants/margin_bottom = 4
 margin_left = 4.0
 margin_top = 4.0
 margin_right = 126.0
-margin_bottom = 162.0
+margin_bottom = 147.0
+mouse_filter = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Margins/CenterContainer"]
 margin_left = 8.0
 margin_right = 114.0
-margin_bottom = 158.0
+margin_bottom = 143.0
 
-[node name="ScreenshotPanel" parent="Margins/CenterContainer/VBoxContainer" instance=ExtResource( 2 )]
+[node name="ScreenshotPanel" parent="Margins/CenterContainer/VBoxContainer" instance=ExtResource( 3 )]
 
-[node name="Label" type="Label" parent="Margins/CenterContainer/VBoxContainer"]
+[node name="FileInfoLabel" type="Label" parent="Margins/CenterContainer/VBoxContainer"]
 margin_top = 110.0
 margin_right = 106.0
-margin_bottom = 158.0
+margin_bottom = 143.0
 text = "Key Lime
 5/8/2019
 Jobs Done: 7"
 align = 1
+[connection signal="gui_input" from="." to="." method="_on_LeftFile_gui_input"]
 [connection signal="mouse_entered" from="." to="." method="_on_LeftFile_mouse_entered"]

@@ -4,11 +4,14 @@ var active = false
 
 var quick_mode = false
 
+var wait_a_bit = false
+
 func show():
 	active = true
 	visible = true
 	find_parent("Root").find_node("PanelBG").visible = true
 	get_tree().paused = true
+	wait_a_bit = true
 
 func show_quick():
 	show()
@@ -29,5 +32,7 @@ func _process(delta):
 	if quick_mode:
 		if not Input.is_action_pressed("action_quick_job_view"):
 			call_deferred('hide')
+	if wait_a_bit:
+		wait_a_bit = false
 	elif Input.is_action_just_pressed("action_dismiss"):
 		call_deferred('hide')

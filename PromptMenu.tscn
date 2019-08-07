@@ -87,6 +87,7 @@ margin_right = 78.0
 margin_bottom = 25.0
 
 [node name="LeftButton" parent="Contents/Numbers/NumberButtons" instance=ExtResource( 4 )]
+custom_styles/focus = ExtResource( 5 )
 custom_styles/disabled = ExtResource( 5 )
 
 [node name="NumberLabel" type="Label" parent="Contents/Numbers/NumberButtons"]
@@ -101,6 +102,7 @@ align = 1
 [node name="RightButton" parent="Contents/Numbers/NumberButtons" instance=ExtResource( 4 )]
 margin_left = 54.0
 margin_right = 78.0
+custom_styles/focus = ExtResource( 5 )
 custom_styles/disabled = ExtResource( 5 )
 icon = ExtResource( 6 )
 

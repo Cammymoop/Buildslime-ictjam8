@@ -1,28 +1,21 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://assets/tileset/Main.tres" type="TileSet" id=1]
 [ext_resource path="res://WorldMap.gd" type="Script" id=2]
 [ext_resource path="res://Combinator.gd" type="Script" id=3]
 [ext_resource path="res://MapGenerator.gd" type="Script" id=4]
-[ext_resource path="res://SaveManager.gd" type="Script" id=5]
-[ext_resource path="res://Screenshotter.gd" type="Script" id=6]
-[ext_resource path="res://Player.gd" type="Script" id=7]
-[ext_resource path="res://assets/images/buildslime.png" type="Texture" id=8]
-[ext_resource path="res://assets/sound/smack.ogg" type="AudioStream" id=9]
-[ext_resource path="res://assets/sound/pickup.ogg" type="AudioStream" id=10]
-[ext_resource path="res://assets/sound/putdown.ogg" type="AudioStream" id=11]
-[ext_resource path="res://assets/ui/UITheme.tres" type="Theme" id=12]
-[ext_resource path="res://LoadMenu.gd" type="Script" id=13]
-[ext_resource path="res://FileDialogOption.tscn" type="PackedScene" id=14]
-[ext_resource path="res://ThickButton.tscn" type="PackedScene" id=15]
-[ext_resource path="res://assets/images/black_arrow_right.png" type="Texture" id=16]
-[ext_resource path="res://MenuControls.gd" type="Script" id=17]
-[ext_resource path="res://PauseScreen.gd" type="Script" id=18]
-[ext_resource path="res://ListMenu.tscn" type="PackedScene" id=19]
-[ext_resource path="res://menu_scripts/main_menu_script.gd" type="Script" id=20]
-[ext_resource path="res://MapPopup.gd" type="Script" id=21]
-[ext_resource path="res://assets/images/logo.png" type="Texture" id=22]
-[ext_resource path="res://Logo.gd" type="Script" id=23]
+[ext_resource path="res://Player.gd" type="Script" id=5]
+[ext_resource path="res://assets/images/buildslime.png" type="Texture" id=6]
+[ext_resource path="res://assets/sound/smack.ogg" type="AudioStream" id=7]
+[ext_resource path="res://assets/sound/pickup.ogg" type="AudioStream" id=8]
+[ext_resource path="res://assets/sound/putdown.ogg" type="AudioStream" id=9]
+[ext_resource path="res://assets/ui/UITheme.tres" type="Theme" id=10]
+[ext_resource path="res://PauseScreen.gd" type="Script" id=11]
+[ext_resource path="res://ListMenu.tscn" type="PackedScene" id=12]
+[ext_resource path="res://menu_scripts/main_menu_script.gd" type="Script" id=13]
+[ext_resource path="res://MapPopup.gd" type="Script" id=14]
+[ext_resource path="res://assets/images/logo.png" type="Texture" id=15]
+[ext_resource path="res://Logo.gd" type="Script" id=16]
 
 [node name="Root" type="Node2D"]
 
@@ -51,22 +44,16 @@ script = ExtResource( 3 )
 [node name="MapGenerator" type="Node" parent="."]
 script = ExtResource( 4 )
 
-[node name="SaveManager" type="Node" parent="."]
-script = ExtResource( 5 )
-
-[node name="Screenshotter" type="Node" parent="."]
-script = ExtResource( 6 )
-
 [node name="Player" type="Node2D" parent="." groups=[
 "saveable",
 ]]
 editor/display_folded = true
 position = Vector2( 304, 304 )
-script = ExtResource( 7 )
+script = ExtResource( 5 )
 
 [node name="PlayerSprite" type="Sprite" parent="Player"]
 position = Vector2( 8, 8 )
-texture = ExtResource( 8 )
+texture = ExtResource( 6 )
 region_enabled = true
 region_rect = Rect2( 0, 0, 16, 16 )
 
@@ -91,16 +78,16 @@ one_shot = true
 
 [node name="SmackSound" type="AudioStreamPlayer2D" parent="Player"]
 position = Vector2( -64, -64 )
-stream = ExtResource( 9 )
+stream = ExtResource( 7 )
 volume_db = -8.077
 
 [node name="PickupSound" type="AudioStreamPlayer2D" parent="Player"]
 position = Vector2( -64, -64 )
-stream = ExtResource( 10 )
+stream = ExtResource( 8 )
 
 [node name="PutdownSound" type="AudioStreamPlayer2D" parent="Player"]
 position = Vector2( -64, -64 )
-stream = ExtResource( 11 )
+stream = ExtResource( 9 )
 
 [node name="BG" type="CanvasLayer" parent="."]
 layer = -1
@@ -124,7 +111,7 @@ margin_left = 5.0
 margin_top = 5.0
 margin_right = -5.0
 margin_bottom = -5.0
-theme = ExtResource( 12 )
+theme = ExtResource( 10 )
 
 [node name="Label" type="Label" parent="BG/PanelBG"]
 anchor_left = 0.5
@@ -141,7 +128,7 @@ pause_mode = 2
 [node name="ThemeMaster" type="Control" parent="Overlay"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme = ExtResource( 12 )
+theme = ExtResource( 10 )
 
 [node name="CenterContainer2" type="CenterContainer" parent="Overlay/ThemeMaster"]
 anchor_right = 1.0
@@ -161,91 +148,13 @@ margin_right = 138.0
 margin_bottom = 14.0
 text = "Open menu to get a job"
 
-[node name="LoadMenu" type="Control" parent="Overlay/ThemeMaster"]
-editor/display_folded = true
-visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-script = ExtResource( 13 )
-
-[node name="CenterContainer" type="CenterContainer" parent="Overlay/ThemeMaster/LoadMenu"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-
-[node name="PanelContainer" type="PanelContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer"]
-margin_left = 144.0
-margin_top = 145.0
-margin_right = 156.0
-margin_bottom = 155.0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer"]
-margin_left = 6.0
-margin_top = 5.0
-margin_right = 280.0
-margin_bottom = 207.0
-
-[node name="Label" type="Label" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer"]
-margin_right = 274.0
-margin_bottom = 9.0
-text = "Load Save File"
-align = 1
-
-[node name="MarginContainer" type="MarginContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer"]
-margin_top = 13.0
-margin_right = 274.0
-margin_bottom = 169.0
-custom_constants/margin_right = 5
-custom_constants/margin_left = 5
-custom_constants/margin_bottom = 5
-
-[node name="FileContainer" type="HBoxContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer"]
-margin_left = 5.0
-margin_right = 269.0
-margin_bottom = 151.0
-
-[node name="LeftFile" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/FileContainer" instance=ExtResource( 14 )]
-
-[node name="RightFile" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/MarginContainer/FileContainer" instance=ExtResource( 14 )]
-margin_left = 134.0
-margin_right = 264.0
-
-[node name="ButtonRow" type="MarginContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer"]
-editor/display_folded = true
-margin_top = 173.0
-margin_right = 274.0
-margin_bottom = 202.0
-custom_constants/margin_right = 5
-custom_constants/margin_left = 5
-custom_constants/margin_bottom = 4
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/ButtonRow"]
-margin_left = 5.0
-margin_right = 269.0
-margin_bottom = 25.0
-
-[node name="Button" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/ButtonRow/HBoxContainer" instance=ExtResource( 15 )]
-
-[node name="Control" type="Control" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/ButtonRow/HBoxContainer"]
-margin_left = 28.0
-margin_right = 236.0
-margin_bottom = 25.0
-size_flags_horizontal = 3
-
-[node name="Button2" parent="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/ButtonRow/HBoxContainer" instance=ExtResource( 15 )]
-margin_left = 240.0
-margin_right = 264.0
-icon = ExtResource( 16 )
-
-[node name="MenuControls" type="Node" parent="Overlay/ThemeMaster"]
-script = ExtResource( 17 )
-
 [node name="PauseScreen" type="Control" parent="Overlay/ThemeMaster"]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_bottom = -300.0
-theme = ExtResource( 12 )
-script = ExtResource( 18 )
+theme = ExtResource( 10 )
+script = ExtResource( 11 )
 
 [node name="CenterContainer" type="CenterContainer" parent="Overlay/ThemeMaster/PauseScreen"]
 anchor_right = 1.0
@@ -271,9 +180,13 @@ out of
 Maybe if I help other people they'll 
 give me stuff"
 
-[node name="MainMenu" parent="Overlay/ThemeMaster/PauseScreen/CenterContainer" instance=ExtResource( 19 )]
+[node name="MainMenu" parent="Overlay/ThemeMaster/PauseScreen/CenterContainer" instance=ExtResource( 12 )]
 visible = true
-item_script = ExtResource( 20 )
+item_script = ExtResource( 13 )
+
+[node name="ScreenshotTimer" type="Timer" parent="Overlay/ThemeMaster/PauseScreen"]
+wait_time = 0.1
+one_shot = true
 
 [node name="CenterContainer" type="CenterContainer" parent="Overlay"]
 anchor_right = 1.0
@@ -288,7 +201,7 @@ mouse_filter = 2
 
 [node name="MapPopup" type="Node2D" parent="Overlay/CenterContainer/Control"]
 visible = false
-script = ExtResource( 21 )
+script = ExtResource( 14 )
 
 [node name="LogoContainer" type="MarginContainer" parent="Overlay"]
 editor/display_folded = true
@@ -312,8 +225,8 @@ margin_bottom = 300.0
 [node name="Logo" type="TextureRect" parent="Overlay/LogoContainer/CenterContainer"]
 margin_right = 300.0
 margin_bottom = 300.0
-texture = ExtResource( 22 )
-script = ExtResource( 23 )
+texture = ExtResource( 15 )
+script = ExtResource( 16 )
 
 [node name="Timer" type="Timer" parent="Overlay/LogoContainer/CenterContainer/Logo"]
 pause_mode = 2
@@ -322,6 +235,5 @@ one_shot = true
 autostart = true
 [connection signal="timeout" from="Player/MoveTimer" to="Player" method="_on_MoveTimer_timeout"]
 [connection signal="timeout" from="Player/InitialMoveTimer" to="Player" method="_on_InitialMoveTimer_timeout"]
-[connection signal="pressed" from="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/ButtonRow/HBoxContainer/Button" to="Overlay/ThemeMaster/LoadMenu" method="scroll_left"]
-[connection signal="pressed" from="Overlay/ThemeMaster/LoadMenu/CenterContainer/PanelContainer/VBoxContainer/ButtonRow/HBoxContainer/Button2" to="Overlay/ThemeMaster/LoadMenu" method="scroll_right"]
+[connection signal="timeout" from="Overlay/ThemeMaster/PauseScreen/ScreenshotTimer" to="Overlay/ThemeMaster/PauseScreen" method="_on_ScreenshotTimer_timeout"]
 [connection signal="timeout" from="Overlay/LogoContainer/CenterContainer/Logo/Timer" to="Overlay/LogoContainer/CenterContainer/Logo" method="_on_Timer_timeout"]

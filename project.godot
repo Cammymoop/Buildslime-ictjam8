@@ -26,6 +26,8 @@ config/icon="res://icon.png"
 
 GlobalData="*res://GlobalData.tscn"
 JobManager="*res://JobManager.gd"
+SaveManager="*res://SaveManager.gd"
+Screenshotter="*res://Screenshotter.gd"
 
 [debug]
 

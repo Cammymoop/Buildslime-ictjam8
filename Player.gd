@@ -9,7 +9,6 @@ var facing = "down"
 var r_tile_map : TileMap = null
 var r_combinator = null
 var r_job_manager = null
-var r_save_manager = null
 
 var hold_1 : int = 0
 var hold_2 : int = 0
@@ -74,7 +73,6 @@ func _ready():
 	
 	r_tile_map = get_parent().get_node("HomeMap")
 	r_combinator = get_parent().get_node("Combinator")
-	r_save_manager = get_parent().get_node("SaveManager")
 	
 	r_job_manager = get_node("/root/JobManager")
 	
@@ -636,12 +634,6 @@ func menu_selection(value : String, extra) -> void:
 			set_my_position(4, 4)
 		"eval-job":
 			evaluate_job()
-		"save-game":
-			if extra == 1:
-				r_save_manager.save_game()
-		"load-game":
-			if extra == 1:
-				r_save_manager.load_game()
 		"restart-game":
 			if extra == 1:
 				get_tree().reload_current_scene()
