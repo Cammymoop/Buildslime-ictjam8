@@ -49,6 +49,9 @@ func get_job_options() -> Array:
 	return options
 
 func pause() -> void:
+	var can_pause = get_node("/root/GlobalData").get_pause_focus('pause-screen')
+	if not can_pause:
+		return
 	paused = true
 	get_tree().paused = true
 	visible = true
@@ -67,6 +70,7 @@ func unpause() -> void:
 	paused = false
 	get_tree().paused = false
 	visible = false
+	get_node("/root/GlobalData").release_pause_focus('pause-screen')
 
 func force_unpause() -> void:
 	r_main_menu.close_menu()

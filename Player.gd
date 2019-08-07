@@ -119,8 +119,9 @@ func get_a_job(job_num : int) -> void:
 	set_spawn_params(job.get_spawn_params())
 	regen_map()
 	load_job_popup(job_num)
-	show_map_popup()
 	load_job_rewards(job_num)
+	#show_map_popup()
+	make_map_popup()
 
 func load_job_rewards(job_num : int) -> void:
 	var job = r_job_manager.get_job(job_num)
@@ -437,6 +438,7 @@ func clear_modifications() -> void:
 func _process(delta) -> void:
 	if make_mp:
 		make_mp = false
+		print('showing mp')
 		show_map_popup()
 		return
 	if holding_button and not Input.is_action_pressed("action_grab"):

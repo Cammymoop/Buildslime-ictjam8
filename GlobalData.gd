@@ -7,6 +7,8 @@ var current_job_num = 0
 
 var save_name : String = 'Jel' setget set_save_name, get_save_name
 
+var pause_focus = ''
+
 func new_game():
 	current_map = 'home'
 	max_job_completed = 0
@@ -34,6 +36,16 @@ func get_save_name() -> String:
 	return save_name
 func set_save_name(v : String):
 	save_name = v
+
+func get_pause_focus(name : String) -> bool:
+	if pause_focus:
+		return false
+	pause_focus = name
+	return true
+
+func release_pause_focus(name):
+	if pause_focus == name:
+		pause_focus = ''
 
 func serialize_for_save() -> Dictionary:
 	var serialized = {

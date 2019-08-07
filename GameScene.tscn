@@ -188,18 +188,18 @@ item_script = ExtResource( 13 )
 wait_time = 0.1
 one_shot = true
 
-[node name="CenterContainer" type="CenterContainer" parent="Overlay"]
+[node name="PopupContainer" type="CenterContainer" parent="Overlay"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 
-[node name="Control" type="Control" parent="Overlay/CenterContainer"]
+[node name="Control" type="Control" parent="Overlay/PopupContainer"]
 margin_right = 300.0
 margin_bottom = 300.0
 rect_min_size = Vector2( 300, 300 )
 mouse_filter = 2
 
-[node name="MapPopup" type="Node2D" parent="Overlay/CenterContainer/Control"]
+[node name="MapPopup" type="Node2D" parent="Overlay/PopupContainer/Control"]
 visible = false
 script = ExtResource( 14 )
 

@@ -7,6 +7,9 @@ var quick_mode = false
 var wait_a_bit = false
 
 func show():
+	var can_pause = get_node("/root/GlobalData").get_pause_focus('goal-popup')
+	if not can_pause:
+		return
 	active = true
 	visible = true
 	find_parent("Root").find_node("PanelBG").visible = true
@@ -23,6 +26,7 @@ func hide():
 	find_parent("Root").find_node("PanelBG").visible = false
 	get_tree().paused = false
 	find_parent("Root").find_node("Player").hide_map_popup()
+	get_node("/root/GlobalData").release_pause_focus('goal-popup')
 
 
 # warning-ignore:unused_argument
