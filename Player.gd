@@ -3,6 +3,7 @@ extends Node2D
 export var enable_debug = true
 
 var tile_position = Vector2(0, 0)
+var target_position = Vector2(0, 0)
 var facing_angle = 0
 var facing = "down"
 
@@ -34,7 +35,7 @@ var TILE = 16
 
 var NON_WALKABLE = [
 	'tree', 'wood_wall', 'metal_wall', 'sheep', 'sheered', 'fence', 'tent', 'bed', 'fire', 'anvil', 'bucket_of_rocks',
-	'bucket', 'water_bucket', 'puddle', 'pillar',
+	'bucket', 'water_bucket', 'puddle', 'pillar', 'birdhouse',
 ]
 var NON_GRABABLE = ['tree', 'gravel', 'metal_wall', 'puddle']
 var AUTOTILES : Array = ['puddle', 'wood_wall']
@@ -68,6 +69,7 @@ func _ready():
 	randomize()
 	tile_position.x = round(position.x/TILE)
 	tile_position.y = round(position.y/TILE)
+	target_position = position
 	
 	#print("spawned at " + str(tile_position))
 	
@@ -91,6 +93,7 @@ func set_my_position(xpos : int, ypos : int) -> void:
 	tile_position.y = ypos
 	position.x = tile_position.x * TILE
 	position.y = tile_position.y * TILE
+	target_position = position
 
 func regen_map() -> void:
 	if r_tile_map.name == "HomeMap":
@@ -230,9 +233,10 @@ func post_ready() -> void:
 	#test_mapgen()
 	r_tile_map.set_cellv(tile_position, 0)
 
-func change_facing(direction) -> void:
+func change_facing(direction_h, direction_v = false) -> void:
 	var y_tex_offset = 0
-	match direction:
+	var direction = direction_h
+	match direction_h:
 		'up':
 			facing_angle = UP_ANGLE
 			y_tex_offset = 16
@@ -246,8 +250,17 @@ func change_facing(direction) -> void:
 			facing_angle = RIGHT_ANGLE
 			y_tex_offset = 32
 		_:
-			print('not a direction: ' + direction)
-			return
+			direction = direction_v
+			match direction_v:
+				'up':
+					facing_angle = UP_ANGLE
+					y_tex_offset = 16
+				'down':
+					facing_angle = DOWN_ANGLE
+					y_tex_offset = 0
+				_:
+					print('not a vertical direction: ' + direction_v)
+					return
 	facing = direction
 	#$PlayerSprite.rotation = facing_angle
 	$PlayerSprite.region_rect.position.y = y_tex_offset
@@ -302,10 +315,11 @@ func get_facing_tile_coord(amount : int = 1) -> Vector2:
 	facing_c.y += _get_facing_ydelta() * amount
 	return facing_c
 
-func move_tile(direction) -> void:
+#returns facing direction
+func move_tile(direction_h, direction_v = false) -> String:
 	var xd = 0
 	var yd = 0
-	match direction:
+	match direction_h:
 		'up':
 			yd = -1
 		'down':
@@ -314,28 +328,84 @@ func move_tile(direction) -> void:
 			xd = -1
 		'right':
 			xd = 1
+		false:
+			pass
 		_:
-			print('not a direction: ' + direction)
-			return
-	_move(xd, yd)
+			print('not a h direction: ' + direction_h)
+			return 'up'
+	match direction_v:
+		'up':
+			yd = -1
+		'down':
+			yd = 1
+		false:
+			pass
+		_:
+			print('not a vertical direction: ' + direction_v)
+			return 'up'
+	return _move(xd, yd)
 
-func _move(xdelta, ydelta) -> void:
+func tile_blocks_move(tile):
+	return NON_WALKABLE.find(tile) != -1
+
+func delta_to_direction(xdelta, ydelta):
+	var direction = ''
+	match xdelta:
+		1:
+			direction = 'right'
+		-1:
+			direction = 'left'
+		0:
+			match ydelta:
+				1:
+					direction = 'down'
+				-1:
+					direction = 'up'
+	return direction
+
+func _move(xdelta, ydelta) -> String:
+	var facing_dir = delta_to_direction(xdelta, ydelta)
 	if tile_position.x + xdelta > MAX_TILE or tile_position.x + xdelta < 0:
-		return
+		xdelta = 0
 	if tile_position.y + ydelta > MAX_TILE or tile_position.y + ydelta < 0:
-		return
+		ydelta = 0
+	
+	if xdelta == 0 and ydelta == 0: # hit map edge, no diagonal
+		return facing_dir
+	
+	facing_dir = delta_to_direction(xdelta, ydelta) #update facing if diagonally along map edge
+	
 	tile_position.x += xdelta
 	tile_position.y += ydelta
 	
 	#can I step here?
-	var object_here = r_tile_map.get_cellv(tile_position)
-	if NON_WALKABLE.find(object_here) != -1:
-		tile_position.x -= xdelta
-		tile_position.y -= ydelta
-		return
-		
-	position.x += xdelta * TILE
-	position.y += ydelta * TILE
+	if xdelta != 0 and ydelta != 0:
+		var object_dest = r_tile_map.get_cellv(tile_position)
+		var object_vert = r_tile_map.get_cell(tile_position.x - xdelta, tile_position.y)
+		var object_horiz = r_tile_map.get_cell(tile_position.x, tile_position.y - ydelta)
+		if tile_blocks_move(object_horiz) and tile_blocks_move(object_vert):
+			tile_position.x -= xdelta
+			tile_position.y -= ydelta
+			return facing_dir
+		if tile_blocks_move(object_dest):
+			if tile_blocks_move(object_vert):
+				facing_dir = delta_to_direction(xdelta, 0)
+				tile_position.y -= ydelta
+			else: # move horizontally by default
+				facing_dir = delta_to_direction(0, ydelta)
+				tile_position.x -= xdelta
+	else:
+		var object_here = r_tile_map.get_cellv(tile_position)
+		if NON_WALKABLE.find(object_here) != -1:
+			tile_position.x -= xdelta
+			tile_position.y -= ydelta
+			return facing_dir
+	
+	target_position.x = tile_position.x * TILE
+	target_position.y = tile_position.y * TILE
+	#position.x += xdelta * TILE
+	#position.y += ydelta * TILE
+	return facing_dir
 
 func smack() -> void:
 	var facing_t = get_facing_tile_coord()
@@ -441,20 +511,26 @@ func _process(delta) -> void:
 		print('showing mp')
 		show_map_popup()
 		return
+	
+	position.x = lerp(position.x, target_position.x, 0.4)
+	position.y = lerp(position.y, target_position.y, 0.4)
+	
 	if holding_button and not Input.is_action_pressed("action_grab"):
 		holding_button = false
 	
 	#movement and flip/rotate
-	var move = false
+	var move_h = false
+	var move_v = false
 	if not holding_button:
 		if Input.is_action_just_pressed("move_up"):
-			move = "up"
+			move_v = "up"
 		elif Input.is_action_just_pressed("move_down"):
-			move = "down"
-		elif Input.is_action_just_pressed("move_left"):
-			move = "left"
+			move_v = "down"
+		
+		if Input.is_action_just_pressed("move_left"):
+			move_h = "left"
 		elif Input.is_action_just_pressed("move_right"):
-			move = "right"
+			move_h = "right"
 	else:
 		var tile = r_tile_map.get_cellv(get_facing_tile_coord())
 		if not AUTOTILES.has(tile):
@@ -466,31 +542,35 @@ func _process(delta) -> void:
 				rotate_a_thing(get_facing_tile_coord(), true)
 	
 	if holding_move:
-		var hold_dir = false
+		var hold_dir_h = false
+		var hold_dir_v = false
 		if Input.is_action_pressed("move_up"):
-			hold_dir = "up"
+			hold_dir_v = "up"
 		elif Input.is_action_pressed("move_down"):
-			hold_dir = "down"
-		elif Input.is_action_pressed("move_left"):
-			hold_dir = "left"
+			hold_dir_v = "down"
+		
+		if Input.is_action_pressed("move_left"):
+			hold_dir_h = "left"
 		elif Input.is_action_pressed("move_right"):
-			hold_dir = "right"
+			hold_dir_h = "right"
 
-		if not hold_dir:
+		if not (hold_dir_h or hold_dir_v):
 			holding_move = false
+			hold_move_ready = false
 			$InitialMoveTimer.stop()
 			$MoveTimer.stop()
 		elif hold_move_ready:
-			move = hold_dir
+			move_h = hold_dir_h
+			move_v = hold_dir_v
 			hold_move_ready = false
-	elif move:
+	elif move_h or move_v:
 		holding_move = true
 		$InitialMoveTimer.start()
 	
-	if move:
-		move_tile(move)
+	if move_h or move_v:
+		var new_facing = move_tile(move_h, move_v)
 		if not Input.is_action_pressed("hold_strafe"):
-			change_facing(move)
+			change_facing(new_facing)
 	else:
 		if Input.is_action_just_pressed("action_grab"):
 			holding_button = true

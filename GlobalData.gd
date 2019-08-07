@@ -13,6 +13,7 @@ func new_game():
 	current_map = 'home'
 	max_job_completed = 0
 	current_job_num = 0
+	pause_focus = ''
 
 func get_max_job_completed() -> int:
 	return max_job_completed
