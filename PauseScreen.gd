@@ -61,7 +61,7 @@ func pause() -> void:
 		options = get_home_options()
 	r_main_menu.show_menu(options)
 	r_main_menu.connect("menu_closed", self, "unpause", [], CONNECT_ONESHOT)
-	r_main_menu.activate_menu()
+	r_main_menu.open_menu()
 
 func unpause() -> void:
 	paused = false

@@ -12,6 +12,7 @@ var text_popup_scn : PackedScene = preload("res://TextPopup.tscn")
 
 var menu_item_count = 0
 
+var menu_open = false
 var menu_active = false
 var parent_menu = null
 var child_menu = null
@@ -43,6 +44,16 @@ func show_menu(options : Array):
 			first = false
 	visible = true
 
+func open_menu():
+	menu_open = true
+	activate_menu()
+
+func close_menu():
+	menu_open = false
+	deactivate_menu()
+	emit_signal("menu_closed")
+	hide_menu()
+
 
 func _add_child_prompt(prompt_text) -> Node:
 	var prompt = prompt_menu_scn.instance()
@@ -58,6 +69,7 @@ func add_child_confirm_prompt(prompt_value : String, prompt_text : String) -> vo
 func add_child_numbers_prompt(prompt_value : String, prompt_text : String, start_number : int, min_num : int, max_num : int) -> void:
 	var prompt = _add_child_prompt(prompt_text)
 	prompt.set_numbers_mode(prompt_value, start_number, max_num, min_num)
+	print('now showing: ' + prompt_value)
 	show_child_prompt(prompt)
 
 func show_child_prompt(prompt):
@@ -93,6 +105,8 @@ func mouse_activate() -> void:
 		item.mouse_filter = MOUSE_FILTER_STOP
 
 func activate_menu() -> void:
+	if not menu_open:
+		return
 	menu_active = true
 	mouse_activate()
 func deactivate_menu() -> void:
@@ -102,10 +116,6 @@ func deactivate_menu() -> void:
 func hide_menu():
 	visible = false
 
-func close_menu():
-	deactivate_menu()
-	emit_signal("menu_closed")
-	hide_menu()
 
 func clear_options() -> void:
 	for item in $MenuContainer.get_children():
