@@ -3,6 +3,8 @@ extends MarginContainer
 signal selected(save_name)
 signal mouse_entered_panel(panel)
 
+export var is_new_file : bool = false
+
 var focus_color = '485454'
 var unfocus_color = '000000'
 
@@ -23,12 +25,16 @@ func is_focused():
 	return focused
 
 func get_save_name() -> String:
+	if is_new_file:
+		return '__new_file__'
 	return save_name
 
 func hide():
 	visible = false
 
-func display_file(save_filename: String):
+func display_file(save_filename: String, label_prefix):
+	if is_new_file:
+		return
 	visible = true
 	save_name = save_filename
 	var meta_data = get_node("/root/SaveManager").get_save_meta(save_filename)
@@ -41,7 +47,7 @@ func display_file(save_filename: String):
 	text += meta_data['date']['month'] + '/' + meta_data['date']['day'] + '/' + meta_data['date']['year'] + '\n'
 	text += 'Jobs Completed: ' + meta_data['job_progress']
 	
-	find_node('FileInfoLabel').text = text
+	find_node('FileInfoLabel').text = label_prefix + text
 	
 	if meta_data['screenshot'] != 'none':
 		display_screenshot(meta_data['screenshot'])
@@ -60,8 +66,11 @@ func fail_display():
 	$Label.text = 'Err\n\nx.x'
 
 func select():
-	print('sn: ' + save_name)
-	emit_signal("selected", save_name)
+	#print('sn: ' + save_name)
+	if is_new_file:
+		emit_signal("selected", '__new_file__')
+	else:
+		emit_signal("selected", save_name)
 
 func _on_LeftFile_mouse_entered():
 	emit_signal("mouse_entered_panel", self)

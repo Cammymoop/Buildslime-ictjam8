@@ -67,9 +67,15 @@ func get_all_results_for(tile_index : int) -> Array:
 	var recipes = get_all_recipes_for(tile_index)
 	var possible_results = []
 	for r in recipes:
-		for r2 in r['results']:
-			if not possible_results.has(r2):
-				possible_results.append(r2)
+		if not r['is_special']:
+			var i = 0
+			for r2 in r['results']:
+				if r2 == 0 or r['ingredients'][i] == r2:
+					# object didnt change or is nothing so it doesnt count as a result
+					pass
+				elif not possible_results.has(r2):
+					possible_results.append(r2)
+				i += 1
 	return possible_results
 
 func process_line(old_line):

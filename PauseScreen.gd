@@ -1,6 +1,9 @@
 extends Control
 
 signal took_screenshot
+signal force_unpause
+
+var btext_scn = preload("res://BetterTextPopup.tscn")
 
 var paused = false
 
@@ -31,7 +34,8 @@ func get_home_options() -> Array:
 	options.append(make_menu_option("save-game", "Save"))
 	if can_load():
 		options.append(make_menu_option("load-game", "Load"))
-	options.append(make_menu_option("restart-game", "Reset Game"))
+	options.append(make_menu_option("set-name", "Change Name"))
+	options.append(make_menu_option("restart-game", "New Game"))
 	#options.append(make_menu_option("quit", "Quit"))
 	return options
 
@@ -45,18 +49,21 @@ func get_job_options() -> Array:
 	options.append(make_menu_option("save-game", "Save"))
 	if can_load():
 		options.append(make_menu_option("load-game", "Load"))
-	options.append(make_menu_option("restart-game", "Reset Game"))
+	options.append(make_menu_option("set-name", "Change Name"))
+	options.append(make_menu_option("restart-game", "New Game"))
 	return options
 
-func pause() -> void:
+func pause() -> bool:
 	var can_pause = get_node("/root/GlobalData").get_pause_focus('pause-screen')
 	if not can_pause:
-		return
+		return false
 	paused = true
 	get_tree().paused = true
 	visible = true
 	r_tutorial.visible = false
-	
+	return true
+
+func show_pause_menu():
 	var options = []
 	if get_node("/root/GlobalData").is_at_job():
 		options = get_job_options()
@@ -73,8 +80,17 @@ func unpause() -> void:
 	get_node("/root/GlobalData").release_pause_focus('pause-screen')
 
 func force_unpause() -> void:
-	r_main_menu.close_menu()
+	if r_main_menu.is_open():
+		r_main_menu.close_menu()
+	emit_signal("force_unpause")
 
+func show_quick_text(text : String, error : bool = false):
+	if pause():
+		var text_popup = btext_scn.instance()
+		text_popup.show_text(text, error)
+		$CenterContainer.add_child(text_popup)
+		text_popup.connect("dismissed", self, "unpause", [], CONNECT_ONESHOT)
+		connect("force_unpause", text_popup, "close", [], CONNECT_ONESHOT)
 
 # warning-ignore:unused_argument
 func _process(delta) -> void:
@@ -84,7 +100,8 @@ func _process(delta) -> void:
 		if paused:
 			force_unpause()
 		else:
-			pause()
+			if pause():
+				show_pause_menu()
 
 func queue_screenshot(name : String) -> void:
 	take_screenshot_name = name

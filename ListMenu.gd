@@ -7,6 +7,7 @@ export (Script) var item_script = null
 
 var menu_item_scn : PackedScene = preload("res://MenuItem.tscn")
 var prompt_menu_scn : PackedScene = preload("res://PromptMenu.tscn")
+var text_prompt_scn : PackedScene = preload("res://TextPrompt.tscn")
 var file_menu_scn : PackedScene = preload("res://FileMenu.tscn")
 var text_popup_scn : PackedScene = preload("res://TextPopup.tscn")
 
@@ -54,6 +55,18 @@ func close_menu():
 	emit_signal("menu_closed")
 	hide_menu()
 
+func is_open() -> bool:
+	return menu_open
+
+
+func add_child_text_prompt(prompt_value, prompt_text, starting_input) -> void:
+	var prompt = text_prompt_scn.instance()
+	get_parent().add_child(prompt)
+	prompt.show_prompt(prompt_text, prompt_value, starting_input)
+	prompt.connect("selected", self, "on_item_selected")
+	prompt.connect("dismissed", self, "activate_menu")
+	connect("menu_closed", prompt, "close")
+	deactivate_menu()
 
 func _add_child_prompt(prompt_text) -> Node:
 	var prompt = prompt_menu_scn.instance()
@@ -69,7 +82,6 @@ func add_child_confirm_prompt(prompt_value : String, prompt_text : String) -> vo
 func add_child_numbers_prompt(prompt_value : String, prompt_text : String, start_number : int, min_num : int, max_num : int) -> void:
 	var prompt = _add_child_prompt(prompt_text)
 	prompt.set_numbers_mode(prompt_value, start_number, max_num, min_num)
-	print('now showing: ' + prompt_value)
 	show_child_prompt(prompt)
 
 func show_child_prompt(prompt):
@@ -78,10 +90,14 @@ func show_child_prompt(prompt):
 	connect("menu_closed", prompt, "close")
 	deactivate_menu()
 
-func add_child_file_menu(main_value : String) -> void:
+func add_child_file_menu(main_value : String, just_these = false, new_mode : bool = false) -> void:
 	var fm : = file_menu_scn.instance()
 	get_parent().add_child(fm)
 	fm.set_main_value(main_value)
+	if new_mode:
+		fm.set_new_file_mode(true)
+	if typeof(just_these) == TYPE_ARRAY:
+		fm.set_files(just_these)
 	fm.connect("file_selected", self, "on_item_selected")
 	fm.connect("menu_closed", self, "activate_menu")
 	connect("menu_closed", fm, "close")

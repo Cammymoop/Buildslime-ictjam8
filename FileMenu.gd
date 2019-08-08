@@ -14,18 +14,47 @@ var all_filenames = []
 
 var left_panel
 var right_panel
+var new_file_panel
 
 var one_panel = false
 
+var new_file_mode = false
+
 func _ready():
-	all_filenames = get_node("/root/SaveManager").get_all_saves()
-	file_count = len(all_filenames)
-	max_page = (file_count + 1)/2
+	var fnames = get_node("/root/SaveManager").get_all_saves()
+	set_files(fnames)
 	
 	left_panel = find_node('LeftFile')
 	right_panel = find_node('RightFile')
+	new_file_panel = find_node('NewFile')
+	new_file_panel.visible = false
+
+func set_files(filenames : Array):
+	all_filenames = filenames
+	file_count = len(all_filenames)
+	max_page = (file_count + 1)/2
 	
+	if file_count == 0:
+		max_page = 1
+		print('zero')
+	
+	var nav_buttons = find_node("ButtonRow")
+	if max_page < 2:
+		nav_buttons.visible = false
+	else:
+		nav_buttons.visible = true
 	update_display()
+
+func set_new_file_mode(new_mode : bool = true) -> void:
+	new_file_mode = new_mode
+	var header_label = find_node('HeaderLabel')
+	if new_file_mode:
+		new_file_panel.visible = true
+		right_panel.visible = false
+		header_label.text = 'Where to save?'
+	else:
+		new_file_panel.visible = false
+		right_panel.visible = true
 
 func set_main_value(val):
 	main_value = val
@@ -33,8 +62,14 @@ func set_main_value(val):
 func focus_left():
 	right_panel.unfocus()
 	left_panel.focus()
+	if new_file_mode:
+		new_file_panel.unfocus()
 func focus_right():
-	right_panel.focus()
+	if new_file_mode:
+		right_panel.unfocus()
+		new_file_panel.focus()
+	else:
+		right_panel.focus()
 	left_panel.unfocus()
 
 func forward_page():
@@ -60,7 +95,7 @@ func update_display():
 		var file_display = container.get_child(i)
 		
 		if file_index < file_count:
-			file_display.display_file(all_filenames[file_index])
+			file_display.display_file(all_filenames[file_index], 'Overwrite\n' if new_file_mode else '')
 		else:
 			one_panel = true
 			file_display.hide()
@@ -92,10 +127,18 @@ func _process(delta):
 		var selected = null
 		if left_panel.is_focused():
 			selected = left_panel
+		elif new_file_panel.is_focused():
+			selected = new_file_panel
 		elif right_panel.is_focused():
 			selected = right_panel
 		
+		if selected == null and new_file_mode and left_panel.visible == false: #only new option
+			selected = new_file_panel
+		if selected == null and not new_file_mode and one_panel:
+			selected = left_panel
+		
 		if selected:
+			print(selected.name)
 			emit_signal("file_selected", main_value, selected.get_save_name())
 		close()
 		return
@@ -117,6 +160,7 @@ func _on_mouse_entered_panel(panel):
 	#print(panel.name)
 	left_panel.unfocus()
 	right_panel.unfocus()
+	new_file_panel.unfocus()
 	panel.focus()
 
 func _on_CancelButton_pressed():

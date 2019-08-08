@@ -424,6 +424,7 @@ func smack() -> void:
 	
 	if typeof(result[0]) == TYPE_STRING and result[0] == "special":
 		handle_special_smack(first, second, result)
+		return
 	
 	$SmackSound.play()
 	set_map_cellv(facing_t, result[0])
@@ -438,6 +439,22 @@ func handle_special_smack(first_t : int, second_t : int, special : Array):
 			# lookup all recipe results for the object that isnt the crafting manual
 			var lookup_tile = second_t if inv_names[first_t] == 'crafting_manual' else first_t
 			var possible_results = r_combinator.get_all_results_for(lookup_tile)
+			var text = ''
+			if len(possible_results) > 0:
+				text = 'With :tile.' + str(lookup_tile) + ': I can make these:\n'
+				
+				var n = 0
+				var per_line = 6
+				for res in possible_results:
+					if n > 0 and n % per_line == 0:
+						text += '\n'
+					text += ':tile.' + str(res) + ':'
+					n += 1
+			else:
+				text = 'I can\'t seem to make anything with :tile.' + str(lookup_tile) + ':.'
+			
+			var pause_screen = find_parent('Root').find_node('PauseScreen')
+			pause_screen.show_quick_text(text)
 
 # check if you're holding too many first
 func pick_up(index) -> void:

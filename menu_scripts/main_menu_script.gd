@@ -54,10 +54,14 @@ func handle_item_selected(value, extra) -> bool:
 				find_parent('Root').find_node('Player').menu_selection('view-job', extra) # TODO refactor
 				return true
 		'save-game':
-			if extra == -1:
-				var max_save = 6
-				r_menu.add_child_numbers_prompt('save-game', 'Choose a save:', 1, 1, max_save)
-			else:
+			if typeof(extra) == TYPE_INT and extra == -1:
+				#var max_save = 6
+				#r_menu.add_child_numbers_prompt('save-game', 'Choose a save:', 1, 1, max_save)
+				if get_node("/root/GlobalData").has_saved():
+					r_menu.add_child_file_menu('save-game', [get_node("/root/GlobalData").get_current_save_filename()], true)
+				else:
+					r_menu.add_child_file_menu('save-game', [], true)
+			elif typeof(extra) == TYPE_STRING:
 				var global = get_node("/root/GlobalData")
 				var screenshotter = get_node("/root/Screenshotter")
 				var scrn_name = screenshotter.get_screenshot_name(global.save_name) + '.png'
@@ -70,16 +74,29 @@ func handle_item_selected(value, extra) -> bool:
 				print('done yielding for screenshot')
 				
 				r_menu.activate_menu()
-				get_node("/root/SaveManager").save_game(str(extra), scrn_name)
+				
+				var saver = get_node("/root/SaveManager")
+				if extra == '__new_file__':
+					extra = saver.get_new_save_name(global.save_name)
+					extra = saver.save_name_to_filename(extra)
+				
+				get_node("/root/GlobalData").set_current_save_filename(extra)
+				saver.save_game(extra, scrn_name)
 				return false
 		'load-game':
 			if typeof(extra) == TYPE_INT and extra == -1:
-				#print(len(get_node("/root/SaveManager").get_all_saves()))
 				r_menu.add_child_file_menu('load-game')
 			elif typeof(extra) == TYPE_STRING:
-				print('want to load: ' + extra)
+				#print('want to load: ' + extra)
+				get_node("/root/GlobalData").set_current_save_filename(extra)
 				get_node("/root/SaveManager").load_game(extra)
 				return true
+		'set-name':
+			if typeof(extra) == TYPE_INT and extra == -1:
+				r_menu.add_child_text_prompt('set-name', 'What is your name???', get_node("/root/GlobalData").save_name)
+			elif typeof(extra) == TYPE_STRING:
+				print('setting name: ' + extra)
+				get_node("/root/GlobalData").save_name = extra
 	
 	# dont close menu
 	return false

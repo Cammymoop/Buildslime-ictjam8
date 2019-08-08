@@ -1,12 +1,13 @@
-[gd_resource type="Theme" load_steps=5 format=2]
+[gd_resource type="Theme" load_steps=6 format=2]
 
 [ext_resource path="res://assets/font/my_font_black.tres" type="BitmapFont" id=1]
 [ext_resource path="res://assets/ui/ui_box_button_light.tres" type="StyleBox" id=2]
-[ext_resource path="res://assets/ui/ui_box.tres" type="StyleBox" id=3]
-[ext_resource path="res://assets/font/my_font_white.tres" type="BitmapFont" id=4]
+[ext_resource path="res://assets/ui/ui_box_grey_text_input.tres" type="StyleBox" id=3]
+[ext_resource path="res://assets/ui/ui_box.tres" type="StyleBox" id=4]
+[ext_resource path="res://assets/font/my_font_white.tres" type="BitmapFont" id=5]
 
 [resource]
-default_font = ExtResource( 4 )
+default_font = ExtResource( 5 )
 Button/colors/font_color = Color( 0.878431, 0.878431, 0.878431, 1 )
 Button/colors/font_color_disabled = Color( 0.9, 0.9, 0.9, 0.2 )
 Button/colors/font_color_hover = Color( 0.941176, 0.941176, 0.941176, 1 )
@@ -29,11 +30,23 @@ Label/constants/shadow_offset_x = 1
 Label/constants/shadow_offset_y = 1
 Label/fonts/font = null
 Label/styles/normal = null
+LineEdit/colors/clear_button_color = Color( 0.878431, 0.878431, 0.878431, 1 )
+LineEdit/colors/clear_button_color_pressed = Color( 1, 1, 1, 1 )
+LineEdit/colors/cursor_color = Color( 0.941176, 0.941176, 0.941176, 1 )
+LineEdit/colors/font_color = Color( 0.878431, 0.878431, 0.878431, 1 )
+LineEdit/colors/font_color_selected = Color( 0, 0, 0, 1 )
+LineEdit/colors/selection_color = Color( 0.513726, 0.521569, 0.811765, 1 )
+LineEdit/constants/minimum_spaces = 12
+LineEdit/fonts/font = null
+LineEdit/icons/clear = null
+LineEdit/styles/focus = ExtResource( 3 )
+LineEdit/styles/normal = ExtResource( 3 )
+LineEdit/styles/read_only = ExtResource( 3 )
 MarginContainer/constants/margin_bottom = 0
 MarginContainer/constants/margin_left = 0
 MarginContainer/constants/margin_right = 0
 MarginContainer/constants/margin_top = 0
-Panel/styles/panel = ExtResource( 3 )
+Panel/styles/panel = ExtResource( 4 )
 Panel/styles/panelf = null
 Panel/styles/panelnc = null
-PanelContainer/styles/panel = ExtResource( 3 )
+PanelContainer/styles/panel = ExtResource( 4 )

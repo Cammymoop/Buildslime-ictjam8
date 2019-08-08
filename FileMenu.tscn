@@ -1,11 +1,14 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://assets/ui/UITheme.tres" type="Theme" id=1]
 [ext_resource path="res://FileMenu.gd" type="Script" id=2]
 [ext_resource path="res://FileDialogOption.tscn" type="PackedScene" id=3]
-[ext_resource path="res://ThickButton.tscn" type="PackedScene" id=4]
-[ext_resource path="res://assets/ui/fake_box_thick.tres" type="StyleBox" id=5]
-[ext_resource path="res://assets/images/black_arrow_right.png" type="Texture" id=6]
+[ext_resource path="res://FileDialogOption.gd" type="Script" id=4]
+[ext_resource path="res://assets/ui/ui_box_grey.tres" type="StyleBox" id=5]
+[ext_resource path="res://assets/images/new_file.png" type="Texture" id=6]
+[ext_resource path="res://ThickButton.tscn" type="PackedScene" id=7]
+[ext_resource path="res://assets/ui/fake_box_thick.tres" type="StyleBox" id=8]
+[ext_resource path="res://assets/images/black_arrow_right.png" type="Texture" id=9]
 
 [node name="FileMenu" type="PanelContainer"]
 margin_right = 286.0
@@ -16,69 +19,141 @@ script = ExtResource( 2 )
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 margin_left = 6.0
 margin_top = 5.0
-margin_right = 280.0
-margin_bottom = 246.0
+margin_right = 414.0
+margin_bottom = 248.0
 
-[node name="Label" type="Label" parent="VBoxContainer"]
-margin_right = 274.0
+[node name="HeaderLabel" type="Label" parent="VBoxContainer"]
+margin_right = 408.0
 margin_bottom = 9.0
 text = "Load Save File"
 align = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
 margin_top = 13.0
-margin_right = 274.0
-margin_bottom = 169.0
+margin_right = 408.0
+margin_bottom = 181.0
 custom_constants/margin_right = 5
 custom_constants/margin_left = 5
 custom_constants/margin_bottom = 5
 
 [node name="FileContainer" type="HBoxContainer" parent="VBoxContainer/MarginContainer"]
 margin_left = 5.0
-margin_right = 269.0
-margin_bottom = 151.0
+margin_right = 403.0
+margin_bottom = 163.0
 
 [node name="LeftFile" parent="VBoxContainer/MarginContainer/FileContainer" instance=ExtResource( 3 )]
+margin_bottom = 163.0
 
 [node name="RightFile" parent="VBoxContainer/MarginContainer/FileContainer" instance=ExtResource( 3 )]
 margin_left = 134.0
 margin_right = 264.0
+margin_bottom = 163.0
+
+[node name="BGColor" parent="VBoxContainer/MarginContainer/FileContainer/RightFile" index="0"]
+margin_bottom = 163.0
+
+[node name="Margins" parent="VBoxContainer/MarginContainer/FileContainer/RightFile" index="1"]
+margin_bottom = 163.0
+
+[node name="VBoxContainer" parent="VBoxContainer/MarginContainer/FileContainer/RightFile/Margins" index="0"]
+margin_bottom = 159.0
+
+[node name="FileInfoLabel" parent="VBoxContainer/MarginContainer/FileContainer/RightFile/Margins/VBoxContainer" index="1"]
+margin_bottom = 155.0
+text = "Key Lime
+5/8/2019
+Jobs Done: 7
+"
+
+[node name="NewFile" type="MarginContainer" parent="VBoxContainer/MarginContainer/FileContainer"]
+margin_left = 268.0
+margin_right = 398.0
+margin_bottom = 163.0
+theme = ExtResource( 1 )
+script = ExtResource( 4 )
+is_new_file = true
+
+[node name="BGColor" type="ColorRect" parent="VBoxContainer/MarginContainer/FileContainer/NewFile"]
+margin_right = 130.0
+margin_bottom = 163.0
+rect_min_size = Vector2( 130, 0 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color( 0, 0, 0, 1 )
+
+[node name="Margins" type="MarginContainer" parent="VBoxContainer/MarginContainer/FileContainer/NewFile"]
+margin_right = 130.0
+margin_bottom = 163.0
+mouse_filter = 1
+custom_constants/margin_right = 4
+custom_constants/margin_top = 4
+custom_constants/margin_left = 4
+custom_constants/margin_bottom = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer/FileContainer/NewFile/Margins"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 126.0
+margin_bottom = 159.0
+
+[node name="NewFilePanel" type="Panel" parent="VBoxContainer/MarginContainer/FileContainer/NewFile/Margins/VBoxContainer"]
+margin_left = 8.0
+margin_right = 114.0
+margin_bottom = 106.0
+rect_min_size = Vector2( 106, 106 )
+mouse_filter = 1
+size_flags_horizontal = 4
+custom_styles/panel = ExtResource( 5 )
+
+[node name="Sprite" type="Sprite" parent="VBoxContainer/MarginContainer/FileContainer/NewFile/Margins/VBoxContainer/NewFilePanel"]
+texture = ExtResource( 6 )
+centered = false
+offset = Vector2( 3, 3 )
+
+[node name="FileInfoLabel" type="Label" parent="VBoxContainer/MarginContainer/FileContainer/NewFile/Margins/VBoxContainer"]
+margin_top = 110.0
+margin_right = 122.0
+margin_bottom = 143.0
+text = "New File
+
+^_^"
+align = 1
 
 [node name="ButtonRow" type="MarginContainer" parent="VBoxContainer"]
-margin_top = 173.0
-margin_right = 274.0
-margin_bottom = 202.0
+margin_top = 185.0
+margin_right = 408.0
+margin_bottom = 214.0
 custom_constants/margin_right = 5
 custom_constants/margin_left = 5
 custom_constants/margin_bottom = 4
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/ButtonRow"]
 margin_left = 5.0
-margin_right = 269.0
+margin_right = 403.0
 margin_bottom = 25.0
 
-[node name="LeftButton" parent="VBoxContainer/ButtonRow/HBoxContainer" instance=ExtResource( 4 )]
-custom_styles/focus = ExtResource( 5 )
-custom_styles/disabled = ExtResource( 5 )
+[node name="LeftButton" parent="VBoxContainer/ButtonRow/HBoxContainer" instance=ExtResource( 7 )]
+custom_styles/focus = ExtResource( 8 )
+custom_styles/disabled = ExtResource( 8 )
 
 [node name="Control" type="Control" parent="VBoxContainer/ButtonRow/HBoxContainer"]
 margin_left = 28.0
-margin_right = 236.0
+margin_right = 370.0
 margin_bottom = 25.0
 size_flags_horizontal = 3
 
-[node name="RightButton" parent="VBoxContainer/ButtonRow/HBoxContainer" instance=ExtResource( 4 )]
-margin_left = 240.0
-margin_right = 264.0
-custom_styles/focus = ExtResource( 5 )
-custom_styles/disabled = ExtResource( 5 )
-icon = ExtResource( 6 )
+[node name="RightButton" parent="VBoxContainer/ButtonRow/HBoxContainer" instance=ExtResource( 7 )]
+margin_left = 374.0
+margin_right = 398.0
+custom_styles/focus = ExtResource( 8 )
+custom_styles/disabled = ExtResource( 8 )
+icon = ExtResource( 9 )
 
-[node name="CancelButton" parent="VBoxContainer" instance=ExtResource( 4 )]
-margin_left = 111.0
-margin_top = 206.0
-margin_right = 163.0
-margin_bottom = 231.0
+[node name="CancelButton" parent="VBoxContainer" instance=ExtResource( 7 )]
+margin_left = 178.0
+margin_top = 218.0
+margin_right = 230.0
+margin_bottom = 243.0
 size_flags_horizontal = 4
 text = "Cancel"
 icon = null
@@ -86,6 +161,12 @@ icon = null
 [connection signal="selected" from="VBoxContainer/MarginContainer/FileContainer/LeftFile" to="." method="_on_selected"]
 [connection signal="mouse_entered_panel" from="VBoxContainer/MarginContainer/FileContainer/RightFile" to="." method="_on_mouse_entered_panel"]
 [connection signal="selected" from="VBoxContainer/MarginContainer/FileContainer/RightFile" to="." method="_on_selected"]
+[connection signal="gui_input" from="VBoxContainer/MarginContainer/FileContainer/NewFile" to="VBoxContainer/MarginContainer/FileContainer/NewFile" method="_on_LeftFile_gui_input"]
+[connection signal="mouse_entered" from="VBoxContainer/MarginContainer/FileContainer/NewFile" to="VBoxContainer/MarginContainer/FileContainer/NewFile" method="_on_LeftFile_mouse_entered"]
+[connection signal="mouse_entered_panel" from="VBoxContainer/MarginContainer/FileContainer/NewFile" to="." method="_on_mouse_entered_panel"]
+[connection signal="selected" from="VBoxContainer/MarginContainer/FileContainer/NewFile" to="." method="_on_selected"]
 [connection signal="pressed" from="VBoxContainer/ButtonRow/HBoxContainer/LeftButton" to="." method="_on_LeftButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/ButtonRow/HBoxContainer/RightButton" to="." method="_on_RightButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/CancelButton" to="." method="_on_CancelButton_pressed"]
+
+[editable path="VBoxContainer/MarginContainer/FileContainer/RightFile"]

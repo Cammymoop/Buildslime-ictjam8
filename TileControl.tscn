@@ -1,14 +1,15 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://TileControl.gd" type="Script" id=1]
+[ext_resource path="res://assets/images/tiles.png" type="Texture" id=2]
 
 [node name="TileControl" type="Control"]
 margin_right = 16.0
 margin_bottom = 16.0
+rect_min_size = Vector2( 16, 16 )
 rect_clip_content = true
 script = ExtResource( 1 )
 
-[node name="Timer" type="Timer" parent="."]
-wait_time = 0.5
-autostart = true
-[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
+[node name="TextureRect" type="TextureRect" parent="."]
+margin_left = -16.0
+texture = ExtResource( 2 )

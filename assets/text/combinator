@@ -64,7 +64,8 @@ paper paper > nothing crafting_manual
 
 R crafting_manual any > special craft_help
 
-R fish cat > coin cat
+fish cat > coin cat
+cat fish > cat coin
 
 sword tree > sword apple
 chisel rock > chisel statue
@@ -90,7 +91,8 @@ grass puddle > seaweed puddle
 fishing_rod puddle > fish puddle
 R fish seaweed > nothing sushi
 
-R ingot wood_wall > nothing metal_wall
+ingot wood_wall > nothing metal_wall
+wood_wall ingot > metal_wall nothing
 metal_wall nothing > nothing metal_wall
 
 plank tree > nothing birdhouse

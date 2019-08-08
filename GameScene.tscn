@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://assets/tileset/Main.tres" type="TileSet" id=1]
 [ext_resource path="res://WorldMap.gd" type="Script" id=2]
@@ -13,9 +13,10 @@
 [ext_resource path="res://PauseScreen.gd" type="Script" id=11]
 [ext_resource path="res://ListMenu.tscn" type="PackedScene" id=12]
 [ext_resource path="res://menu_scripts/main_menu_script.gd" type="Script" id=13]
-[ext_resource path="res://MapPopup.gd" type="Script" id=14]
-[ext_resource path="res://assets/images/logo.png" type="Texture" id=15]
-[ext_resource path="res://Logo.gd" type="Script" id=16]
+[ext_resource path="res://BetterTextPopup.tscn" type="PackedScene" id=14]
+[ext_resource path="res://MapPopup.gd" type="Script" id=15]
+[ext_resource path="res://assets/images/logo.png" type="Texture" id=16]
+[ext_resource path="res://Logo.gd" type="Script" id=17]
 
 [node name="Root" type="Node2D"]
 
@@ -149,7 +150,6 @@ margin_bottom = 14.0
 text = "Open menu to get a job"
 
 [node name="PauseScreen" type="Control" parent="Overlay/ThemeMaster"]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_bottom = -300.0
@@ -170,10 +170,10 @@ margin_bottom = 160.0
 rect_min_size = Vector2( 0, 20 )
 
 [node name="Label" type="Label" parent="Overlay/ThemeMaster/PauseScreen/CenterContainer/Thought"]
-margin_left = 4.0
-margin_top = 4.0
-margin_right = 230.0
-margin_bottom = 65.0
+margin_left = 6.0
+margin_top = 5.0
+margin_right = 228.0
+margin_bottom = 62.0
 text = "I need something to build a house 
 out of
 
@@ -181,8 +181,14 @@ Maybe if I help other people they'll
 give me stuff"
 
 [node name="MainMenu" parent="Overlay/ThemeMaster/PauseScreen/CenterContainer" instance=ExtResource( 12 )]
-visible = true
 item_script = ExtResource( 13 )
+
+[node name="QuickText" parent="Overlay/ThemeMaster/PauseScreen/CenterContainer" instance=ExtResource( 14 )]
+visible = false
+margin_left = 144.0
+margin_top = 145.0
+margin_right = 156.0
+margin_bottom = 155.0
 
 [node name="ScreenshotTimer" type="Timer" parent="Overlay/ThemeMaster/PauseScreen"]
 wait_time = 0.1
@@ -201,7 +207,7 @@ mouse_filter = 2
 
 [node name="MapPopup" type="Node2D" parent="Overlay/PopupContainer/Control"]
 visible = false
-script = ExtResource( 14 )
+script = ExtResource( 15 )
 
 [node name="LogoContainer" type="MarginContainer" parent="Overlay"]
 editor/display_folded = true
@@ -225,8 +231,8 @@ margin_bottom = 300.0
 [node name="Logo" type="TextureRect" parent="Overlay/LogoContainer/CenterContainer"]
 margin_right = 300.0
 margin_bottom = 300.0
-texture = ExtResource( 15 )
-script = ExtResource( 16 )
+texture = ExtResource( 16 )
+script = ExtResource( 17 )
 
 [node name="Timer" type="Timer" parent="Overlay/LogoContainer/CenterContainer/Logo"]
 pause_mode = 2

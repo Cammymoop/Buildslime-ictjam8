@@ -27,24 +27,23 @@ custom_constants/margin_top = 4
 custom_constants/margin_left = 4
 custom_constants/margin_bottom = 4
 
-[node name="CenterContainer" type="CenterContainer" parent="Margins"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Margins"]
 margin_left = 4.0
 margin_top = 4.0
 margin_right = 126.0
 margin_bottom = 147.0
-mouse_filter = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Margins/CenterContainer"]
+[node name="ScreenshotPanel" parent="Margins/VBoxContainer" instance=ExtResource( 3 )]
 margin_left = 8.0
 margin_right = 114.0
-margin_bottom = 143.0
+size_flags_horizontal = 4
+size_flags_vertical = 0
 
-[node name="ScreenshotPanel" parent="Margins/CenterContainer/VBoxContainer" instance=ExtResource( 3 )]
-
-[node name="FileInfoLabel" type="Label" parent="Margins/CenterContainer/VBoxContainer"]
+[node name="FileInfoLabel" type="Label" parent="Margins/VBoxContainer"]
 margin_top = 110.0
-margin_right = 106.0
+margin_right = 122.0
 margin_bottom = 143.0
+size_flags_vertical = 7
 text = "Key Lime
 5/8/2019
 Jobs Done: 7"
