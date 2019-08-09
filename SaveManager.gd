@@ -12,7 +12,14 @@ func save_game(save_filename : String, screenshot_name : String = 'none') -> voi
 	if len(save_filename) < 4 or save_filename.substr(len(save_filename) - 3, 3) != '.bs':
 		save_filename = save_name_to_filename(save_filename)
 	
-	var save_file = File.new()
+	#delete old screenshot when overriding save
+	var save_file : File = File.new()
+	if save_file.file_exists("user://" + save_filename):
+		var meta = get_save_meta(save_filename)
+		var screenshot = meta['screenshot']
+		if save_file.file_exists("user://screenshots/" + screenshot):
+			Directory.new().remove("user://screenshots/" + screenshot)
+	
 	save_file.open("user://" + save_filename, File.WRITE)
 	print('saving: ' + save_filename)
 	
@@ -171,7 +178,7 @@ func get_save_meta(filename) -> Dictionary:
 		var second_line = save_file.get_line()
 		save_meta['name'] = second_line.substr(5, second_line.length() - 1)
 		var third_line = save_file.get_line().split(" ", false)
-		save_meta['job_progress'] = second_line[1]
+		save_meta['job_progress'] = third_line[1]
 		var date = save_file.get_line().split(" ", false)[1].split('-', false)
 		
 		save_meta['date'] = {'year': date[0], 'month': date[1], 'day': date[2]}
