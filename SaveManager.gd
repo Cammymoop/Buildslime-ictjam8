@@ -6,7 +6,6 @@ func _ready():
 		d.make_dir("user://saves")
 
 func save_game(save_filename : String, screenshot_name : String = 'none') -> void:
-	print('save in: ' + save_filename)
 	if len(save_filename) < 1:
 		print('no filename')
 		return
@@ -117,10 +116,7 @@ func get_new_save_name(base_name : String) -> String:
 		if c == ' ':
 			c = '_'
 		if _is_alpha_num(c) or allowed_symbols.find(c) != -1:
-			print('allowed: ' + c)
 			new_name += c
-		else:
-			print('not allowed: ' + c)
 	
 	while f.file_exists("user://saves/" + new_name + str(number) + '.bs'):
 		number += 1

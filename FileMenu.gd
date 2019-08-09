@@ -138,7 +138,6 @@ func _process(delta):
 			selected = left_panel
 		
 		if selected:
-			print(selected.name)
 			emit_signal("file_selected", main_value, selected.get_save_name())
 		close()
 		return

@@ -69,9 +69,9 @@ func handle_item_selected(value, extra) -> bool:
 				
 				var pause_screen = find_parent('PauseScreen')
 				pause_screen.queue_screenshot(scrn_name)
-				print('yielding for screenshot')
+				#print('yielding for screenshot')
 				yield(pause_screen, "took_screenshot")
-				print('done yielding for screenshot')
+				#print('done yielding for screenshot')
 				
 				r_menu.activate_menu()
 				

@@ -525,7 +525,6 @@ func clear_modifications() -> void:
 func _process(delta) -> void:
 	if make_mp:
 		make_mp = false
-		print('showing mp')
 		show_map_popup()
 		return
 	
