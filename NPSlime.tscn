@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Entity.gd" type="Script" id=1]
+[ext_resource path="res://assets/images/slime_2.png" type="Texture" id=2]
+[ext_resource path="res://EntitySprite.gd" type="Script" id=3]
+[ext_resource path="res://EntityRandMove.gd" type="Script" id=4]
+
+[node name="NPSlime" type="Node2D" groups=[
+"saveable",
+]]
+position = Vector2( 276.998, 282.584 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="EntitySprite" type="Sprite" parent="."]
+position = Vector2( 8, 8 )
+texture = ExtResource( 2 )
+region_enabled = true
+region_rect = Rect2( 48, 0, 16, 16 )
+script = ExtResource( 3 )
+version_i = 3
+
+[node name="Timer" type="Timer" parent="."]
+autostart = true
+script = ExtResource( 4 )
+[connection signal="timeout" from="Timer" to="Timer" method="_on_Timer_timeout"]

@@ -1,11 +1,6 @@
-extends Node2D
+extends "res://Entity.gd"
 
 export var enable_debug = true
-
-var tile_position = Vector2(0, 0)
-var target_position = Vector2(0, 0)
-var facing_angle = 0
-var facing = "down"
 
 var r_tile_map : TileMap = null
 var r_combinator = null
@@ -21,24 +16,10 @@ var holding_button : bool = false
 
 var at_home = true
 
-var UP_ANGLE = PI
-var DOWN_ANGLE = 0
-var LEFT_ANGLE = PI/2
-var RIGHT_ANGLE = PI + PI/2
-
 var holding_move = false
 var hold_move_ready = false
 
-var MAX_TILE = 40
-
-var TILE = 16
-
-var NON_WALKABLE = [
-	'tree', 'wood_wall', 'metal_wall', 'sheep', 'sheered', 'fence', 'tent', 'bed', 'fire', 'anvil', 'bucket_of_rocks',
-	'bucket', 'water_bucket', 'puddle', 'pillar', 'birdhouse',
-]
-var NON_GRABABLE = ['tree', 'gravel', 'metal_wall', 'puddle']
-var AUTOTILES : Array = ['puddle', 'wood_wall']
+var debug_mode = false
 
 var modification_queue = []
 
@@ -47,9 +28,6 @@ var job_rewards : Array = []
 var current_job_num = 0
 
 var make_mp = false
-
-var names
-var inv_names
 
 var spawn_params : Dictionary = {
 	'spawns': [
@@ -67,9 +45,8 @@ var spawn_params : Dictionary = {
 
 func _ready():
 	randomize()
-	tile_position.x = round(position.x/TILE)
-	tile_position.y = round(position.y/TILE)
-	target_position = position
+	var tmap = find_parent("Root").find_node("HomeMap")
+	spawn(tmap)
 	
 	#print("spawned at " + str(tile_position))
 	
@@ -81,19 +58,17 @@ func _ready():
 	get_node("/root/GlobalData").new_game()
 	
 	if OS.has_feature('debug') and enable_debug:
+		debug_mode = true
 		get_node("/root/GlobalData").max_job_completed = r_job_manager.num_jobs()
-		NON_GRABABLE = []
 	
 	#get_parent().find_node("MenuControls").set_next_available_job(min(jobs_finished + 1, r_job_manager.num_jobs()))
 	
 	call_deferred("post_ready")
 
-func set_my_position(xpos : int, ypos : int) -> void:
-	tile_position.x = xpos
-	tile_position.y = ypos
-	position.x = tile_position.x * TILE
-	position.y = tile_position.y * TILE
-	target_position = position
+func post_ready() -> void:
+	.post_ready()
+	if debug_mode:
+		NON_GRABBABLE = []
 
 func regen_map() -> void:
 	if r_tile_map.name == "HomeMap":
@@ -101,15 +76,6 @@ func regen_map() -> void:
 		return
 	get_parent().get_node("MapGenerator").generate(r_tile_map, spawn_params)
 	auto_tile_whole_map()
-
-func set_map_cellv(coord : Vector2, index : int) -> void:
-	set_map_cell(int(coord.x), int(coord.y), index)
-
-func set_map_cell(x : int, y : int, index : int) -> void:
-	var old = r_tile_map.get_cell(x, y)
-	r_tile_map.set_cell(x, y, index)
-	if AUTOTILES.has(index) or AUTOTILES.has(old):
-		r_tile_map.update_bitmask_area(Vector2(x, y))
 
 func auto_tile_whole_map() -> void:
 	r_tile_map.update_bitmask_region(Vector2(-1, -1), Vector2(41, 41))
@@ -185,6 +151,7 @@ func change_to_job_map() -> void:
 	r_tile_map.visible = false
 	r_tile_map = get_parent().get_node("JobMap")
 	r_tile_map.visible = true
+	spawn(r_tile_map)
 	#get_parent().find_node("MenuControls").call_deferred('set_job_options')
 	get_parent().find_node("ColorRectJob").visible = true
 func change_to_home_map() -> void:
@@ -194,6 +161,7 @@ func change_to_home_map() -> void:
 	r_tile_map.visible = false
 	r_tile_map = get_parent().get_node("HomeMap")
 	r_tile_map.visible = true
+	spawn(r_tile_map)
 	#get_parent().find_node("MenuControls").set_next_available_job(min(jobs_finished + 1, r_job_manager.num_jobs()))
 	#get_parent().find_node("MenuControls").call_deferred('set_home_options')
 	get_parent().find_node("ColorRectJob").visible = false
@@ -211,67 +179,13 @@ func set_spawn_params(new_params : Dictionary, name_to_id : bool = true) -> void
 		for sp in spawn_params['spawns']:
 			sp['object'] = names[sp['object']]
 
-func post_ready() -> void:
-	names = r_combinator.names
-	inv_names = r_combinator.inv_names
-	
-	var temp = []
-	for name_t in NON_WALKABLE:
-		temp.append(names[name_t])
-	NON_WALKABLE = temp
-	
-	temp = []
-	for name_t in NON_GRABABLE:
-		temp.append(names[name_t])
-	NON_GRABABLE = temp
-	
-	temp = []
-	for name_t in AUTOTILES:
-		temp.append(names[name_t])
-	AUTOTILES = temp
-	
-	#test_mapgen()
-	r_tile_map.set_cellv(tile_position, 0)
-
-func change_facing(direction_h, direction_v = false) -> void:
-	var y_tex_offset = 0
-	var direction = direction_h
-	match direction_h:
-		'up':
-			facing_angle = UP_ANGLE
-			y_tex_offset = 16
-		'down':
-			facing_angle = DOWN_ANGLE
-			y_tex_offset = 0
-		'left':
-			facing_angle = LEFT_ANGLE
-			y_tex_offset = 48
-		'right':
-			facing_angle = RIGHT_ANGLE
-			y_tex_offset = 32
-		_:
-			direction = direction_v
-			match direction_v:
-				'up':
-					facing_angle = UP_ANGLE
-					y_tex_offset = 16
-				'down':
-					facing_angle = DOWN_ANGLE
-					y_tex_offset = 0
-				_:
-					print('not a vertical direction: ' + direction_v)
-					return
-	facing = direction
-	#$PlayerSprite.rotation = facing_angle
-	$PlayerSprite.region_rect.position.y = y_tex_offset
-
 func rotate_a_thing(tile_coord, counterclockwise = false) -> void:
-	var ind = r_tile_map.get_cellv(tile_coord)
+	var ind = get_map_cellv(tile_coord)
 	if not ind:
 		return
-	var h_flip = r_tile_map.is_cell_x_flipped(tile_coord.x, tile_coord.y)
-	var v_flip = r_tile_map.is_cell_y_flipped(tile_coord.x, tile_coord.y)
-	var transposed = r_tile_map.is_cell_transposed(tile_coord.x, tile_coord.y)
+	var h_flip = r_current_map.is_cell_x_flipped(tile_coord.x, tile_coord.y)
+	var v_flip = r_current_map.is_cell_y_flipped(tile_coord.x, tile_coord.y)
+	var transposed = r_current_map.is_cell_transposed(tile_coord.x, tile_coord.y)
 	
 	var determine = 0
 	determine += 1 if h_flip else 0
@@ -284,10 +198,10 @@ func rotate_a_thing(tile_coord, counterclockwise = false) -> void:
 		h_flip = not h_flip
 	else:
 		v_flip = not v_flip
-	r_tile_map.set_cellv(tile_coord, ind, h_flip, v_flip, transposed)
+	r_current_map.set_cellv(tile_coord, ind, h_flip, v_flip, transposed)
 
 func flip_a_thing(tile_coord) -> void:
-	var ind = r_tile_map.get_cellv(tile_coord)
+	var ind = get_map_cellv(tile_coord)
 	if not ind:
 		return
 	var h_flip = r_tile_map.is_cell_x_flipped(tile_coord.x, tile_coord.y)
@@ -300,121 +214,14 @@ func flip_a_thing(tile_coord) -> void:
 		h_flip = not h_flip
 	r_tile_map.set_cellv(tile_coord, ind, h_flip, v_flip, transposed)
 
-func _get_facing_xdelta() -> int:
-	if facing == 'up' or facing == 'down':
-		return 0
-	return 1 if facing == 'right' else -1
-func _get_facing_ydelta() -> int:
-	if facing == 'left' or facing == 'right':
-		return 0
-	return 1 if facing == 'down' else -1
-
-func get_facing_tile_coord(amount : int = 1) -> Vector2:
-	var facing_c = Vector2(tile_position.x, tile_position.y)
-	facing_c.x += _get_facing_xdelta() * amount
-	facing_c.y += _get_facing_ydelta() * amount
-	return facing_c
-
-#returns facing direction
-func move_tile(direction_h, direction_v = false) -> String:
-	var xd = 0
-	var yd = 0
-	match direction_h:
-		'up':
-			yd = -1
-		'down':
-			yd = 1
-		'left':
-			xd = -1
-		'right':
-			xd = 1
-		false:
-			pass
-		_:
-			print('not a h direction: ' + direction_h)
-			return 'up'
-	match direction_v:
-		'up':
-			yd = -1
-		'down':
-			yd = 1
-		false:
-			pass
-		_:
-			print('not a vertical direction: ' + direction_v)
-			return 'up'
-	return _move(xd, yd)
-
-func tile_blocks_move(tile):
-	return NON_WALKABLE.find(tile) != -1
-
-func delta_to_direction(xdelta, ydelta):
-	var direction = ''
-	match xdelta:
-		1:
-			direction = 'right'
-		-1:
-			direction = 'left'
-		0:
-			match ydelta:
-				1:
-					direction = 'down'
-				-1:
-					direction = 'up'
-	return direction
-
-func _move(xdelta, ydelta) -> String:
-	var facing_dir = delta_to_direction(xdelta, ydelta)
-	if tile_position.x + xdelta > MAX_TILE or tile_position.x + xdelta < 0:
-		xdelta = 0
-	if tile_position.y + ydelta > MAX_TILE or tile_position.y + ydelta < 0:
-		ydelta = 0
-	
-	if xdelta == 0 and ydelta == 0: # hit map edge, no diagonal
-		return facing_dir
-	
-	facing_dir = delta_to_direction(xdelta, ydelta) #update facing if diagonally along map edge
-	
-	tile_position.x += xdelta
-	tile_position.y += ydelta
-	
-	#can I step here?
-	if xdelta != 0 and ydelta != 0:
-		var object_dest = r_tile_map.get_cellv(tile_position)
-		var object_vert = r_tile_map.get_cell(tile_position.x - xdelta, tile_position.y)
-		var object_horiz = r_tile_map.get_cell(tile_position.x, tile_position.y - ydelta)
-		if tile_blocks_move(object_horiz) and tile_blocks_move(object_vert):
-			tile_position.x -= xdelta
-			tile_position.y -= ydelta
-			return facing_dir
-		if tile_blocks_move(object_dest):
-			if tile_blocks_move(object_vert):
-				facing_dir = delta_to_direction(xdelta, 0)
-				tile_position.y -= ydelta
-			else: # move horizontally by default
-				facing_dir = delta_to_direction(0, ydelta)
-				tile_position.x -= xdelta
-	else:
-		var object_here = r_tile_map.get_cellv(tile_position)
-		if NON_WALKABLE.find(object_here) != -1:
-			tile_position.x -= xdelta
-			tile_position.y -= ydelta
-			return facing_dir
-	
-	target_position.x = tile_position.x * TILE
-	target_position.y = tile_position.y * TILE
-	#position.x += xdelta * TILE
-	#position.y += ydelta * TILE
-	return facing_dir
-
 func smack() -> void:
 	var facing_t = get_facing_tile_coord()
 	var facing_t_2 = get_facing_tile_coord(2)
 	
-	var first = r_tile_map.get_cellv(facing_t)
+	var first = get_map_cellv(facing_t)
 	if first < 0:
 		first = 0
-	var second = r_tile_map.get_cellv(facing_t_2)
+	var second = get_map_cellv(facing_t_2)
 	if second < 0:
 		second = 0
 	
@@ -462,7 +269,7 @@ func pick_up(index) -> void:
 	hold_2 = hold_1
 	hold_1 = index
 	hold_count += 1
-	$PlayerSprite.region_rect.position.x += 16
+	$EntitySprite.set_holding_amt(hold_count)
 	$PickupSound.play()
 
 #check if you're holding something first
@@ -472,7 +279,7 @@ func drop() -> int:
 	hold_2 = hold_3
 	hold_3 = 0
 	hold_count -= 1
-	$PlayerSprite.region_rect.position.x -= 16
+	$EntitySprite.set_holding_amt(hold_count)
 	$PutdownSound.play()
 	return drop_me
 
@@ -485,7 +292,7 @@ func restore_inv(inv) -> void:
 	hold_1 = inv[0]
 	hold_2 = inv[1]
 	hold_3 = inv[2]
-	$PlayerSprite.region_rect.position.x = (count*16)
+	$EntitySprite.set_holding_amt(hold_count)
 	
 
 func restore_pos_facing(pos, res_facing) -> void:
@@ -521,15 +328,20 @@ func add_modification(tile_was_pos : Vector2, tile_was : int, tile_was_2_pos = f
 func clear_modifications() -> void:
 	modification_queue = []
 
+func set_y_stretch(amount: float) -> void:
+	$EntitySprite.set_y_stretch(amount)
+
 # warning-ignore:unused_argument
 func _process(delta) -> void:
+	if not active:
+		return
+	
 	if make_mp:
 		make_mp = false
 		show_map_popup()
 		return
 	
-	position.x = lerp(position.x, target_position.x, 0.4)
-	position.y = lerp(position.y, target_position.y, 0.4)
+	._process(delta)
 	
 	if holding_button and not Input.is_action_pressed("action_grab"):
 		holding_button = false
@@ -548,7 +360,7 @@ func _process(delta) -> void:
 		elif Input.is_action_just_pressed("move_right"):
 			move_h = "right"
 	else:
-		var tile = r_tile_map.get_cellv(get_facing_tile_coord())
+		var tile = get_map_cellv(get_facing_tile_coord())
 		if not AUTOTILES.has(tile):
 			if Input.is_action_just_pressed("move_up") or Input.is_action_just_pressed("move_down"):
 				flip_a_thing(get_facing_tile_coord())
@@ -591,9 +403,9 @@ func _process(delta) -> void:
 		if Input.is_action_just_pressed("action_grab"):
 			holding_button = true
 			var facing_t = get_facing_tile_coord()
-			var ind = r_tile_map.get_cellv(facing_t)
+			var ind = get_map_cellv(facing_t)
 			if ind > 0:
-				if NON_GRABABLE.find(ind) == -1 and hold_count < 3:
+				if NON_GRABBABLE.find(ind) == -1 and hold_count < 3:
 					#print("got object " + str(ind))
 					set_map_cellv(facing_t, 0)
 					add_modification(facing_t, ind)
@@ -608,111 +420,21 @@ func _process(delta) -> void:
 					set_map_cellv(facing_t, ind)
 		elif Input.is_action_just_pressed("action_smack"):
 			smack()
-		elif Input.is_action_just_pressed("action_d_regen"):
-			regen_map()
 		elif Input.is_action_just_pressed("action_rewind"):
 			pop_modification()
 		elif Input.is_action_just_pressed("action_quick_job_view"):
 			if not at_home:
 				show_map_popup(true)
 
-func evaluate_job() -> void:
-	var JOB_WIDTH = 19
-	
-	var first_x = -1
-	var first_y = -1
-	var first_tile = false
-	var last_x = -1
-	var last_y = -1
-	
-	var r_job_map : TileMap = get_parent().find_node("MapPopup").find_node("JobGoal", true, false)
-	if not r_job_map:
-		print("no job to check")
-		get_parent().find_node("MapPopup").print_tree_pretty()
-		return
-	
-	var max_j = -1
-	
-	for ty in range(JOB_WIDTH):
-		for tx in range(JOB_WIDTH):
-			var this_tile = r_job_map.get_cell(tx, ty)
-			if this_tile > 0:
-				if first_x < 0:
-					first_x = tx
-					first_y = ty
-					first_tile = this_tile
-				last_x = tx
-				last_y = ty
-				max_j = max(max_j, tx)
-	
-	var width = max_j - first_x + 1
-	
-	var verified = false
-	
-	
-	var search_origin_x = -1
-	var search_origin_y = -1
-	var searching = false
-	var return_coord = false
-	
-	var tx = 0
-	var ty = 0
-	
-	var safety = 200000
-	
-	while ty <= MAX_TILE:
-		if verified:
-			break
-		tx = 0
-		while tx <= MAX_TILE:
-			safety -= 1
-			if safety < 0:
-				return
-			var this_tile = r_tile_map.get_cell(tx, ty)
-			if searching:
-				var x_offset = tx + (first_x - search_origin_x)
-				var y_offset = ty + (first_y - search_origin_y)
-				var that_tile = r_job_map.get_cell(x_offset, y_offset)
-				if that_tile < 1 or that_tile == this_tile:
-					if x_offset == last_x and y_offset == last_y:
-						verified = true
-						break
-					
-					if that_tile < 1 and this_tile == first_tile and not return_coord:
-						return_coord = Vector2(tx, ty)
-				else:
-					searching = false
-					if return_coord:
-						ty = return_coord.y
-						tx = return_coord.x - 1
-						continue
-			if not searching and this_tile == first_tile and not (tx + width > MAX_TILE):
-				search_origin_x = tx
-				search_origin_y = ty
-				if first_x == last_x and first_y == last_y: # job is only 1 tile
-					verified = true
-					break
-				searching = true
-			tx += 1
-		ty += 1
-	
-#	if verified:
-#		call_deferred("verified_menu")
-
-#func verified_menu() -> void:
-#	get_parent().find_node("MenuControls").job_validated()
-
 func clear_inventory() -> void:
 	hold_1 = 0
 	hold_2 = 0
 	hold_3 = 0
 	hold_count = 0
-	$PlayerSprite.region_rect.position.x = 0
+	$EntitySprite.set_showing_frame(0, 0)
 
 func menu_selection(value : String, extra) -> void:
 	match value:
-		"return":
-			pass
 		"job":
 			if not extra:
 				get_a_job(get_node("/root/GlobalData").max_job_completed + 1)
@@ -730,11 +452,6 @@ func menu_selection(value : String, extra) -> void:
 			job_complete()
 			change_to_home_map()
 			set_my_position(4, 4)
-		"eval-job":
-			evaluate_job()
-		"restart-game":
-			if extra == 1:
-				get_tree().reload_current_scene()
 		_:
 			print("Unkown menu option: " + value)
 

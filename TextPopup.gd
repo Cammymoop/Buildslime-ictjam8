@@ -21,6 +21,7 @@ func show_text(text : String, v = '', e = -1, error : bool = false):
 func close() -> void:
 	queue_free()
 
+# warning-ignore:unused_argument
 func _process(delta):
 	if wait_a_bit:
 		wait_a_bit = false

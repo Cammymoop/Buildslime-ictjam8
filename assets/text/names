@@ -1,45 +1,45 @@
 0 nothing
-2 tree
+2 tree NO_WALK NO_GRAB
 3 log
 4 plank
-5 wood_wall
+5 wood_wall AUTO_TILE NO_WALK
 6 rock
-7 sheep
-8 sheered
+7 sheep NO_WALK
+8 sheered NO_WALK
 9 cloth
 10 stick
-11 tent
-12 puddle
+11 tent NO_WALK
+12 puddle AUTO_TILE NO_WALK NO_GRAB
 13 sticks
-14 table
+14 table NO_WALK
 15 chair
 16 grass
 17 seed
 18 sapling
 19 seed_bag
-20 fence
-21 gravel
+20 fence NO_WALK
+21 gravel NO_GRAB
 22 cabbage
-23 bed
+23 bed NO_WALK
 24 flower
 25 metal
 26 hammer
 27 sword
 28 sword_in_stone
 29 fire_starter
-30 fire
+30 fire NO_WALK
 31 apple
-32 statue
+32 statue NO_WALK
 33 computer
 34 chisel
-35 anvil
-36 heart
+35 anvil NO_WALK
+36 heart 
 37 skull
 38 pie
-39 birdhouse
+39 birdhouse NO_WALK
 40 plate
 41 coin
-42 metal_wall
+42 metal_wall NO_WALK NO_GRAB
 43 fish
 44 pole
 45 flag
@@ -47,17 +47,17 @@
 47 sushi
 48 seaweed
 49 cat
-50 pillar
-51 bucket_of_rocks
-52 bucket
+50 pillar NO_WALK
+51 bucket_of_rocks NO_WALK
+52 bucket NO_WALK
 53 ring
-54 water_bucket
+54 water_bucket NO_WALK
 55 ingot
 56 rod
 57 twine
 58 fishing_rod
 59 piece_of_pie
-60 tent_2
+60 tent_2 NO_WALK
 61 poles
 62 pillow
 63 chip
@@ -66,3 +66,4 @@
 66 paper
 67 crafting_manual
 68 bird
+69 camera

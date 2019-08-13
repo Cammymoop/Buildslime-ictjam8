@@ -9,6 +9,8 @@ func show_screenshot(name : String):
 		$Sprite.visible = true
 		
 		$LogoSprite.visible = false
+	else:
+		reset()
 
 func reset():
 	$Sprite.visible = false

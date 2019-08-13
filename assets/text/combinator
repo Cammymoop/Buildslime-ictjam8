@@ -17,26 +17,25 @@ grass nothing > grass grass
 
 grass grass > nothing twine
 
-R stick cloth > nothing tent
-R plank log > nothing table
-R plank table > nothing chair
+.R stick cloth > nothing tent
+.R plank log > nothing table
+.R plank table > nothing chair
 sticks sticks > fence fence
 
 cloth cloth > nothing pillow
-R pillow table > nothing bed
+.R pillow table > nothing bed
 
 puddle seed > puddle sapling
 puddle sapling > puddle tree
 puddle grass > puddle cabbage
 
-R seed cloth > nothing seed_bag
-seed_bag nothing > seed_bag seed
+.R seed cloth > nothing seed_bag
+.RO seed_bag nothing > seed_bag seed
 
 rock nothing > gravel nothing
 
-R sticks stick > nothing fire_starter
-fire_starter sticks > fire_starter fire
-sticks fire_starter > fire fire_starter
+.R sticks stick > nothing fire_starter
+.RO fire_starter sticks > fire_starter fire
 fire sticks > fire fire
 
 apple fire > pie fire
@@ -45,9 +44,9 @@ fire gravel > fire metal
 
 gravel puddle > nothing nothing
 
-R stick rock > nothing hammer
+.R stick rock > nothing hammer
 
-R stick metal > nothing chisel
+.R stick metal > nothing chisel
 metal metal > nothing ingot
 ingot ingot > nothing anvil
 ingot anvil > sword anvil
@@ -55,17 +54,16 @@ hammer metal > hammer plate
 hammer plate > hammer ring
 sword rock > nothing sword_in_stone
 
-R plate pie > nothing piece_of_pie
+.R plate pie > piece_of_pie piece_of_pie
 
 hammer plank > hammer wood_wall
 
 hammer log > hammer paper
 paper paper > nothing crafting_manual
 
-R crafting_manual any > special craft_help
+.R crafting_manual any > special craft_help
 
-fish cat > coin cat
-cat fish > cat coin
+.RO fish cat > coin cat
 
 sword tree > sword apple
 chisel rock > chisel statue
@@ -79,39 +77,43 @@ twine rod > nothing fishing_rod
 metal anvil > pole anvil
 
 pole pole > nothing poles
-R poles cloth > nothing tent_2
+.R poles cloth > nothing tent_2
 
-apple nothing > seed nothing
+apple nothing > seed seed
 
-R cloth pole > nothing flag
-R sheered flag > nothing baba
+.R cloth pole > nothing flag
+.RO sheered flag > nothing baba
 
 grass puddle > seaweed puddle
 
 fishing_rod puddle > fish puddle
-R fish seaweed > nothing sushi
+.R fish seaweed > nothing sushi
 
-ingot wood_wall > nothing metal_wall
-wood_wall ingot > metal_wall nothing
-metal_wall nothing > nothing metal_wall
+.RO ingot wood_wall > nothing metal_wall
+# 'I' ignores the recipe for the purpose of showing possible crafting results
+.I metal_wall nothing > nothing metal_wall
 
 plank tree > nothing birdhouse
 
 rock rock > nothing pillar
 
-R plank ring > nothing bucket
+.R plank ring > nothing bucket
 
-bucket puddle > water_bucket nothing
-puddle bucket > nothing water_bucket
+.RO bucket puddle > water_bucket nothing
 water_bucket nothing > bucket puddle
 water_bucket bucket > water_bucket water_bucket
 
-R rock bucket > nothing bucket_of_rocks
-bucket_of_rocks nothing > bucket_of_rocks rock
+.R rock bucket > nothing bucket_of_rocks
+.RO bucket_of_rocks nothing > bucket_of_rocks rock
 
-heart skull > nothing sheered
+.RO heart skull > nothing sheered
 
-R rock metal > nothing chip
+.R rock metal > nothing chip
 chip chip > nothing circuit_board
-R apple circuit_board > nothing computer
+.R apple circuit_board > nothing computer
+
+
+
+# rules using something + "any" go here to not override other recipes
+camera any > camera same
 

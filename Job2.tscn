@@ -9,7 +9,7 @@ spawn_objects = [ "sheep", "tree", "rock", "grass" ]
 spawn_frequencies = [ 5, 2, 4, 11 ]
 spawn_mirrorable = [ true, false, true, true ]
 rewards = [ "tree", "stick", "stick", "rock", "twine", "log", "log" ]
-forest = false
+forest = true
 
 [node name="JobGoal" type="TileMap" parent="."]
 visible = false
