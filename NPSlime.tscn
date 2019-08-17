@@ -23,6 +23,5 @@ script = ExtResource( 3 )
 version_i = 3
 
 [node name="Timer" type="Timer" parent="."]
-autostart = true
 script = ExtResource( 4 )
 [connection signal="timeout" from="Timer" to="Timer" method="_on_Timer_timeout"]

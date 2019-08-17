@@ -1,7 +1,8 @@
 extends Timer
 
 func _ready():
-	get_parent().spawn(find_parent("Root").find_node("HomeMap"))
+	var p = get_parent()
+	p.connect("become_active", self, "start_me")
 
 func _on_Timer_timeout():
 	var rand = randi() % 4
@@ -15,3 +16,6 @@ func _on_Timer_timeout():
 			entity.standard_move('left')
 		3:
 			entity.standard_move('right')
+
+func start_me():
+	start()

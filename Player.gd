@@ -3,7 +3,6 @@ extends "res://Entity.gd"
 export var enable_debug = true
 
 var r_tile_map : TileMap = null
-var r_combinator = null
 var r_job_manager = null
 
 var hold_1 : int = 0
@@ -45,13 +44,10 @@ var spawn_params : Dictionary = {
 
 func _ready():
 	randomize()
-	var tmap = find_parent("Root").find_node("HomeMap")
-	spawn(tmap)
 	
 	#print("spawned at " + str(tile_position))
 	
-	r_tile_map = get_parent().get_node("HomeMap")
-	r_combinator = get_parent().get_node("Combinator")
+	#r_tile_map = get_parent().get_node("HomeMap")
 	
 	r_job_manager = get_node("/root/JobManager")
 	
@@ -71,10 +67,10 @@ func post_ready() -> void:
 		NON_GRABBABLE = []
 
 func regen_map() -> void:
-	if r_tile_map.name == "HomeMap":
+	if r_current_map.name == "HomeMap":
 		print('dont overwrite home!!!')
 		return
-	get_parent().get_node("MapGenerator").generate(r_tile_map, spawn_params)
+	get_node("/root/MapGenerator").generate(r_current_map, spawn_params)
 	auto_tile_whole_map()
 
 func auto_tile_whole_map() -> void:
@@ -133,7 +129,7 @@ func make_map_popup() -> void:
 	make_mp = true
 
 func show_map_popup(quick_mode : bool = false) -> void:
-	r_tile_map.visible = false
+	r_current_map.visible = false
 	visible = false
 	if quick_mode:
 		get_parent().find_node("MapPopup").show_quick()
@@ -141,7 +137,7 @@ func show_map_popup(quick_mode : bool = false) -> void:
 		get_parent().find_node("MapPopup").show()
 
 func hide_map_popup() -> void:
-	r_tile_map.visible = true
+	r_current_map.visible = true
 	visible = true
 
 func change_to_job_map() -> void:
@@ -204,19 +200,21 @@ func flip_a_thing(tile_coord) -> void:
 	var ind = get_map_cellv(tile_coord)
 	if not ind:
 		return
-	var h_flip = r_tile_map.is_cell_x_flipped(tile_coord.x, tile_coord.y)
-	var v_flip = r_tile_map.is_cell_y_flipped(tile_coord.x, tile_coord.y)
-	var transposed = r_tile_map.is_cell_transposed(tile_coord.x, tile_coord.y)
+	var h_flip = r_current_map.is_cell_x_flipped(tile_coord.x, tile_coord.y)
+	var v_flip = r_current_map.is_cell_y_flipped(tile_coord.x, tile_coord.y)
+	var transposed = r_current_map.is_cell_transposed(tile_coord.x, tile_coord.y)
 	
 	if transposed:
 		v_flip = not v_flip
 	else:
 		h_flip = not h_flip
-	r_tile_map.set_cellv(tile_coord, ind, h_flip, v_flip, transposed)
+	r_current_map.set_cellv(tile_coord, ind, h_flip, v_flip, transposed)
 
 func smack() -> void:
 	var facing_t = get_facing_tile_coord()
 	var facing_t_2 = get_facing_tile_coord(2)
+	if not r_current_map.coord_is_in_bounds(facing_t) or not r_current_map.coord_is_in_bounds(facing_t_2):
+		return
 	
 	var first = get_map_cellv(facing_t)
 	if first < 0:
@@ -225,6 +223,7 @@ func smack() -> void:
 	if second < 0:
 		second = 0
 	
+	var r_combinator = get_node("/root/Combinator")
 	var result = r_combinator.get_combinator_result(first, second)
 	if not result:
 		return
@@ -241,6 +240,7 @@ func smack() -> void:
 	add_modification(facing_t, first, facing_t_2, second)
 
 func handle_special_smack(first_t : int, second_t : int, special : Array):
+	var r_combinator = get_node("/root/Combinator")
 	match special[1]:
 		'craft_help':
 			# lookup all recipe results for the object that isnt the crafting manual
@@ -399,25 +399,31 @@ func _process(delta) -> void:
 		var new_facing = move_tile(move_h, move_v)
 		if not Input.is_action_pressed("hold_strafe"):
 			change_facing(new_facing)
+		
+		var cur_map = get_node("/root/GlobalData").current_map
+		if cur_map == 'home' and tile_position.y < -1:
+			get_node("/root/WorldControl").load_test_map()
+			set_my_position(4, 4)
 	else:
 		if Input.is_action_just_pressed("action_grab"):
 			holding_button = true
 			var facing_t = get_facing_tile_coord()
-			var ind = get_map_cellv(facing_t)
-			if ind > 0:
-				if NON_GRABBABLE.find(ind) == -1 and hold_count < 3:
-					#print("got object " + str(ind))
-					set_map_cellv(facing_t, 0)
-					add_modification(facing_t, ind)
-					pick_up(ind)
+			if r_current_map.coord_is_in_bounds(facing_t):
+				var ind = get_map_cellv(facing_t)
+				if ind > 0:
+					if NON_GRABBABLE.find(ind) == -1 and hold_count < 3:
+						#print("got object " + str(ind))
+						set_map_cellv(facing_t, 0)
+						add_modification(facing_t, ind)
+						pick_up(ind)
+					else:
+						print("cant pick up")
 				else:
-					print("cant pick up")
-			else:
-				if hold_count > 0:
-					add_modification(facing_t, 0)
-					ind = drop()
-					#print("placed object " + str(ind))
-					set_map_cellv(facing_t, ind)
+					if hold_count > 0:
+						add_modification(facing_t, 0)
+						ind = drop()
+						#print("placed object " + str(ind))
+						set_map_cellv(facing_t, ind)
 		elif Input.is_action_just_pressed("action_smack"):
 			smack()
 		elif Input.is_action_just_pressed("action_rewind"):
@@ -511,3 +517,8 @@ func _on_InitialMoveTimer_timeout():
 	
 	hold_move_ready = true
 	$MoveTimer.start()
+
+func _on_Blinker_timeout():
+	$EntitySprite.blink()
+	$Blinker.wait_time = rand_range(10.8, 50)
+	$Blinker.start()

@@ -9,7 +9,6 @@ var focus_color = '485454'
 var unfocus_color = '000000'
 
 var save_name : String
-var file_data
 
 var focused = false
 

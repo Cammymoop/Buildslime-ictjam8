@@ -1,4 +1,7 @@
 extends Node2D
+class_name Entity
+
+signal become_active
 
 
 export var squishy = false
@@ -34,7 +37,7 @@ func _ready():
 	tile_position.y = round(position.y/TILE)
 	position = tile_position * TILE
 	target_position = position
-
+	
 	call_deferred("post_ready")
 
 func post_ready() -> void:
@@ -48,6 +51,8 @@ func post_ready() -> void:
 
 func spawn(new_tilemap, new_tile_position = false) -> void:
 	r_current_map = new_tilemap
+	print('me ' + name)
+	print('new current map = ' + new_tilemap.name)
 	if new_tile_position:
 		set_my_positionv(new_tile_position)
 	
@@ -55,6 +60,9 @@ func spawn(new_tilemap, new_tile_position = false) -> void:
 
 func set_active(new_active : bool) -> void:
 	active = new_active
+	visible = active
+	if active:
+		emit_signal("become_active")
 
 func set_my_positionv(new_tile_position : Vector2):
 	tile_position = new_tile_position
@@ -163,6 +171,17 @@ func get_map_cellv(v : Vector2):
 # warning-ignore:narrowing_conversion
 	return get_map_cell(v.x, v.y)
 
+func get_map_collision(x : int, y : int) -> bool:
+	return get_map_collisionv(Vector2(x, y))
+func get_map_collisionv(pos : Vector2) -> bool:
+	if tile_blocks_move(get_map_cellv(pos)):
+		return true
+	var e = r_current_map.get_entity_at(pos)
+	if e:
+		return true
+	return false
+
+
 func set_map_cellv(coord : Vector2, index : int) -> void:
 	set_map_cell(int(coord.x), int(coord.y), index)
 
@@ -174,42 +193,39 @@ func set_map_cell(x : int, y : int, index : int) -> void:
 
 func _move(xdelta, ydelta) -> String:
 	var facing_dir = delta_to_direction(xdelta, ydelta)
-	if tile_position.x + xdelta > MAX_TILE or tile_position.x + xdelta < 0:
-		xdelta = 0
-	if tile_position.y + ydelta > MAX_TILE or tile_position.y + ydelta < 0:
-		ydelta = 0
+#	if tile_position.x + xdelta > MAX_TILE or tile_position.x + xdelta < 0:
+#		xdelta = 0
+#	if tile_position.y + ydelta > MAX_TILE or tile_position.y + ydelta < 0:
+#		ydelta = 0
 
 	if xdelta == 0 and ydelta == 0: # hit map edge, no diagonal
 		return facing_dir
 
 	facing_dir = delta_to_direction(xdelta, ydelta) #update facing if diagonally along map edge
 
-	tile_position.x += xdelta
-	tile_position.y += ydelta
+	var new_tile_pos = tile_position + Vector2(xdelta, ydelta)
+	#tile_position.x += xdelta
+	#tile_position.y += ydelta
 
 	#can I step here?
 	if xdelta != 0 and ydelta != 0:
-		var object_dest = get_map_cellv(tile_position)
-		var object_vert = get_map_cell(tile_position.x - xdelta, tile_position.y)
-		var object_horiz = get_map_cell(tile_position.x, tile_position.y - ydelta)
-		if tile_blocks_move(object_horiz) and tile_blocks_move(object_vert):
-			tile_position.x -= xdelta
-			tile_position.y -= ydelta
+		var block_dest = get_map_collisionv(new_tile_pos)
+		var block_vert = get_map_collision(tile_position.x, tile_position.y + ydelta)
+		var block_horiz = get_map_collision(tile_position.x + xdelta, tile_position.y)
+		if block_horiz and block_vert:
 			return facing_dir
-		if tile_blocks_move(object_dest):
-			if tile_blocks_move(object_vert):
+		if block_dest:
+			if block_vert:
 				facing_dir = delta_to_direction(xdelta, 0)
-				tile_position.y -= ydelta
+				new_tile_pos.y -= ydelta
 			else: # move horizontally by default
 				facing_dir = delta_to_direction(0, ydelta)
-				tile_position.x -= xdelta
+				new_tile_pos.x -= xdelta
 	else:
-		var object_here = get_map_cellv(tile_position)
-		if NON_WALKABLE.find(object_here) != -1:
-			tile_position.x -= xdelta
-			tile_position.y -= ydelta
+		if get_map_collisionv(new_tile_pos):
 			return facing_dir
 
+	tile_position = new_tile_pos
 	target_position.x = tile_position.x * TILE
 	target_position.y = tile_position.y * TILE
 	#position.x += xdelta * TILE

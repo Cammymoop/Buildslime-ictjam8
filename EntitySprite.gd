@@ -5,7 +5,7 @@ var sprite_width = 16
 var sprite_height = 16
 
 var facing_i = 0
-export var version_i = 0 setget version_setget
+export var version_i : int = 0 setget version_set, version_get
 
 
 func _set_all_region_pos(pos : Vector2):
@@ -17,7 +17,8 @@ func set_y_stretch(amount : float):
 
 func set_showing_frame(facing : int, version = false):
 	facing_i = facing
-	if version:
+	#print([version_i, get_parent().name])
+	if typeof(version) == TYPE_INT:
 		version_i = version
 	_set_all_region_pos(Vector2(version_i * sprite_width, facing * sprite_height))
 
@@ -40,7 +41,9 @@ func set_facing_dir(facing_dir):
 			facing = 3
 	set_facing_frame(facing)
 
-func version_setget(new_version):
+func version_set(new_version):
 	version_i = new_version
 	set_showing_frame(facing_i)
+
+func version_get() -> int:
 	return version_i

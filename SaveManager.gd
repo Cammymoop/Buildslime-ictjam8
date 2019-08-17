@@ -1,5 +1,7 @@
 extends Node
 
+var CUR_SAVE_VER = 4
+
 func _ready():
 	var d :Directory = Directory.new()
 	if not d.dir_exists("user://saves"):
@@ -23,7 +25,7 @@ func save_game(save_filename : String, screenshot_name : String = 'none') -> voi
 	save_file.open("user://" + save_filename, File.WRITE)
 	print('saving: ' + save_filename)
 	
-	save_file.store_line('buildslime_save_version 3')
+	save_file.store_line('buildslime_save_version ' + str(CUR_SAVE_VER))
 	
 	var date = OS.get_date()
 	
@@ -57,7 +59,7 @@ func load_game(save_filename : String) -> void:
 	
 	var first_line = save_file.get_line()
 	var save_version = int(first_line.split(" ", false)[1])
-	if save_version > 3:
+	if save_version > CUR_SAVE_VER:
 		print('unsupported save version!')
 		return
 	print('loading save version ' + str(save_version))

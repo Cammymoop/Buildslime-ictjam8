@@ -6,6 +6,7 @@ export (Texture) var blink_tex = preload("res://assets/images/buildslime_eyes_cl
 var holding_i = 0
 
 var asleep = false
+var blink_times = 0
 
 func fall_asleep():
 	asleep = true
@@ -16,11 +17,24 @@ func wake_up():
 	$Eyes.texture = eye_tex
 
 func blink():
+	if asleep:
+		blink_times = 0
+		return
+	if blink_times <= 0:
+		blink_times = randi() % 5
+		if blink_times > 2 or blink_times < 1:
+			blink_times = 1
 	$Eyes.texture = blink_tex
 	$Blink.start()
 
 func _on_unblink():
+	blink_times -= 1
 	$Eyes.texture = eye_tex
+	if blink_times > 0:
+		$ReBlink.start()
+
+func _on_reblink():
+	blink()
 
 func _set_all_region_pos(pos : Vector2):
 	._set_all_region_pos(pos)
@@ -33,7 +47,7 @@ func set_y_stretch(amount : float):
 
 func set_holding_amt(holding):
 	holding_i = holding
-	set_showing_frame(facing_i, holding)
+	set_version(holding)
 
 func set_facing_dir(facing_dir):
 	var facing = -1

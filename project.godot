@@ -8,9 +8,14 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "Node2D",
+"class": "Entity",
+"language": "GDScript",
+"path": "res://Entity.gd"
+} ]
 _global_script_class_icons={
-
+"Entity": ""
 }
 
 [application]
@@ -29,6 +34,8 @@ JobManager="*res://JobManager.gd"
 SaveManager="*res://SaveManager.gd"
 Screenshotter="*res://Screenshotter.gd"
 Combinator="*res://Combinator.gd"
+WorldControl="*res://WorldControl.gd"
+MapGenerator="*res://MapGenerator.gd"
 
 [debug]
 
@@ -193,6 +200,6 @@ quality/driver/driver_name="GLES2"
 quality/intended_usage/framebuffer_allocation=0
 quality/intended_usage/framebuffer_allocation.mobile=1
 quality/2d/use_pixel_snap=true
-environment/default_clear_color=Color( 0.0313726, 0.101961, 0.172549, 1 )
+environment/default_clear_color=Color( 0.0117647, 0.054902, 0.0980392, 1 )
 environment/default_environment="res://default_env.tres"
 quality/dynamic_fonts/use_oversampling=false

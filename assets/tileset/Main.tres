@@ -721,3 +721,13 @@
 69/navigation_offset = Vector2( 0, 0 )
 69/shapes = [  ]
 69/z_index = 0
+70/name = "tiles.png 70"
+70/texture = ExtResource( 1 )
+70/tex_offset = Vector2( 0, 0 )
+70/modulate = Color( 1, 1, 1, 1 )
+70/region = Rect2( 144, 16, 16, 16 )
+70/tile_mode = 0
+70/occluder_offset = Vector2( 0, 0 )
+70/navigation_offset = Vector2( 0, 0 )
+70/shapes = [  ]
+70/z_index = 0
