@@ -3,9 +3,7 @@
 [ext_resource path="res://assets/tileset/Main.tres" type="TileSet" id=1]
 [ext_resource path="res://WorldMap.gd" type="Script" id=2]
 
-[node name="HomeMap" type="TileMap" groups=[
-"saveable",
-]]
+[node name="HomeMap" type="TileMap"]
 tile_set = ExtResource( 1 )
 cell_size = Vector2( 16, 16 )
 format = 1
@@ -13,7 +11,7 @@ tile_data = PoolIntArray( -196600, 21, 0, -196599, 21, 0, -196598, 21, 0, -13106
 script = ExtResource( 2 )
 is_persistent = true
 bounds_cam_margin = 2
-id = "home"
+id = "HomeMap"
 
 [node name="BG" type="CanvasLayer" parent="."]
 layer = -1

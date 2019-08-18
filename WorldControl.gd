@@ -2,26 +2,41 @@ extends Node
 
 var world_map : WorldMap = null
 
-var unloaded_maps = []
+var unloaded_maps = {}
 
 func load_home() -> void:
 	load_map("HomeMap")
 
 func load_test_map() -> void:
 	load_map("TestMap")
-	get_node("/root/GlobalData").current_map = 'test'
 
-func load_map(target_map_name : String) -> void:
+func load_map(target_map_name : String, spawn_entities : bool = true) -> void:
 	if not ResourceLoader.exists("res://assets/maps/" + target_map_name + '.tscn'):
 		print('Could not find map scene: ' + target_map_name)
 		return
 	
 	var map_instance = load("res://assets/maps/" + target_map_name + ".tscn").instance()
+	if map_instance.id != target_map_name:
+		print('map name id mismatch. name: ' + target_map_name + ' id: ' + map_instance.id)
 	_load_map(map_instance)
+	
+	if spawn_entities:
+		spawn_entities()
+	
+	if unloaded_maps.has(world_map.id):
+		var save = unloaded_maps[world_map.id]
+		world_map.restore_save(save, save['save_version'])
+	
 	var player = get_player()
 	if player:
 		player.set_camera_bounds(world_map.get_camera_bounds())
 	get_node("/root/GlobalData").current_map = target_map_name
+
+func spawn_entities() -> void:
+	var entities = world_map.get_entities()
+	
+	for ent in entities:
+		ent.spawn(world_map)
 
 func load_job(job_num : int) -> void:
 	var player = get_player()
@@ -38,12 +53,6 @@ func load_job(job_num : int) -> void:
 	var job = job_manager.get_job(job_num)
 	
 	get_node("/root/UI").set_popup_goal(job.get_job_goal())
-#	change_to_job_map()
-#	set_my_position(4, 4)
-#	load_job_popup(job_num)
-#	load_job_rewards(job_num)
-#	#show_map_popup()
-#	make_map_popup()
 	load_map("JobMap")
 	
 	get_node("/root/MapGenerator").generate(world_map, job.get_spawn_params())
@@ -57,11 +66,6 @@ func _load_map(new_world_map : TileMap) -> void:
 	if not world_map.is_inside_tree():
 		get_node("/root/Root").add_child(world_map)
 		#print('adding ' + world_map.name + ' to the tree')
-	
-	var entities = world_map.get_entities()
-	
-	for ent in entities:
-		ent.spawn(world_map)
 	
 	world_map.visible = true
 
@@ -125,7 +129,36 @@ func clear_map() -> void:
 	world_map = null
 
 func unload_map() -> void:
-	if not world_map.is_persistent:
-		world_map.queue_free()
-	else:
-		world_map.visible = false
+	if world_map.is_persistent:
+		var serialized = world_map.serialize_for_save()
+		unloaded_maps[world_map.id] = serialized
+	world_map.queue_free()
+
+func serialize_for_save() -> Dictionary:
+	var cur_map_serialized = world_map.serialize_for_save()
+	var serialized = {
+		"name": get_name(),
+		"node_path": str(get_path()),
+		"mode": 'restore',
+		
+		"unloaded_maps": unloaded_maps,
+		"cur_world_map": cur_map_serialized,
+	}
+	return serialized
+
+func restore_save(serialized, save_version) -> String:
+	unloaded_maps = {}
+	
+	var cur_map = serialized['cur_world_map']
+	if save_version < 4:
+		cur_map['id'] = cur_map['name']
+	load_map(cur_map['id'])
+	
+	world_map.restore_save(cur_map, cur_map['save_version'])
+	
+	unloaded_maps = serialized['unloaded_maps']
+	
+	return "world_post_load"
+
+func world_post_load() -> void:
+	spawn_entities()

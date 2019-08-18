@@ -40,7 +40,7 @@ JobManager="*res://JobManager.gd"
 SaveManager="*res://SaveManager.gd"
 Screenshotter="*res://Screenshotter.gd"
 Combinator="*res://Combinator.gd"
-WorldControl="*res://WorldControl.gd"
+WorldControl="*res://WorldControl.tscn"
 MapGenerator="*res://MapGenerator.gd"
 UI="*res://UI.tscn"
 

@@ -15,7 +15,7 @@ script = ExtResource( 2 )
 is_persistent = true
 is_modifiable = false
 bounds_cam_margin = 2
-id = "test"
+id = "Village"
 
 [node name="Entities" type="Node2D" parent="."]
 

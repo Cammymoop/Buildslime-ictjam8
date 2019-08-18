@@ -23,6 +23,7 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_group_": true
 }
+enable_debug = false
 
 [node name="EntitySprite" type="Sprite" parent="Player"]
 position = Vector2( 8, 8 )

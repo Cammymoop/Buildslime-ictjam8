@@ -363,6 +363,7 @@ func make_sleep_tent(coord: Vector2) -> bool:
 func serialize_for_save() -> Dictionary:
 	var serialized = {
 		"name": get_name(),
+		"node_path": str(get_path()),
 		"mode": 'restore',
 		
 		"tile_pos_x": tile_position.x,
@@ -392,7 +393,7 @@ func restore_save(serialized, save_version) -> void:
 	change_facing(serialized['facing'])
 	set_my_position(serialized['tile_pos_x'], serialized['tile_pos_y'])
 	
-	if serialized['in_tent']:
+	if save_version > 3 and serialized['in_tent']:
 		go_in_tent()
 	else:
 		get_out_of_tent()

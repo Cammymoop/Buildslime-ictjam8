@@ -1,11 +1,16 @@
 extends Node
 
+signal post_load
+
 var CUR_SAVE_VER = 4
 
 func _ready():
 	var d :Directory = Directory.new()
 	if not d.dir_exists("user://saves"):
 		d.make_dir("user://saves")
+
+func get_cur_save_version() -> int:
+	return CUR_SAVE_VER
 
 func save_game(save_filename : String, screenshot_name : String = 'none') -> void:
 	if len(save_filename) < 1:
@@ -74,7 +79,38 @@ func load_game(save_filename : String) -> void:
 # warning-ignore:unused_variable
 		var fifth_line = save_file.get_line() # screenshot name
 	
-	var root_node = get_node('/root/Root') # this only works in gamescene anyway
+	if save_version < 4:
+		load_legacy_file_3(save_file, save_version)
+	else:
+		while not save_file.eof_reached():
+			var line = save_file.get_line()
+			if not line:
+				continue
+			var load_node = parse_json(line)
+			
+			if not load_node:
+				print('json parse fail')
+				continue
+			
+			if load_node['mode'] != 'restore':
+				#only support restoring object state atm, possible need to create objects at some point
+				continue
+			
+			var existing_node = get_node(load_node['node_path'])
+			if existing_node:
+				print('calling restore on: ' + existing_node.get_path())
+				var post_load_callback = existing_node.call('restore_save', load_node, save_version)
+				if post_load_callback:
+					connect("post_load", existing_node, post_load_callback, [], CONNECT_ONESHOT)
+			else:
+				push_error('couldnt find ' + load_node['node_path'])
+	
+	emit_signal("post_load")
+	
+func load_legacy_file_3(save_file, save_version) -> void:
+	var maps = {}
+	var loaded_map = ''
+	var root_node = get_node('/root/Root')
 	while not save_file.eof_reached():
 		var line = save_file.get_line()
 		if not line:
@@ -89,19 +125,46 @@ func load_game(save_filename : String) -> void:
 			#only support restoring object state atm, possible need to create objects at some point
 			continue
 		
-		var existing_node = null
-		if load_node['name'] == "GlobalData":
-			existing_node = get_node("/root/GlobalData")
-		else:
+		# dont try to load the maps instead well make a worldContrl later
+		if load_node['name'] == 'HomeMap' or load_node['name'] == 'JobMap':
+			maps[load_node['name']] = load_node
+			continue
+		
+		if load_node['name'] == 'Player':
+			loaded_map = 'HomeMap' if load_node['at_home'] else 'JobMap'
+		
+		var existing_node = get_node("/root/GlobalData")
+		if load_node['name'] != 'GlobalData':
 			existing_node = root_node.find_node(load_node['name'])
 		
 		if existing_node:
 			print('calling restore on: ' + existing_node.get_path())
-			existing_node.call('restore_save', load_node, save_version)
+			var post_load_callback = existing_node.call('restore_save', load_node, save_version)
+			if post_load_callback:
+				connect("post_load", existing_node, post_load_callback, [], CONNECT_ONESHOT)
 		else:
-			print('couldnt find ' + load_node['name'])
-			root_node.print_tree_pretty()
-			existing_node.get_path() # error out
+			push_error('couldnt find ' + load_node['name'])
+	
+	var world_control = {
+		"name": get_name(),
+		"node_path": str(get_path()),
+		"mode": 'restore',
+	}
+	
+	var cur_map_save = maps[loaded_map]
+	cur_map_save['save_version'] = save_version
+	world_control['cur_world_map'] = cur_map_save
+	
+	world_control['unloaded_maps'] = {}
+	if loaded_map == "JobMap":
+		var home_world = maps['HomeMap']
+		home_world['save_version'] = save_version
+		world_control['unloaded_maps'] = {'HomeMap': home_world}
+	
+	var post_load_callback = get_node("/root/WorldControl").restore_save(world_control, save_version)
+	if post_load_callback:
+		connect("post_load", get_node("/root/WorldControl"), post_load_callback, [], CONNECT_ONESHOT)
+	
 
 func _is_alpha_num(c : String) -> bool:
 	if len(c) != 1:
@@ -167,7 +230,7 @@ func get_save_meta(filename) -> Dictionary:
 	
 	var first_line = save_file.get_line()
 	var save_version = int(first_line.split(" ", false)[1])
-	if save_version > 3:
+	if save_version > CUR_SAVE_VER:
 		print('unsupported save version!')
 		return {'success': false}
 	#print('getting meta for save version: ' + str(save_version))

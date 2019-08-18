@@ -68,19 +68,25 @@ func release_pause_focus(name):
 func serialize_for_save() -> Dictionary:
 	var serialized = {
 		"name": get_name(),
+		"node_path": str(get_path()),
 		"mode": 'restore',
 		
 		"max_job_completed": max_job_completed,
 		'current_job_num': current_job_num,
-		'current_map': current_map,
 		
 		'save_name': save_name,
 	}
 	return serialized
 
-func restore_save(serialized, save_version) -> void:
+func restore_save(serialized, save_version) -> String:
 	max_job_completed = serialized['max_job_completed']
 	current_job_num = serialized['current_job_num']
-	current_map = serialized['current_map']
 	
 	save_name = serialized['save_name']
+	
+	return "post_load"
+
+func post_load() -> void:
+	if current_map == "JobMap":
+		var job = get_node("/root/JobManager").get_job(current_job_num)
+		get_node("/root/UI").set_popup_goal(job.get_job_goal())

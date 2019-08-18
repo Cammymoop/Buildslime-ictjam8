@@ -86,6 +86,8 @@ func serialize_for_save() -> Dictionary:
 		"id": id,
 		"mode": 'restore',
 		
+		"save_version": get_node("/root/SaveManager").get_cur_save_version(),
+		
 		"width": map_width,
 		"height": map_height,
 		"start_x": start_x,
@@ -97,7 +99,6 @@ func serialize_for_save() -> Dictionary:
 		"tiles_hflip": tiles_hflip,
 		"tiles_vflip": tiles_vflip,
 		"tiles_transpose": tiles_transpose,
-		"visible": visible,
 	}
 	return serialized
 
@@ -134,8 +135,6 @@ func restore_save(serialized, save_version) -> void:
 	
 	if save_version >= 4:
 		is_modifiable = serialized['is_modifiable']
-	
-	visible = serialized['visible']
 	auto_tile_whole_map()
 
 func coord_is_in_bounds(coord : Vector2) -> bool:
