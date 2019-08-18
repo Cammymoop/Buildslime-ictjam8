@@ -2,9 +2,6 @@ extends "res://Entity.gd"
 
 export var enable_debug = true
 
-var r_tile_map : TileMap = null
-var r_job_manager = null
-
 var hold_1 : int = 0
 var hold_2 : int = 0
 var hold_3 : int = 0
@@ -13,8 +10,6 @@ var hold_count : int = 0
 # rotate/flip by holding down grab
 var holding_button : bool = false
 
-var at_home = true
-
 var holding_move = false
 var hold_move_ready = false
 
@@ -22,42 +17,17 @@ var debug_mode = false
 
 var modification_queue = []
 
-var job_rewards : Array = []
-
-var current_job_num = 0
-
-var make_mp = false
-
-var spawn_params : Dictionary = {
-	'spawns': [
-		{'object': 'tree', 'frequency': 16},
-		{'object': 'sheep', 'frequency': 4, 'mirrorable': true},
-		{'object': 'rock', 'frequency': 8},
-		{'object': 'grass', 'frequency': 18, 'mirrorable': true},
-		{'object': 'stick', 'frequency': 6, 'mirrorable': true},
-		{'object': 'puddle', 'frequency': 3, 'mirrorable': true},
-		{'object': 'seed', 'frequency': 1, 'mirrorable': true},
-	],
-	'has_forest': false,
-	'map_width': 40
-}
+var in_tent = false
 
 func _ready():
 	randomize()
 	
 	#print("spawned at " + str(tile_position))
-	
-	#r_tile_map = get_parent().get_node("HomeMap")
-	
-	r_job_manager = get_node("/root/JobManager")
-	
 	get_node("/root/GlobalData").new_game()
 	
 	if OS.has_feature('debug') and enable_debug:
 		debug_mode = true
-		get_node("/root/GlobalData").max_job_completed = r_job_manager.num_jobs()
-	
-	#get_parent().find_node("MenuControls").set_next_available_job(min(jobs_finished + 1, r_job_manager.num_jobs()))
+		get_node("/root/GlobalData").max_job_completed = get_node("/root/JobManager").num_jobs()
 	
 	call_deferred("post_ready")
 
@@ -66,118 +36,18 @@ func post_ready() -> void:
 	if debug_mode:
 		NON_GRABBABLE = []
 
-func regen_map() -> void:
-	if r_current_map.name == "HomeMap":
-		print('dont overwrite home!!!')
-		return
-	get_node("/root/MapGenerator").generate(r_current_map, spawn_params)
-	auto_tile_whole_map()
-
-func auto_tile_whole_map() -> void:
-	r_tile_map.update_bitmask_region(Vector2(-1, -1), Vector2(41, 41))
-
-func get_a_job(job_num : int) -> void:
-	current_job_num = job_num
-	var job = r_job_manager.get_job(job_num)
-	change_to_job_map()
-	set_my_position(4, 4)
-	set_spawn_params(job.get_spawn_params())
-	regen_map()
-	load_job_popup(job_num)
-	load_job_rewards(job_num)
-	#show_map_popup()
-	make_map_popup()
-
-func load_job_rewards(job_num : int) -> void:
-	var job = r_job_manager.get_job(job_num)
-	job_rewards = job.get_rewards()
-
-func load_job_popup(job_num : int):
-	var job = r_job_manager.get_job(job_num)
-	clear_popup()
-	var popup = find_parent("Root").find_node("MapPopup")
-	var goal = job.get_node("JobGoal")
-	job.remove_child(goal)
-	popup.add_child(goal)
-	goal.visible = true
-
-func place_rewards() -> void:
-	var home_map = get_parent().find_node("HomeMap")
-	for reward in job_rewards:
-		var safety = 1000
-		while safety >= 0:
-			var rx = randi() % 19
-			var ry = randi() % 19
-			if rx == 4 and ry == 4:
-				safety -= 1
-				continue
-			var existing = home_map.get_cell(rx, ry)
-			if existing > 0:
-				safety -= 1
-				continue
-			home_map.set_cell(rx, ry, names[reward])
-			break
-		if safety < 0:
-			print ('couldnt find a spot to spawn reward: ' + reward)
-	home_map.update_bitmask_region()
-
-func job_complete() -> void:
-	var global = get_node("/root/GlobalData")
-	global.max_job_completed = max(global.max_job_completed, current_job_num)
-
-func make_map_popup() -> void:
-	make_mp = true
-
-func show_map_popup(quick_mode : bool = false) -> void:
-	r_current_map.visible = false
-	visible = false
-	if quick_mode:
-		get_parent().find_node("MapPopup").show_quick()
-	else:
-		get_parent().find_node("MapPopup").show()
-
-func hide_map_popup() -> void:
-	r_current_map.visible = true
-	visible = true
-
-func change_to_job_map() -> void:
+func spawn(new_tilemap, new_tile_position = false) -> void:
+	.spawn(new_tilemap, new_tile_position)
 	clear_modifications()
-	at_home = false
-	get_node("/root/GlobalData").set_to_map_job(current_job_num)
-	r_tile_map.visible = false
-	r_tile_map = get_parent().get_node("JobMap")
-	r_tile_map.visible = true
-	spawn(r_tile_map)
-	#get_parent().find_node("MenuControls").call_deferred('set_job_options')
-	get_parent().find_node("ColorRectJob").visible = true
-func change_to_home_map() -> void:
-	clear_modifications()
-	at_home = true
-	get_node("/root/GlobalData").set_to_map_home()
-	r_tile_map.visible = false
-	r_tile_map = get_parent().get_node("HomeMap")
-	r_tile_map.visible = true
-	spawn(r_tile_map)
-	#get_parent().find_node("MenuControls").set_next_available_job(min(jobs_finished + 1, r_job_manager.num_jobs()))
-	#get_parent().find_node("MenuControls").call_deferred('set_home_options')
-	get_parent().find_node("ColorRectJob").visible = false
-	call_deferred('clear_popup')
 
-func clear_popup():
-	var popup = get_parent().find_node("MapPopup")
-	for child in popup.get_children():
-		child.queue_free()
-
-func set_spawn_params(new_params : Dictionary, name_to_id : bool = true) -> void:
-	spawn_params = new_params
-	#print(spawn_params)
-	if name_to_id:
-		for sp in spawn_params['spawns']:
-			sp['object'] = names[sp['object']]
+func focus_camera() -> void:
+	$Camera2D.reset_smoothing()
 
 func rotate_a_thing(tile_coord, counterclockwise = false) -> void:
 	var ind = get_map_cellv(tile_coord)
 	if not ind:
+		return
+	if not get_node("/root/Combinator").can_rotate(ind):
 		return
 	var h_flip = r_current_map.is_cell_x_flipped(tile_coord.x, tile_coord.y)
 	var v_flip = r_current_map.is_cell_y_flipped(tile_coord.x, tile_coord.y)
@@ -232,6 +102,10 @@ func smack() -> void:
 		handle_special_smack(first, second, result)
 		return
 	
+	if not r_current_map.is_map_modifiable():
+		cant_build_here()
+		return
+	
 	$SmackSound.play()
 	set_map_cellv(facing_t, result[0])
 	set_map_cellv(facing_t_2, result[1])
@@ -260,8 +134,11 @@ func handle_special_smack(first_t : int, second_t : int, special : Array):
 			else:
 				text = 'I can\'t seem to make anything with :tile.' + str(lookup_tile) + ':.'
 			
-			var pause_screen = find_parent('Root').find_node('PauseScreen')
+			var pause_screen = get_node("/root/UI").get_pause_screen()
 			pause_screen.show_quick_text(text)
+
+func is_holding_stuff() -> bool:
+	return hold_count > 0
 
 # check if you're holding too many first
 func pick_up(index) -> void:
@@ -308,6 +185,7 @@ func pop_modification() -> void:
 	var mod = modification_queue.pop_back()
 	restore_inv(mod['inventory'])
 	restore_pos_facing(mod['pos'], mod['facing'])
+	stop_being_invisible()
 	
 	restore_tile_mod(mod['tile1'])
 	if mod['tile2']:
@@ -336,11 +214,6 @@ func _process(delta) -> void:
 	if not active:
 		return
 	
-	if make_mp:
-		make_mp = false
-		show_map_popup()
-		return
-	
 	._process(delta)
 	
 	if holding_button and not Input.is_action_pressed("action_grab"):
@@ -349,25 +222,29 @@ func _process(delta) -> void:
 	#movement and flip/rotate
 	var move_h = false
 	var move_v = false
-	if not holding_button:
-		if Input.is_action_just_pressed("move_up"):
-			move_v = "up"
-		elif Input.is_action_just_pressed("move_down"):
-			move_v = "down"
-		
-		if Input.is_action_just_pressed("move_left"):
-			move_h = "left"
-		elif Input.is_action_just_pressed("move_right"):
-			move_h = "right"
-	else:
-		var tile = get_map_cellv(get_facing_tile_coord())
-		if not AUTOTILES.has(tile):
-			if Input.is_action_just_pressed("move_up") or Input.is_action_just_pressed("move_down"):
-				flip_a_thing(get_facing_tile_coord())
-			if Input.is_action_just_pressed("move_right"):
-				rotate_a_thing(get_facing_tile_coord())
+	if not in_tent:
+		if not holding_button:
+			if Input.is_action_just_pressed("move_up"):
+				move_v = "up"
+			elif Input.is_action_just_pressed("move_down"):
+				move_v = "down"
+			
 			if Input.is_action_just_pressed("move_left"):
-				rotate_a_thing(get_facing_tile_coord(), true)
+				move_h = "left"
+			elif Input.is_action_just_pressed("move_right"):
+				move_h = "right"
+		else:
+			var tile = get_map_cellv(get_facing_tile_coord())
+			if not AUTOTILES.has(tile):
+				if Input.is_action_just_pressed("move_up") or Input.is_action_just_pressed("move_down"):
+					flip_a_thing(get_facing_tile_coord())
+				if Input.is_action_just_pressed("move_right"):
+					rotate_a_thing(get_facing_tile_coord())
+				if Input.is_action_just_pressed("move_left"):
+					rotate_a_thing(get_facing_tile_coord(), true)
+	else:
+		if Input.is_action_just_pressed("move_down"):
+			move_v = "down"
 	
 	if holding_move:
 		var hold_dir_h = false
@@ -383,10 +260,7 @@ func _process(delta) -> void:
 			hold_dir_h = "right"
 
 		if not (hold_dir_h or hold_dir_v):
-			holding_move = false
-			hold_move_ready = false
-			$InitialMoveTimer.stop()
-			$MoveTimer.stop()
+			stop_holding_move()
 		elif hold_move_ready:
 			move_h = hold_dir_h
 			move_v = hold_dir_v
@@ -396,41 +270,69 @@ func _process(delta) -> void:
 		$InitialMoveTimer.start()
 	
 	if move_h or move_v:
+		if in_tent:
+			get_out_of_tent()
+			make_sleep_tent(tile_position)
 		var new_facing = move_tile(move_h, move_v)
 		if not Input.is_action_pressed("hold_strafe"):
 			change_facing(new_facing)
 		
 		var cur_map = get_node("/root/GlobalData").current_map
-		if cur_map == 'home' and tile_position.y < -1:
-			get_node("/root/WorldControl").load_test_map()
-			set_my_position(4, 4)
+		if cur_map == 'HomeMap' and tile_position.y < -1:
+			get_node("/root/WorldControl").load_map("Village")
+			set_my_position(tile_position.x, 39)
+		if cur_map == 'Village' and tile_position.y > 42:
+			get_node("/root/WorldControl").load_map("HomeMap")
+			set_my_position(9, 0)
 	else:
 		if Input.is_action_just_pressed("action_grab"):
 			holding_button = true
-			var facing_t = get_facing_tile_coord()
-			if r_current_map.coord_is_in_bounds(facing_t):
-				var ind = get_map_cellv(facing_t)
-				if ind > 0:
-					if NON_GRABBABLE.find(ind) == -1 and hold_count < 3:
-						#print("got object " + str(ind))
-						set_map_cellv(facing_t, 0)
-						add_modification(facing_t, ind)
-						pick_up(ind)
+			if not r_current_map.is_map_modifiable():
+				cant_build_here()
+			else:
+				var facing_t = get_facing_tile_coord()
+				if r_current_map.coord_is_in_bounds(facing_t):
+					var ind = get_map_cellv(facing_t)
+					if ind > 0:
+						if NON_GRABBABLE.find(ind) == -1 and hold_count < 3:
+							#print("got object " + str(ind))
+							set_map_cellv(facing_t, 0)
+							add_modification(facing_t, ind)
+							pick_up(ind)
+						else:
+							print("cant pick up")
 					else:
-						print("cant pick up")
-				else:
-					if hold_count > 0:
-						add_modification(facing_t, 0)
-						ind = drop()
-						#print("placed object " + str(ind))
-						set_map_cellv(facing_t, ind)
+						if hold_count > 0:
+							add_modification(facing_t, 0)
+							ind = drop()
+							#print("placed object " + str(ind))
+							set_map_cellv(facing_t, ind)
 		elif Input.is_action_just_pressed("action_smack"):
 			smack()
 		elif Input.is_action_just_pressed("action_rewind"):
 			pop_modification()
-		elif Input.is_action_just_pressed("action_quick_job_view"):
-			if not at_home:
-				show_map_popup(true)
+
+func stop_holding_move() -> void:
+	holding_move = false
+	hold_move_ready = false
+	$InitialMoveTimer.stop()
+	$MoveTimer.stop()
+
+func cant_build_here() -> void:
+	var pause_screen = get_node("/root/UI").get_pause_screen()
+	pause_screen.show_quick_text("Hey you can't build here!", true)
+
+#returns facing direction
+func move_tile(direction_h, direction_v = false) -> String:
+	if (typeof(direction_h) == TYPE_STRING and direction_h == 'up') or (typeof(direction_v) == TYPE_STRING and direction_v == 'up'):
+		var deltas = get_move_deltas(direction_h, direction_v)
+		var dest_tile = get_map_cellv(tile_position + deltas)
+		if dest_tile == names['tent']:
+			go_in_tent()
+			make_tent_sleep(tile_position + deltas)
+			_force_move(deltas.x, deltas.y)
+			return 'down'
+	return .move_tile(direction_h, direction_v)
 
 func clear_inventory() -> void:
 	hold_1 = 0
@@ -439,27 +341,24 @@ func clear_inventory() -> void:
 	hold_count = 0
 	$EntitySprite.set_showing_frame(0, 0)
 
-func menu_selection(value : String, extra) -> void:
-	match value:
-		"job":
-			if not extra:
-				get_a_job(get_node("/root/GlobalData").max_job_completed + 1)
-			else:
-				get_a_job(extra)
-		"view-job":
-			make_map_popup()
-		"leave-job":
-			if extra == 1:
-				clear_inventory()
-				change_to_home_map()
-				set_my_position(4, 4)
-		"finish-job":
-			place_rewards()
-			job_complete()
-			change_to_home_map()
-			set_my_position(4, 4)
-		_:
-			print("Unkown menu option: " + value)
+func become_invisible() -> void:
+	$EntitySprite.set_visible(false)
+func stop_being_invisible() -> void:
+	$EntitySprite.set_visible(true)
+
+func go_in_tent() -> void:
+	in_tent = true
+	change_facing('down')
+	stop_holding_move()
+	become_invisible()
+func get_out_of_tent() -> void:
+	in_tent = false
+	stop_being_invisible()
+
+func make_tent_sleep(coord : Vector2) -> bool:
+	return r_current_map.transform_object_from_to(coord, 'tent', 'sleep_in_tent')
+func make_sleep_tent(coord: Vector2) -> bool:
+	return r_current_map.transform_object_from_to(coord, 'sleep_in_tent', 'tent')
 
 func serialize_for_save() -> Dictionary:
 	var serialized = {
@@ -472,36 +371,34 @@ func serialize_for_save() -> Dictionary:
 		"pos_y": position.y,
 		"facing": facing,
 		
-		"at_home": at_home,
-		
 		"hold_count": hold_count,
 		"hold_1": hold_1,
 		"hold_2": hold_2,
 		"hold_3": hold_3,
 		
-		"current_job_num": current_job_num,
+		"in_tent": in_tent,
 	}
 	return serialized
 
 func restore_save(serialized, save_version) -> void:
 	clear_modifications()
+	stop_being_invisible()
 	if save_version < 3:
 		get_node("/root/GlobalData").max_job_completed = serialized['jobs_finished']
-	
-	if serialized['at_home']:
-		change_to_home_map()
-		clear_popup()
-	else:
-		current_job_num = serialized['current_job_num']
-		change_to_job_map()
-		load_job_popup(current_job_num)
-		load_job_rewards(current_job_num)
 	
 	clear_inventory()
 	restore_inv([serialized['hold_1'], serialized['hold_2'], serialized['hold_3']])
 	
 	change_facing(serialized['facing'])
 	set_my_position(serialized['tile_pos_x'], serialized['tile_pos_y'])
+	
+	if serialized['in_tent']:
+		go_in_tent()
+	else:
+		get_out_of_tent()
+
+func set_camera_bounds(bounds : Rect2) -> void:
+	$Camera2D.set_world_cam_bounds(bounds)
 
 func _on_MoveTimer_timeout():
 	if not holding_move:

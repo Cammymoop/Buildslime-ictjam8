@@ -20,8 +20,6 @@ var DOWN_ANGLE = 0
 var LEFT_ANGLE = PI/2
 var RIGHT_ANGLE = PI + PI/2
 
-var MAX_TILE = 40
-
 var TILE = 16
 
 var NON_WALKABLE = []
@@ -51,8 +49,6 @@ func post_ready() -> void:
 
 func spawn(new_tilemap, new_tile_position = false) -> void:
 	r_current_map = new_tilemap
-	print('me ' + name)
-	print('new current map = ' + new_tilemap.name)
 	if new_tile_position:
 		set_my_positionv(new_tile_position)
 	
@@ -90,8 +86,11 @@ func change_facing(direction_h, direction_v = false) -> void:
 					facing_angle = UP_ANGLE
 				'down':
 					facing_angle = DOWN_ANGLE
+				false:
+					print([direction_h, direction_v])
+					return
 				_:
-					print('not a vertical direction: ' + direction_v)
+					print('not a vertical direction: ' + str(direction_v))
 					return
 	facing = direction
 	$EntitySprite.set_facing_dir(direction)
@@ -117,8 +116,7 @@ func standard_move(direction):
 	var new_facing = move_tile(direction)
 	change_facing(new_facing)
 
-#returns facing direction
-func move_tile(direction_h, direction_v = false) -> String:
+func get_move_deltas(direction_h, direction_v = false) -> Vector2:
 	var xd = 0
 	var yd = 0
 	match direction_h:
@@ -134,7 +132,7 @@ func move_tile(direction_h, direction_v = false) -> String:
 			pass
 		_:
 			print('not a h direction: ' + direction_h)
-			return 'up'
+			return Vector2(0, 0)
 	match direction_v:
 		'up':
 			yd = -1
@@ -144,13 +142,18 @@ func move_tile(direction_h, direction_v = false) -> String:
 			pass
 		_:
 			print('not a vertical direction: ' + direction_v)
-			return 'up'
-	return _move(xd, yd)
+			return Vector2(0, 0)
+	return Vector2(xd, yd)
+
+#returns facing direction
+func move_tile(direction_h, direction_v = false) -> String:
+	var deltas = get_move_deltas(direction_h, direction_v)
+	return _move(deltas.x, deltas.y)
 
 func tile_blocks_move(tile):
 	return NON_WALKABLE.find(tile) != -1
 
-func delta_to_direction(xdelta, ydelta):
+func delta_to_direction(xdelta : int, ydelta : int):
 	var direction = ''
 	match xdelta:
 		1:
@@ -168,6 +171,7 @@ func delta_to_direction(xdelta, ydelta):
 func get_map_cell(x : int, y : int):
 	return r_current_map.get_cell(x, y)
 func get_map_cellv(v : Vector2):
+# warning-ignore:narrowing_conversion
 # warning-ignore:narrowing_conversion
 	return get_map_cell(v.x, v.y)
 
@@ -193,10 +197,13 @@ func set_map_cell(x : int, y : int, index : int) -> void:
 
 func _move(xdelta, ydelta) -> String:
 	var facing_dir = delta_to_direction(xdelta, ydelta)
-#	if tile_position.x + xdelta > MAX_TILE or tile_position.x + xdelta < 0:
-#		xdelta = 0
-#	if tile_position.y + ydelta > MAX_TILE or tile_position.y + ydelta < 0:
-#		ydelta = 0
+	
+	
+	if r_current_map.do_bounds_block_move():
+		if not r_current_map.coord_is_in_bounds(tile_position + Vector2(xdelta, 0)):
+			xdelta = 0
+		if not r_current_map.coord_is_in_bounds(tile_position + Vector2(0, ydelta)):
+			ydelta = 0
 
 	if xdelta == 0 and ydelta == 0: # hit map edge, no diagonal
 		return facing_dir
@@ -231,6 +238,12 @@ func _move(xdelta, ydelta) -> String:
 	#position.x += xdelta * TILE
 	#position.y += ydelta * TILE
 	return facing_dir
+
+func _force_move(xdelta, ydelta) -> void:
+	var new_tile_pos = tile_position + Vector2(xdelta, ydelta)
+	tile_position = new_tile_pos
+	target_position.x = tile_position.x * TILE
+	target_position.y = tile_position.y * TILE
 
 func set_y_stretch(amount: float) -> void:
 	$EntitySprite.set_y_stretch(amount)

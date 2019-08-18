@@ -8,7 +8,7 @@
 8 sheered NO_WALK
 9 cloth
 10 stick
-11 tent NO_WALK
+11 tent NO_WALK NO_ROTATE
 12 puddle AUTO_TILE NO_WALK NO_GRAB
 13 sticks
 14 table NO_WALK
@@ -68,3 +68,4 @@
 68 bird
 69 camera
 70 double_fence NO_GRAB NO_WALK
+71 sleep_in_tent

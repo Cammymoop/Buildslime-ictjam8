@@ -2,10 +2,13 @@ extends Control
 
 signal took_screenshot
 signal force_unpause
+signal unpaused
 
 var btext_scn = preload("res://BetterTextPopup.tscn")
 
 var paused = false
+
+var just_paused = false
 
 var r_main_menu : VBoxContainer = null
 var r_tutorial : Control = null
@@ -18,7 +21,7 @@ var take_screenshot = false
 func _ready() -> void:
 	r_main_menu = find_node("MainMenu")
 	
-	r_tutorial = find_parent("Overlay").find_node("Tutorial")
+	r_tutorial = find_parent("UI").find_node("Tutorial")
 
 func make_menu_option(value, text : String) -> Dictionary:
 	return {'value': value, 'text': text}
@@ -54,10 +57,14 @@ func get_job_options() -> Array:
 	return options
 
 func pause() -> bool:
+	if paused:
+		just_paused = true
+		return true
 	var can_pause = get_node("/root/GlobalData").get_pause_focus('pause-screen')
 	if not can_pause:
 		return false
 	paused = true
+	just_paused = true
 	get_tree().paused = true
 	visible = true
 	r_tutorial.visible = false
@@ -70,14 +77,20 @@ func show_pause_menu():
 	else:
 		options = get_home_options()
 	r_main_menu.show_menu(options)
-	r_main_menu.connect("menu_closed", self, "unpause", [], CONNECT_ONESHOT)
+	r_main_menu.connect("menu_closed", self, "defer_unpause", [], CONNECT_ONESHOT)
 	r_main_menu.open_menu()
 
+func defer_unpause() -> void:
+	call_deferred('unpause')
+
 func unpause() -> void:
+	if just_paused:
+		return
 	paused = false
 	get_tree().paused = false
 	visible = false
 	get_node("/root/GlobalData").release_pause_focus('pause-screen')
+	emit_signal("unpaused")
 
 func force_unpause() -> void:
 	if r_main_menu.is_open():
@@ -85,6 +98,7 @@ func force_unpause() -> void:
 	emit_signal("force_unpause")
 
 func show_quick_text(text : String, error : bool = false):
+	print('show text')
 	if pause():
 		var text_popup = btext_scn.instance()
 		text_popup.show_text(text, error)
@@ -96,6 +110,8 @@ func show_quick_text(text : String, error : bool = false):
 func _process(delta) -> void:
 	if take_screenshot:
 		return
+	if just_paused:
+		just_paused = false
 	if Input.is_action_just_pressed("action_menu_open"):
 		if paused:
 			force_unpause()

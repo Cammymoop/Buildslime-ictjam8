@@ -36,7 +36,6 @@ func set_active() -> void:
 
 func select() -> void:
 	emit_signal("selected", value, extra)
-	#find_parent("Root").find_node("Player").menu_selection(value, extra)
 
 func set_inactive() -> void:
 	is_current = false

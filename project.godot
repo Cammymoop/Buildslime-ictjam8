@@ -13,9 +13,15 @@ _global_script_classes=[ {
 "class": "Entity",
 "language": "GDScript",
 "path": "res://Entity.gd"
+}, {
+"base": "TileMap",
+"class": "WorldMap",
+"language": "GDScript",
+"path": "res://WorldMap.gd"
 } ]
 _global_script_class_icons={
-"Entity": ""
+"Entity": "",
+"WorldMap": ""
 }
 
 [application]
@@ -36,6 +42,7 @@ Screenshotter="*res://Screenshotter.gd"
 Combinator="*res://Combinator.gd"
 WorldControl="*res://WorldControl.gd"
 MapGenerator="*res://MapGenerator.gd"
+UI="*res://UI.tscn"
 
 [debug]
 

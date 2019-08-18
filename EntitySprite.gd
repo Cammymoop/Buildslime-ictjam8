@@ -7,6 +7,8 @@ var sprite_height = 16
 var facing_i = 0
 export var version_i : int = 0 setget version_set, version_get
 
+func set_visible(val : bool) -> void:
+	visible = val
 
 func _set_all_region_pos(pos : Vector2):
 	region_rect.position = pos

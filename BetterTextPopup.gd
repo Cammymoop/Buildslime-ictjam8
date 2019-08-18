@@ -63,12 +63,15 @@ func show_text(text : String, error : bool = false) -> void:
 func close() -> void:
 	queue_free()
 
+func dismiss() -> void:
+		emit_signal("dismissed")
+		emit_signal("selected", value, extra)
+		close()
+
 # warning-ignore:unused_argument
 func _process(delta):
 	if wait_a_bit:
 		wait_a_bit = false
 		return
 	if Input.is_action_just_pressed("action_dismiss"):
-		emit_signal("dismissed")
-		emit_signal("selected", value, extra)
-		close()
+		call_deferred('dismiss')

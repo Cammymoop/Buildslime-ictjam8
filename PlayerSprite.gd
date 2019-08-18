@@ -36,6 +36,10 @@ func _on_unblink():
 func _on_reblink():
 	blink()
 
+func set_visible(val : bool):
+	visible = val
+	$Eyes.visible = val
+
 func _set_all_region_pos(pos : Vector2):
 	._set_all_region_pos(pos)
 	$Eyes.region_rect.position = pos

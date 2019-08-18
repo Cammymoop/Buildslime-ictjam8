@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://assets/tileset/Main.tres" type="TileSet" id=1]
+[ext_resource path="res://WorldMap.gd" type="Script" id=2]
+
+[node name="JobMap" type="TileMap" groups=[
+"saveable",
+]]
+tile_set = ExtResource( 1 )
+cell_size = Vector2( 16, 16 )
+format = 1
+script = ExtResource( 2 )
+bounds_block_move = true
+id = "job"
+
+[node name="BG" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="ColorRect" type="ColorRect" parent="BG"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.0235294, 0.0196078, 0.027451, 1 )

@@ -16,6 +16,9 @@ func has_forest() -> bool:
 func get_rewards() -> Array:
 	return rewards
 
+func get_job_goal() -> TileMap:
+	return ($JobGoal as TileMap)
+
 func get_spawn_params() -> Array:
 	var spawn_params = {'map_width': 40, 'spawns': [], 'has_forest': has_forest()}
 	

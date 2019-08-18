@@ -15,8 +15,6 @@ var menu_item_count = 0
 
 var menu_open = false
 var menu_active = false
-var parent_menu = null
-var child_menu = null
 
 var has_script = false
 

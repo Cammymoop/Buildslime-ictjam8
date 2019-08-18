@@ -13,10 +13,11 @@ func generate(map : TileMap, gen_parameters : Dictionary):
 	var has_prebuilt : bool = false
 	var prebuilt : TileMap = null
 	if gen_parameters.has("prebuilt_map"):
-		print('has a prebuilt')
+		#print('has a prebuilt')
 		prebuilt = gen_parameters['prebuilt_map']
 		has_prebuilt = true
 	
+	var names = get_node("/root/Combinator").names
 	
 	for x in range(-1, map_width + 1):
 		for y in range(-1, map_width + 1):
@@ -41,6 +42,8 @@ func generate(map : TileMap, gen_parameters : Dictionary):
 			for sp in spawns:
 				if rv < sp['frequency']:
 					this_tile = sp['object']
+					if typeof(this_tile) == TYPE_STRING:
+						this_tile = names[this_tile]
 					if sp.has('mirrorable') and sp['mirrorable']:
 						mirrorable = true
 					break

@@ -13,6 +13,8 @@ var RES_SAME = -4
 
 var NON_WALKABLE : Array = []
 var NON_GRABBABLE : Array = []
+var NON_ROTATABLE : Array = []
+var NON_MIRRORABLE : Array = []
 var AUTOTILES : Array = []
 
 func _ready():
@@ -53,8 +55,17 @@ func process_name(old_line):
 					NON_WALKABLE.append(int(parts[0]))
 				'NO_GRAB':
 					NON_GRABBABLE.append(int(parts[0]))
+				'NO_ROTATE':
+					NON_ROTATABLE.append(int(parts[0]))
+				'NO_MIRROR':
+					NON_MIRRORABLE.append(int(parts[0]))
 				'AUTO_TILE':
 					AUTOTILES.append(int(parts[0]))
+
+func can_rotate(tile_index: int) -> bool:
+	return not NON_ROTATABLE.has(tile_index)
+func can_mirror(tile_index: int) -> bool:
+	return not NON_ROTATABLE.has(tile_index)
 
 # rule matching
 func _ingredients_match_rule_exact(rule : Dictionary, ing1 : int, ing2 : int) -> bool:
