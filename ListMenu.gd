@@ -10,6 +10,7 @@ var prompt_menu_scn : PackedScene = preload("res://PromptMenu.tscn")
 var text_prompt_scn : PackedScene = preload("res://TextPrompt.tscn")
 var file_menu_scn : PackedScene = preload("res://FileMenu.tscn")
 var text_popup_scn : PackedScene = preload("res://TextPopup.tscn")
+var list_menu_scn_path = "res://ListMenu.tscn"
 
 var menu_item_count = 0
 
@@ -20,14 +21,34 @@ var has_script = false
 
 func _ready():
 	if item_script:
-		var script_obj = item_script.new()
-		script_obj.name = "Script"
-		script_obj.set_menu(self)
-		add_child(script_obj)
-		has_script = true
+		_set_menu_script(item_script)
+#		var script_obj = item_script.new()
+#		script_obj.name = "Script"
+#		script_obj.set_menu(self)
+#		add_child(script_obj)
+#		has_script = true
+
+func set_menu_script(script_name : String) -> void:
+	var scr : = load("res://menu_scripts/" + script_name) as Script
+	if not scr:
+		push_error('couldn\'t load menu script: ' + script_name)
+		return
+	_set_menu_script(scr)
+
+func _set_menu_script(menu_script : Script) -> void:
+	var script_obj = menu_script.new()
+	script_obj.name = "MenuScript"
+	script_obj.set_menu(self)
+	add_child(script_obj)
+	has_script = true
 
 func show_menu(options : Array):
 	clear_options()
+	
+	if len(options) < 1 and has_script:
+		if $MenuScript.has_method('get_options'):
+			options = $MenuScript.get_options()
+	
 	var first = true
 	for o in options:
 		var option : = o as Dictionary
@@ -50,12 +71,29 @@ func open_menu():
 func close_menu():
 	menu_open = false
 	deactivate_menu()
-	emit_signal("menu_closed")
 	hide_menu()
+	emit_signal("menu_closed")
+
+func remove_menu():
+	close_menu()
+	queue_free()
 
 func is_open() -> bool:
 	return menu_open
 
+func add_child_list_menu(script_name : String = '', options : Array = []) -> void:
+	var lm = load(list_menu_scn_path).instance()
+	get_parent().add_child(lm)
+	if script_name:
+		lm.set_menu_script(script_name)
+	else:
+		lm.connect("item_selected", self, "on_item_selected")
+	lm.show_menu(options)
+	lm.open_menu()
+	lm.connect("menu_closed", self, "activate_menu", [], CONNECT_ONESHOT)
+	connect("menu_closed", lm, "remove_menu")
+	deactivate_menu()
+	
 
 func add_child_text_prompt(prompt_value, prompt_text, starting_input) -> void:
 	var prompt = text_prompt_scn.instance()
@@ -151,9 +189,9 @@ func on_item_selected(item, extra):
 		emit_signal("item_selected", item, extra)
 		close_menu()
 	else:
-		var close : bool = $Script.handle_item_selected(item, extra)
+		var close : bool = $MenuScript.handle_item_selected(item, extra)
 		if close:
-			close_menu()
+			call_deferred('close_menu')
 
 func on_mouseover_item(m_item):
 	for item in $MenuContainer.get_children():

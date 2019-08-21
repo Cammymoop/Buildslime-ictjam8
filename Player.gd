@@ -64,7 +64,7 @@ func rotate_a_thing(tile_coord, counterclockwise = false) -> void:
 		h_flip = not h_flip
 	else:
 		v_flip = not v_flip
-	r_current_map.set_cellv(tile_coord, ind, h_flip, v_flip, transposed)
+	r_current_map.set_map_cellv(tile_coord, ind, h_flip, v_flip, transposed)
 
 func flip_a_thing(tile_coord) -> void:
 	var ind = get_map_cellv(tile_coord)
@@ -78,7 +78,7 @@ func flip_a_thing(tile_coord) -> void:
 		v_flip = not v_flip
 	else:
 		h_flip = not h_flip
-	r_current_map.set_cellv(tile_coord, ind, h_flip, v_flip, transposed)
+	r_current_map.set_map_cellv(tile_coord, ind, h_flip, v_flip, transposed)
 
 func smack() -> void:
 	var facing_t = get_facing_tile_coord()
@@ -119,6 +119,8 @@ func handle_special_smack(first_t : int, second_t : int, special : Array):
 		'craft_help':
 			# lookup all recipe results for the object that isnt the crafting manual
 			var lookup_tile = second_t if inv_names[first_t] == 'crafting_manual' else first_t
+			if lookup_tile == 0:
+				return
 			var possible_results = r_combinator.get_all_results_for(lookup_tile)
 			var text = ''
 			if len(possible_results) > 0:
@@ -139,6 +141,9 @@ func handle_special_smack(first_t : int, second_t : int, special : Array):
 
 func is_holding_stuff() -> bool:
 	return hold_count > 0
+
+func is_inventory_full() -> bool:
+	return hold_count >= 3
 
 # check if you're holding too many first
 func pick_up(index) -> void:
@@ -300,7 +305,7 @@ func _process(delta) -> void:
 							add_modification(facing_t, ind)
 							pick_up(ind)
 						else:
-							print("cant pick up")
+							print('cannot pick up ' + str(ind))
 					else:
 						if hold_count > 0:
 							add_modification(facing_t, 0)

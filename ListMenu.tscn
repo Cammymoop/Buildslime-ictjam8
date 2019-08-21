@@ -4,6 +4,7 @@
 [ext_resource path="res://ListMenu.gd" type="Script" id=2]
 
 [node name="ListMenu" type="PanelContainer"]
+editor/display_folded = true
 visible = false
 margin_left = 144.0
 margin_top = 140.0

@@ -34,11 +34,9 @@ func get_home_options() -> Array:
 	var options = []
 	options.append(make_menu_option("return", "Return"))
 	options.append(make_menu_option("get-job", "Get job"))
-	options.append(make_menu_option("save-game", "Save"))
-	if can_load():
-		options.append(make_menu_option("load-game", "Load"))
+	options.append(make_menu_option("save-load-menu", "Save/Load"))
 	options.append(make_menu_option("set-name", "Change Name"))
-	options.append(make_menu_option("restart-game", "New Game"))
+	options.append(make_menu_option("help-menu", "Help"))
 	#options.append(make_menu_option("quit", "Quit"))
 	return options
 
@@ -49,11 +47,9 @@ func get_job_options() -> Array:
 	options.append(make_menu_option("view-job", "Show job"))
 	options.append(make_menu_option("eval-job", "Evaluate job"))
 	options.append(make_menu_option("leave-job", "Cancel job"))
-	options.append(make_menu_option("save-game", "Save"))
-	if can_load():
-		options.append(make_menu_option("load-game", "Load"))
+	options.append(make_menu_option("save-load-menu", "Save/Load"))
 	options.append(make_menu_option("set-name", "Change Name"))
-	options.append(make_menu_option("restart-game", "New Game"))
+	options.append(make_menu_option("help-menu", "Help"))
 	return options
 
 func pause() -> bool:

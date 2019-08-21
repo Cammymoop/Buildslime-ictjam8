@@ -5,10 +5,13 @@ var r_menu
 func set_menu(menu):
 	r_menu = menu
 
+# close menu if return true
 func handle_item_selected(value, extra) -> bool:
 	match value:
 		'return':
 			return true
+		'ignore':
+			pass
 		'get-job':
 			if extra == -1:
 				var max_job = get_node("/root/JobManager").get_next_job()
@@ -96,10 +99,33 @@ func handle_item_selected(value, extra) -> bool:
 			elif typeof(extra) == TYPE_STRING:
 				print('setting name: ' + extra)
 				get_node("/root/GlobalData").save_name = extra
+		
+		'help-menu':
+			r_menu.add_child_list_menu('help_menu_script.gd')
+		
+		'save-load-menu':
+			var options = get_file_menu_options()
+			r_menu.add_child_list_menu('', options)
 	
 	# dont close menu
 	return false
 
+func can_load() -> bool:
+	return len(get_node("/root/SaveManager").get_all_saves()) > 0
+
+func get_file_menu_options() -> Array:
+	var options = []
+	options.append(make_menu_option("ignore", "Back"))
+	options.append(make_menu_option("save-game", "Save"))
+	if can_load():
+		options.append(make_menu_option("load-game", "Load"))
+	options.append(make_menu_option("restart-game", "New Game"))
+	return options
+
 func show_popup_on_unpause():
 	var ui = get_node("/root/UI")
 	ui.get_pause_screen().connect("unpaused", ui, "show_popup_goal", [], CONNECT_ONESHOT)
+	
+	
+func make_menu_option(value, text : String) -> Dictionary:
+	return {'value': value, 'text': text}

@@ -3,7 +3,9 @@ extends TileMap
 
 class_name WorldMap
 
-var TILE = 16
+var TILE : = 16
+
+var NOTHING : = 0
 
 export var map_width : int = 41 setget set_map_width, get_map_width
 export var map_height : int = 41 setget set_map_height, get_map_height
@@ -19,6 +21,27 @@ export var bounds_block_move : bool = false
 export var bounds_cam_margin : int = 0
 
 export var id : String = ''
+
+var tileset : TileSet = preload("res://assets/tileset/Main.tres")
+
+var AUTOTILES : Array = []
+var BIG_TILES : Array = []
+var BIG_EXTRAS : Array = []
+var BIG_H : int = 0
+var BIG_V : int = 0
+var BIG_HV : int = 0
+
+func _ready():
+	var combinator = get_node("/root/Combinator")
+	AUTOTILES = combinator.AUTOTILES
+	BIG_TILES = combinator.BIG_TILES
+	
+	BIG_H = combinator.names['BIG_H']
+	BIG_V = combinator.names['BIG_V']
+	BIG_HV = combinator.names['BIG_HV']
+	BIG_EXTRAS.append(BIG_H)
+	BIG_EXTRAS.append(BIG_V)
+	BIG_EXTRAS.append(BIG_HV)
 
 func set_map_width(val) -> void:
 	map_width = val
@@ -65,6 +88,87 @@ func _draw():
 #		var rect = Rect2(start_x * TILE, start_y * TILE, map_width * TILE, map_height * TILE)
 #		draw_rect(rect, Color('#eeaaaa'), false)
 		draw_polyline(points, Color('#fe9999'), 3, false)
+
+#########
+# Big tile handling is here in these abstraction functions for getting and setting cells
+func get_map_cell(x : int, y : int):
+	var index = get_cell(x, y)
+	while BIG_EXTRAS.has(index):
+		var xd : = 0 if index == BIG_V else -1
+		var yd : = 0 if index == BIG_H else -1
+		x += xd
+		y += yd
+		index = get_cell(x, y)
+	return index
+
+func set_map_cell(x : int, y : int, index : int, flip_x : bool = false, flip_y : bool = false, transpose : bool = false) -> void:
+	var old = get_cell(x, y)
+	set_cell(x, y, index, flip_x, flip_y, transpose)
+	if AUTOTILES.has(index) or AUTOTILES.has(old):
+		update_bitmask_area(Vector2(x, y))
+
+func set_map_cellv(coord : Vector2, index : int, flip_x : bool = false, flip_y : bool = false, transpose : bool = false) -> void:
+	set_map_cell(int(coord.x), int(coord.y), index, flip_x, flip_y, transpose)
+
+func unset_big_tile_at(x : int, y : int) -> void:
+	var index = get_cell(x, y)
+	while BIG_EXTRAS.has(index):
+		var xd : = 0 if index == BIG_V else -1
+		var yd : = 0 if index == BIG_H else -1
+		x += xd
+		y += yd
+		index = get_cell(x, y)
+	if BIG_TILES.has(index):
+		_remove_big_tile(x, y)
+
+func fix_big_tile(x : int, y : int) -> void:
+	var index = get_cell(x, y)
+	if BIG_TILES.has(index):
+		_place_big_tile(x, y, index)
+
+func fix_all_big_tiles() -> void:
+	var x_range : = range(start_x, start_x + map_width)
+	var y_range : = range(start_y, start_y + map_height)
+	x_range.invert() # go through the map in reverse to unset big extras and reset them once the big tile is found
+	y_range.invert()
+	for y in y_range:
+		for x in x_range:
+			var index : = get_cell(x, y)
+			if BIG_EXTRAS.has(index):
+				set_cell(x, y, NOTHING)
+			if BIG_TILES.has(index):
+				_place_big_tile(x, y, index)
+
+func _get_big_tile_width(big_tile_index : int) -> int:
+	var tile_rect = tileset.tile_get_region(big_tile_index)
+	return int(tile_rect.size.x / TILE)
+func _get_big_tile_height(big_tile_index : int) -> int:
+	var tile_rect = tileset.tile_get_region(big_tile_index)
+	return int(tile_rect.size.y / TILE)
+
+func _remove_big_tile(x : int, y : int) -> void:
+	var index : = get_cell(x, y)
+	var t_width : = _get_big_tile_width(index)
+	var t_height : = _get_big_tile_height(index)
+	
+	for y in range(t_height):
+		for x in range(t_width):
+			set_cell(x, y, NOTHING)
+	
+func _place_big_tile(x : int, y : int, big_tile_index : int) -> void:
+	var t_width = _get_big_tile_width(big_tile_index)
+	var t_height = _get_big_tile_height(big_tile_index)
+	
+	for vy in range(t_height):
+		for vx in range(t_width):
+			if vx == 0 and vy == 0:
+				set_cell(x + vx, y + vy, big_tile_index)
+			elif vy == 0:
+				set_cell(x + vx, y + vy, BIG_H)
+			elif vx == 0:
+				set_cell(x + vx, y + vy, BIG_V)
+			else:
+				set_cell(x + vx, y + vy, BIG_HV)
 
 func serialize_for_save() -> Dictionary:
 	var tiles = []

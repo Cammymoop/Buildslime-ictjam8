@@ -27,6 +27,8 @@ func load_map(target_map_name : String, spawn_entities : bool = true) -> void:
 		var save = unloaded_maps[world_map.id]
 		world_map.restore_save(save, save['save_version'])
 	
+	world_map.fix_all_big_tiles()
+	
 	var player = get_player()
 	if player:
 		player.set_camera_bounds(world_map.get_camera_bounds())

@@ -15,6 +15,7 @@ var NON_WALKABLE : Array = []
 var NON_GRABBABLE : Array = []
 var NON_ROTATABLE : Array = []
 var NON_MIRRORABLE : Array = []
+var BIG_TILES : Array = []
 var AUTOTILES : Array = []
 
 func _ready():
@@ -59,6 +60,9 @@ func process_name(old_line):
 					NON_ROTATABLE.append(int(parts[0]))
 				'NO_MIRROR':
 					NON_MIRRORABLE.append(int(parts[0]))
+				'BIG':
+					BIG_TILES.append(int(parts[0]))
+					NON_GRABBABLE.append(int(parts[0]))
 				'AUTO_TILE':
 					AUTOTILES.append(int(parts[0]))
 

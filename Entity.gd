@@ -169,7 +169,7 @@ func delta_to_direction(xdelta : int, ydelta : int):
 	return direction
 
 func get_map_cell(x : int, y : int):
-	return r_current_map.get_cell(x, y)
+	return r_current_map.get_map_cell(x, y)
 func get_map_cellv(v : Vector2):
 # warning-ignore:narrowing_conversion
 # warning-ignore:narrowing_conversion
@@ -190,10 +190,7 @@ func set_map_cellv(coord : Vector2, index : int) -> void:
 	set_map_cell(int(coord.x), int(coord.y), index)
 
 func set_map_cell(x : int, y : int, index : int) -> void:
-	var old = r_current_map.get_cell(x, y)
-	r_current_map.set_cell(x, y, index)
-	if AUTOTILES.has(index) or AUTOTILES.has(old):
-		r_current_map.update_bitmask_area(Vector2(x, y))
+	r_current_map.set_map_cell(x, y, index)
 
 func _move(xdelta, ydelta) -> String:
 	var facing_dir = delta_to_direction(xdelta, ydelta)

@@ -68,9 +68,9 @@ func generate(map : TileMap, gen_parameters : Dictionary):
 				inv_y = true
 		
 		var max_x_extent = 9 + (randi() % 9)
-		print(max_x_extent)
+		print('forest max x ' + max_x_extent)
 		var max_y_extent = 9 + (randi() % 9)
-		print(max_y_extent)
+		print('forest max y ' + max_y_extent)
 		
 		var cur_x_extent = max_x_extent
 		

@@ -33,7 +33,6 @@ func complete_current_job() -> void:
 func get_current_map() -> String:
 	return current_map
 func set_current_map(v : String):
-	print(v)
 	current_map = v
 
 func has_saved() -> bool:
