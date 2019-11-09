@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://Player.gd" type="Script" id=1]
 [ext_resource path="res://assets/images/buildslime.png" type="Texture" id=2]
@@ -10,6 +10,137 @@
 [ext_resource path="res://assets/sound/putdown.ogg" type="AudioStream" id=8]
 [ext_resource path="res://assets/music_temp/Algo_Rhythm_Natural.ogg" type="AudioStream" id=9]
 
+[sub_resource type="VisualShaderNodeScalarUniform" id=1]
+uniform_name = "red"
+
+[sub_resource type="VisualShaderNodeVectorOp" id=2]
+operator = 2
+
+[sub_resource type="VisualShaderNodeVectorOp" id=3]
+operator = 6
+
+[sub_resource type="VisualShaderNodeColorUniform" id=4]
+uniform_name = "Color_blue"
+
+[sub_resource type="VisualShaderNodeScalarUniform" id=5]
+uniform_name = "blue"
+
+[sub_resource type="VisualShaderNodeVectorOp" id=6]
+operator = 2
+
+[sub_resource type="VisualShaderNodeInput" id=7]
+input_name = "uv"
+
+[sub_resource type="VisualShaderNodeTexture" id=8]
+source = 2
+
+[sub_resource type="VisualShaderNodeColorUniform" id=9]
+uniform_name = "Color_red"
+
+[sub_resource type="VisualShader" id=10]
+code = "shader_type canvas_item;
+render_mode unshaded;
+
+uniform vec4 Color_red : hint_color;
+uniform float red;
+uniform vec4 Color_blue : hint_color;
+uniform float blue;
+
+
+
+void vertex() {
+// Output:0
+
+}
+
+void fragment() {
+// ColorUniform:9
+	vec3 n_out9p0;
+	float n_out9p1;
+	n_out9p0 = Color_red.rgb;
+	n_out9p1 = Color_red.a;
+
+// ScalarUniform:10
+	float n_out10p0;
+	n_out10p0 = red;
+
+// VectorOp:12
+	vec3 n_out12p0;
+	n_out12p0 = n_out9p0 * vec3(n_out10p0);
+
+// ColorUniform:14
+	vec3 n_out14p0;
+	float n_out14p1;
+	n_out14p0 = Color_blue.rgb;
+	n_out14p1 = Color_blue.a;
+
+// ScalarUniform:15
+	float n_out15p0;
+	n_out15p0 = blue;
+
+// VectorOp:16
+	vec3 n_out16p0;
+	n_out16p0 = n_out14p0 * vec3(n_out15p0);
+
+// VectorOp:13
+	vec3 n_out13p0;
+	n_out13p0 = max( n_out12p0 , n_out16p0 );
+
+// Input:4
+	vec3 n_out4p0;
+	n_out4p0 = vec3(UV,0.0);
+
+// Texture:8
+	vec3 n_out8p0;
+	float n_out8p1;
+	{
+		vec4 _tex_read = texture( TEXTURE , n_out4p0.xy );
+		n_out8p0 = _tex_read.rgb;
+		n_out8p1 = _tex_read.a;
+	}
+
+// Output:0
+	COLOR.rgb = n_out13p0;
+	COLOR.a = n_out8p1;
+
+}
+
+void light() {
+// Output:0
+
+}
+"
+mode = 1
+flags/light_only = false
+flags/unshaded = true
+nodes/fragment/0/position = Vector2( 1080, 260 )
+nodes/fragment/4/node = SubResource( 7 )
+nodes/fragment/4/position = Vector2( 340, 60 )
+nodes/fragment/8/node = SubResource( 8 )
+nodes/fragment/8/position = Vector2( 520, 40 )
+nodes/fragment/9/node = SubResource( 9 )
+nodes/fragment/9/position = Vector2( 240, 180 )
+nodes/fragment/10/node = SubResource( 1 )
+nodes/fragment/10/position = Vector2( 240, 280 )
+nodes/fragment/12/node = SubResource( 2 )
+nodes/fragment/12/position = Vector2( 620, 240 )
+nodes/fragment/13/node = SubResource( 3 )
+nodes/fragment/13/position = Vector2( 860, 300 )
+nodes/fragment/14/node = SubResource( 4 )
+nodes/fragment/14/position = Vector2( 240, 360 )
+nodes/fragment/15/node = SubResource( 5 )
+nodes/fragment/15/position = Vector2( 240, 460 )
+nodes/fragment/16/node = SubResource( 6 )
+nodes/fragment/16/position = Vector2( 620, 400 )
+nodes/fragment/connections = PoolIntArray( 4, 0, 8, 0, 10, 0, 12, 1, 9, 0, 12, 0, 13, 0, 0, 0, 12, 0, 13, 0, 16, 0, 13, 1, 14, 0, 16, 0, 15, 0, 16, 1, 8, 1, 0, 1 )
+
+[sub_resource type="ShaderMaterial" id=11]
+shader = SubResource( 10 )
+shader_param/Color_red = Color( 0.694118, 0.282353, 0.388235, 1 )
+shader_param/red = 1.0
+shader_param/Color_blue = Color( 0.513726, 0.521569, 0.811765, 1 )
+shader_param/blue = 0.0
+
 [node name="Root" type="Node2D"]
 
 [node name="Player" type="Node2D" parent="." groups=[
@@ -17,7 +148,7 @@
 "player",
 ]]
 editor/display_folded = true
-position = Vector2( 96, 64 )
+position = Vector2( 96, 144 )
 z_index = 1
 script = ExtResource( 1 )
 __meta__ = {
@@ -26,6 +157,8 @@ __meta__ = {
 enable_debug = false
 
 [node name="EntitySprite" type="Sprite" parent="Player"]
+editor/display_folded = true
+material = SubResource( 11 )
 position = Vector2( 8, 8 )
 texture = ExtResource( 2 )
 region_enabled = true
@@ -33,6 +166,7 @@ region_rect = Rect2( 0, 0, 16, 16 )
 script = ExtResource( 3 )
 
 [node name="Eyes" type="Sprite" parent="Player/EntitySprite"]
+use_parent_material = true
 texture = ExtResource( 4 )
 region_enabled = true
 region_rect = Rect2( 0, 0, 16, 16 )

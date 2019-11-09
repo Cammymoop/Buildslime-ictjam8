@@ -201,6 +201,10 @@ menu_back={
  ]
 }
 
+[locale]
+
+locale_filter=[ 0, [ "en", "ja" ] ]
+
 [rendering]
 
 quality/driver/driver_name="GLES2"

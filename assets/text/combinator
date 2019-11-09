@@ -32,15 +32,15 @@ puddle grass > puddle cabbage
 .R seed cloth > nothing seed_bag
 .RO seed_bag nothing > seed_bag seed
 
-rock nothing > gravel nothing
+rock nothing > broken_rock nothing
+broken_rock nothing > gravel nothing
 
 .R sticks stick > nothing fire_starter
 .RO fire_starter sticks > fire_starter fire
 fire sticks > fire fire
 
 apple fire > pie fire
-gravel fire > metal fire
-fire gravel > fire metal
+.RO broken_rock fire > metal fire
 
 .R gravel puddle > nothing nothing
 
