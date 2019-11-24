@@ -60,15 +60,15 @@ func set_facing_dir(facing_dir):
 			facing = 0
 		'up':
 			facing = 1
-			var red = material.get_shader_param("red")
-			var blue = 0
-			if red > 0.5:
-				red = 0
-				blue = 1
-			else:
-				red = 1
-			material.set_shader_param("red", red)
-			material.set_shader_param("blue", blue)
+#			var red = material.get_shader_param("red")
+#			var blue = 0
+#			if red > 0.5:
+#				red = 0
+#				blue = 1
+#			else:
+#				red = 1
+#			material.set_shader_param("red", red)
+#			material.set_shader_param("blue", blue)
 		'right':
 			facing = 2
 		'left':

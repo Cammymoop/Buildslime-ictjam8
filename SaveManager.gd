@@ -265,3 +265,27 @@ func get_save_meta(filename) -> Dictionary:
 			save_meta['job_progress'] = str(data['jobs_finished'])
 	
 	return save_meta
+
+func get_settings_file_json() -> Dictionary:
+	var fpath = "user://settings.json"
+	
+	var f = File.new()
+	if not f.file_exists(fpath):
+		print('settings file doesnt exist')
+		return {}
+	
+	f.open(fpath, File.READ)
+	var res : = JSON.parse(f.get_line())
+	if res.error == OK and typeof(res.result) == TYPE_DICTIONARY:
+		return res.result
+	else:
+		print('unable to parse settings file')
+		return {}
+
+func save_settings_file(settings_data : Dictionary):
+	var fpath = "user://settings.json"
+	
+	var f = File.new()
+	f.open(fpath, File.WRITE)
+	f.store_line(to_json(settings_data))
+	f.close()

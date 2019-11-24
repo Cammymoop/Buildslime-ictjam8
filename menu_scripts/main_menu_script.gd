@@ -102,6 +102,9 @@ func handle_item_selected(value, extra) -> bool:
 		
 		'help-menu':
 			r_menu.add_child_list_menu('help_menu_script.gd')
+
+		'options-menu':
+			r_menu.add_child_list_menu('options_menu_script.gd')
 		
 		'save-load-menu':
 			var options = get_file_menu_options()

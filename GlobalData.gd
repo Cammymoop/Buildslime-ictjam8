@@ -11,6 +11,12 @@ var cur_save_filename = ''
 
 var pause_focus = ''
 
+var settings : Dictionary
+
+func _ready():
+	load_file_settings()
+	write_settings()
+
 func new_game():
 	current_map = ''
 	max_job_completed = 0
@@ -20,6 +26,36 @@ func new_game():
 	save_name = 'Jel'
 	get_node("/root/WorldControl").clear_map()
 	get_node("/root/WorldControl").call_deferred('load_home')
+
+func default_settings() -> Dictionary:
+	return {
+		'camera_smoothing': 1,
+		'movement_smoothing': 1,
+		'squishing': 2,
+	}
+
+func load_default_settings() -> void:
+	settings = default_settings()
+
+func load_file_settings() -> void:
+	load_default_settings()
+	var file_settings : Dictionary = get_node("/root/SaveManager").get_settings_file_json()
+	for k in settings.keys():
+		if file_settings.has(k):
+			settings[k] = file_settings[k]
+
+func change_setting(key : String, value) -> void:
+	if not settings.has(key):
+		print('Setting not initialized: ' + key)
+	
+	settings[key] = value
+	write_settings()
+
+func get_settings() -> Dictionary:
+	return settings
+
+func write_settings() -> void:
+	get_node("/root/SaveManager").save_settings_file(settings)
 
 func get_max_job_completed() -> int:
 	return max_job_completed
@@ -82,6 +118,13 @@ func restore_save(serialized, save_version) -> String:
 	current_job_num = serialized['current_job_num']
 	
 	save_name = serialized['save_name']
+	
+	##### I would do this if settings were tied to save file
+	##### Maybe some of them should be, for now they're just going to be globally saved I think
+#	if save_version <= 4:
+#		load_default_settings()
+#	else:
+#		settings = serialized['settings']
 	
 	return "post_load"
 

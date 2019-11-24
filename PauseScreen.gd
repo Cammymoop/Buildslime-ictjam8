@@ -37,6 +37,7 @@ func get_home_options() -> Array:
 	options.append(make_menu_option("save-load-menu", "Save/Load"))
 	options.append(make_menu_option("set-name", "Change Name"))
 	options.append(make_menu_option("help-menu", "Help"))
+	options.append(make_menu_option("options-menu", "Options"))
 	#options.append(make_menu_option("quit", "Quit"))
 	return options
 
@@ -50,6 +51,7 @@ func get_job_options() -> Array:
 	options.append(make_menu_option("save-load-menu", "Save/Load"))
 	options.append(make_menu_option("set-name", "Change Name"))
 	options.append(make_menu_option("help-menu", "Help"))
+	options.append(make_menu_option("options-menu", "Options"))
 	return options
 
 func pause() -> bool:

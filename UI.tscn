@@ -18,6 +18,9 @@ script = ExtResource( 1 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 theme = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="CenterContainer2" type="CenterContainer" parent="ThemeMaster"]
 visible = false
@@ -42,7 +45,6 @@ text = "Open menu to get a job"
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_bottom = -300.0
-theme = ExtResource( 2 )
 script = ExtResource( 3 )
 
 [node name="CenterContainer" type="CenterContainer" parent="ThemeMaster/PauseScreen"]
@@ -50,7 +52,6 @@ anchor_right = 1.0
 margin_bottom = 300.0
 
 [node name="Thought" type="PanelContainer" parent="ThemeMaster/PauseScreen/CenterContainer"]
-editor/display_folded = true
 visible = false
 margin_left = 144.0
 margin_top = 140.0
@@ -92,7 +93,6 @@ mouse_filter = 2
 script = ExtResource( 7 )
 
 [node name="PanelBG" type="Panel" parent="ThemeMaster/MapPopup"]
-editor/display_folded = true
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 5.0
@@ -111,7 +111,6 @@ margin_bottom = 9.0
 text = "Build This:"
 
 [node name="LogoContainer" type="MarginContainer" parent="."]
-editor/display_folded = true
 visible = false
 anchor_right = 1.0
 margin_bottom = 300.0

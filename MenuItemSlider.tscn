@@ -1,0 +1,43 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://assets/ui/UITheme.tres" type="Theme" id=1]
+[ext_resource path="res://assets/images/menu_cursor.png" type="Texture" id=2]
+[ext_resource path="res://MenuItemToggle.gd" type="Script" id=3]
+
+[node name="MenuItemToggle" type="HBoxContainer"]
+margin_left = 2.0
+margin_top = 2.0
+margin_right = 162.0
+margin_bottom = 14.0
+mouse_default_cursor_shape = 2
+theme = ExtResource( 1 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+margin_right = 8.0
+margin_bottom = 14.0
+rect_min_size = Vector2( 8, 8 )
+
+[node name="Cursor" type="TextureRect" parent="CenterContainer"]
+visible = false
+margin_top = 3.0
+margin_right = 8.0
+margin_bottom = 11.0
+texture = ExtResource( 2 )
+
+[node name="Label" type="Label" parent="."]
+margin_left = 12.0
+margin_top = 2.0
+margin_right = 54.0
+margin_bottom = 11.0
+text = "Setting"
+
+[node name="HSlider" type="HSlider" parent="."]
+margin_left = 58.0
+margin_right = 160.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+[connection signal="mouse_entered" from="." to="." method="_on_MenuItem_mouse_entered"]

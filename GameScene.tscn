@@ -137,17 +137,16 @@ nodes/fragment/connections = PoolIntArray( 4, 0, 8, 0, 10, 0, 12, 1, 9, 0, 12, 0
 [sub_resource type="ShaderMaterial" id=11]
 shader = SubResource( 10 )
 shader_param/Color_red = Color( 0.694118, 0.282353, 0.388235, 1 )
-shader_param/red = 1.0
+shader_param/red = 0.0
 shader_param/Color_blue = Color( 0.513726, 0.521569, 0.811765, 1 )
-shader_param/blue = 0.0
+shader_param/blue = 1.0
 
 [node name="Root" type="Node2D"]
 
 [node name="Player" type="Node2D" parent="." groups=[
-"saveable",
 "player",
+"saveable",
 ]]
-editor/display_folded = true
 position = Vector2( 96, 144 )
 z_index = 1
 script = ExtResource( 1 )
@@ -157,7 +156,6 @@ __meta__ = {
 enable_debug = false
 
 [node name="EntitySprite" type="Sprite" parent="Player"]
-editor/display_folded = true
 material = SubResource( 11 )
 position = Vector2( 8, 8 )
 texture = ExtResource( 2 )
@@ -186,8 +184,6 @@ limit_left = -30
 limit_top = -30
 limit_right = 686
 limit_bottom = 686
-drag_margin_h_enabled = false
-drag_margin_v_enabled = false
 smoothing_enabled = true
 editor_draw_limits = true
 script = ExtResource( 5 )
@@ -216,7 +212,6 @@ one_shot = true
 autostart = true
 
 [node name="BG" type="CanvasLayer" parent="."]
-editor/display_folded = true
 layer = -1
 
 [node name="ColorRect" type="ColorRect" parent="BG"]
@@ -233,7 +228,6 @@ color = Color( 0, 0, 0, 1 )
 
 [node name="Music" type="Node" parent="."]
 pause_mode = 2
-editor/display_folded = true
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Music"]
 stream = ExtResource( 9 )
