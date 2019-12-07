@@ -20,7 +20,6 @@ id = "Village"
 [node name="Entities" type="Node2D" parent="."]
 
 [node name="NPSlime" parent="Entities" instance=ExtResource( 3 )]
-editor/display_folded = true
 position = Vector2( 340, 285 )
 
 [node name="EntitySprite" parent="Entities/NPSlime" index="0"]
@@ -28,7 +27,6 @@ region_rect = Rect2( 16, 0, 16, 16 )
 version_i = 1
 
 [node name="NPSlime2" parent="Entities" instance=ExtResource( 3 )]
-editor/display_folded = true
 position = Vector2( 588, 520 )
 
 [node name="EntitySprite" parent="Entities/NPSlime2" index="0"]
@@ -36,7 +34,6 @@ region_rect = Rect2( 0, 0, 16, 16 )
 version_i = 0
 
 [node name="NPSlime3" parent="Entities" instance=ExtResource( 3 )]
-editor/display_folded = true
 position = Vector2( 540, 189 )
 
 [node name="EntitySprite" parent="Entities/NPSlime3" index="0"]
@@ -44,7 +41,6 @@ region_rect = Rect2( 32, 0, 16, 16 )
 version_i = 2
 
 [node name="NPSlime4" parent="Entities" instance=ExtResource( 3 )]
-editor/display_folded = true
 position = Vector2( 290, 561 )
 
 [node name="BG" type="CanvasLayer" parent="."]
@@ -55,6 +51,7 @@ visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color( 0, 0, 0, 1 )
+[connection signal="become_active" from="Entities/NPSlime" to="." method="_on_NPSlime_become_active"]
 
 [editable path="Entities/NPSlime"]
 

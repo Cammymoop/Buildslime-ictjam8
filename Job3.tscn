@@ -12,6 +12,7 @@ rewards = [ "sapling", "sapling", "cloth", "puddle", "flower", "flower", "ring" 
 forest = false
 
 [node name="JobGoal" type="TileMap" parent="."]
+visible = false
 tile_set = ExtResource( 2 )
 cell_size = Vector2( 16, 16 )
 format = 1

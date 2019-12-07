@@ -4,6 +4,7 @@ export var data_filename = "combinator"
 export var names_filename = "names"
 
 var rules = []
+var step_rules = []
 var names = {}
 var inv_names = {}
 
@@ -111,6 +112,13 @@ func get_combinator_result(tile1, tile2):
 			return results
 	return false
 
+func get_stepon_result(tile) -> int:
+	for srule in step_rules:
+		if srule['start'] != tile:
+			continue
+		return srule['result']
+	return -1 #No change
+
 func get_all_recipes_for(tile_index : int) -> Array:
 	var recipes = []
 	for rule in rules:
@@ -140,6 +148,10 @@ func process_line(old_line):
 	if line.length() < 1 or parts.size() < 1: #empty line
 		return
 	if parts[0][0] == '#': #comment
+		return
+	
+	if parts[0][0] == '_':
+		process_step_rule(parts, old_line)
 		return
 	
 	var rule = {'reversable': false, 'reverse_out': false, 'result_ignore': false}
@@ -173,3 +185,16 @@ func process_line(old_line):
 			rule['results'] = [names[parts[3]], names[parts[4]]]
 		rules.append(rule)
 
+func process_step_rule(parts, old_line) -> void:
+	var rule = {}
+	
+	if parts[2] != ">":
+		print("invalid rule: " + old_line)
+		return
+	if not (names.has(parts[1]) and names.has(parts[3])): 
+		print("invalid name in rule: " + old_line)
+		return
+	
+	rule['start'] = names[parts[1]]
+	rule['result'] = names[parts[3]]
+	step_rules.append(rule)

@@ -112,6 +112,7 @@ water_bucket bucket > water_bucket water_bucket
 chip chip > nothing circuit_board
 .R apple circuit_board > nothing computer
 
+_ dirt > nothing
 
 
 # rules using something + "any" go here to not override other recipes

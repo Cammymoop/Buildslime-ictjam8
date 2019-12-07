@@ -337,7 +337,30 @@ func move_tile(direction_h, direction_v = false) -> String:
 			make_tent_sleep(tile_position + deltas)
 			_force_move(deltas.x, deltas.y)
 			return 'down'
-	return .move_tile(direction_h, direction_v)
+	var new_facing = .move_tile(direction_h, direction_v)
+	if not .is_last_move_blocked():
+		moved_onto_new_tile()
+	return new_facing
+
+func moved_onto_new_tile() -> void:
+	var tile_here = get_map_cellv(tile_position)
+	if tile_here <= 0:
+		return
+	
+	var r_combinator = get_node("/root/Combinator")
+	var result = r_combinator.get_stepon_result(tile_here)
+	if result < 0:
+		return
+	
+	if not r_current_map.is_map_modifiable():
+		#cant_build_here()
+		return
+	
+	#$SmackSound.play()
+	set_map_cellv(tile_position, result)
+	
+	# add old tiles to the undo queue
+	add_modification(tile_position, tile_here)
 
 func clear_inventory() -> void:
 	hold_1 = 0

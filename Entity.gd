@@ -15,6 +15,8 @@ var active = false
 
 var r_current_map = null
 
+var last_move_blocked = false
+
 var UP_ANGLE = PI
 var DOWN_ANGLE = 0
 var LEFT_ANGLE = PI/2
@@ -194,7 +196,7 @@ func set_map_cell(x : int, y : int, index : int) -> void:
 
 func _move(xdelta, ydelta) -> String:
 	var facing_dir = delta_to_direction(xdelta, ydelta)
-	
+	last_move_blocked = false
 	
 	if r_current_map.do_bounds_block_move():
 		if not r_current_map.coord_is_in_bounds(tile_position + Vector2(xdelta, 0)):
@@ -203,6 +205,7 @@ func _move(xdelta, ydelta) -> String:
 			ydelta = 0
 
 	if xdelta == 0 and ydelta == 0: # hit map edge, no diagonal
+		last_move_blocked = true
 		return facing_dir
 
 	facing_dir = delta_to_direction(xdelta, ydelta) #update facing if diagonally along map edge
@@ -217,6 +220,7 @@ func _move(xdelta, ydelta) -> String:
 		var block_vert = get_map_collision(tile_position.x, tile_position.y + ydelta)
 		var block_horiz = get_map_collision(tile_position.x + xdelta, tile_position.y)
 		if block_horiz and block_vert:
+			last_move_blocked = true
 			return facing_dir
 		if block_dest:
 			if block_vert:
@@ -227,6 +231,7 @@ func _move(xdelta, ydelta) -> String:
 				new_tile_pos.x -= xdelta
 	else:
 		if get_map_collisionv(new_tile_pos):
+			last_move_blocked = true
 			return facing_dir
 
 	tile_position = new_tile_pos
@@ -235,6 +240,9 @@ func _move(xdelta, ydelta) -> String:
 	#position.x += xdelta * TILE
 	#position.y += ydelta * TILE
 	return facing_dir
+
+func is_last_move_blocked() -> bool:
+	return last_move_blocked
 
 func _force_move(xdelta, ydelta) -> void:
 	var new_tile_pos = tile_position + Vector2(xdelta, ydelta)

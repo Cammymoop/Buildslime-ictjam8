@@ -82,3 +82,4 @@ func _on_LeftFile_gui_input(event : InputEvent):
 	
 	if click_event.button_index == BUTTON_LEFT and click_event.pressed: # on press
 		select()
+
