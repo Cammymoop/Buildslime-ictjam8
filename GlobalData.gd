@@ -32,6 +32,7 @@ func default_settings() -> Dictionary:
 		'camera_smoothing': 1,
 		'movement_smoothing': 1,
 		'squishing': 2,
+		'master_volume': 100,
 	}
 
 func load_default_settings() -> void:

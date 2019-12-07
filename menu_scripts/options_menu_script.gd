@@ -13,6 +13,7 @@ func get_options() -> Array:
 	options.append(make_menu_toggle("movement_smoothing", "Movement Smoothing", settings))
 	options.append(make_menu_toggle("camera_smoothing", "Camera Smoothing", settings))
 	options.append(make_menu_toggle("squishing", "Squishing", settings))
+	options.append(make_menu_slider("master_volume", "Volume", settings))
 	return options
 
 # close menu if return true
@@ -28,7 +29,12 @@ func handle_item_selected(value, extra) -> bool:
 				pass
 			else:
 				if settings.has(value):
+					print('saving ' + str(value))
 					get_node("/root/GlobalData").change_setting(value, extra)
+				else:
+					
+					print('not saving ' + str(value))
+					print(settings)
 	
 	# dont close menu
 	return false
@@ -41,3 +47,9 @@ func make_menu_toggle(value, text : String, starting_vals : Dictionary) -> Dicti
 	if starting_vals.has(value):
 		starting = starting_vals[value]
 	return {'value': value, 'text': text, 'toggle': true, 'starting_extra': starting}
+
+func make_menu_slider(value, text : String, starting_vals : Dictionary, min_e : float = 0, max_e : float = 100) -> Dictionary:
+	var starting = 1
+	if starting_vals.has(value):
+		starting = starting_vals[value]
+	return {'value': value, 'text': text, 'slider': true, 'starting_extra': starting, 'min_extra': min_e, 'max_extra': max_e}

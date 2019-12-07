@@ -7,6 +7,7 @@ export (Script) var item_script = null
 
 var menu_item_scn : PackedScene = preload("res://MenuItem.tscn")
 var menu_option_scn : PackedScene = preload("res://MenuItemToggle.tscn")
+var menu_slider_scn : PackedScene = preload("res://MenuItemSlider.tscn")
 
 var prompt_menu_scn : PackedScene = preload("res://PromptMenu.tscn")
 var text_prompt_scn : PackedScene = preload("res://TextPrompt.tscn")
@@ -64,6 +65,8 @@ func show_menu(options : Array):
 		var item
 		if option.has('toggle'):
 			item = add_menu_option(option['value'], option['text'], option['starting_extra'])
+		elif option.has('slider'):
+			item = add_menu_slider(option['value'], option['text'], option['min_extra'], option['max_extra'], option['starting_extra'])
 		else:
 			item = add_menu_item(option['value'], option['text'])
 		if first:
@@ -195,6 +198,18 @@ func add_menu_option(val : String, text : String, starting_extra) -> Node:
 	var item = menu_option_scn.instance()
 	item.set_label(text)
 	item.set_value(val)
+	item.set_extra(starting_extra)
+	$MenuContainer.add_child(item)
+	menu_item_count += 1
+	item.connect("selected", self, "on_item_selected")
+	item.connect("mouse_entered_item", self, "on_mouseover_item")
+	return item
+
+func add_menu_slider(val : String, text : String, min_e : float, max_e : float, starting_extra : float) -> Node:
+	var item = menu_slider_scn.instance()
+	item.set_label(text)
+	item.set_value(val)
+	item.set_range(min_e, max_e)
 	item.set_extra(starting_extra)
 	$MenuContainer.add_child(item)
 	menu_item_count += 1
