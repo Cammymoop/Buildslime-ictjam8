@@ -31,6 +31,8 @@ var BIG_H : int = 0
 var BIG_V : int = 0
 var BIG_HV : int = 0
 
+var warps : Array = []
+
 func _ready():
 	var combinator = get_node("/root/Combinator")
 	AUTOTILES = combinator.AUTOTILES
@@ -42,6 +44,8 @@ func _ready():
 	BIG_EXTRAS.append(BIG_H)
 	BIG_EXTRAS.append(BIG_V)
 	BIG_EXTRAS.append(BIG_HV)
+	
+	centered_textures = true
 
 func set_map_width(val) -> void:
 	map_width = val
@@ -129,7 +133,8 @@ func fix_big_tile(x : int, y : int) -> void:
 func fix_all_big_tiles() -> void:
 	var x_range : = range(start_x, start_x + map_width)
 	var y_range : = range(start_y, start_y + map_height)
-	x_range.invert() # go through the map in reverse to unset big extras and reset them once the big tile is found
+	# go through the map in reverse to unset big extras and reset them once the big tile is found
+	x_range.invert() 
 	y_range.invert()
 	for y in y_range:
 		for x in x_range:

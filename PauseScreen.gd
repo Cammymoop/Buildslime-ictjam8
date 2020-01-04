@@ -10,7 +10,7 @@ var paused = false
 
 var just_paused = false
 
-var r_main_menu : VBoxContainer = null
+var r_main_menu = null
 var r_tutorial : Control = null
 
 var cur_menu = 'home'

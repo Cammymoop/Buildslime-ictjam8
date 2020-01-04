@@ -755,7 +755,7 @@
 72/z_index = 0
 73/name = "big_tiles.png 73"
 73/texture = ExtResource( 2 )
-73/tex_offset = Vector2( 0, 0 )
+73/tex_offset = Vector2( 16, 16 )
 73/modulate = Color( 1, 1, 1, 1 )
 73/region = Rect2( 176, 16, 48, 48 )
 73/tile_mode = 0
@@ -765,7 +765,7 @@
 73/z_index = 0
 74/name = "big_tiles.png 74"
 74/texture = ExtResource( 2 )
-74/tex_offset = Vector2( 0, 0 )
+74/tex_offset = Vector2( 8, 8 )
 74/modulate = Color( 1, 1, 1, 1 )
 74/region = Rect2( 112, 32, 32, 32 )
 74/tile_mode = 0
@@ -815,7 +815,7 @@
 78/z_index = 0
 79/name = "tiles.png 79"
 79/texture = ExtResource( 1 )
-79/tex_offset = Vector2( 0, -16 )
+79/tex_offset = Vector2( 0, 0 )
 79/modulate = Color( 1, 1, 1, 1 )
 79/region = Rect2( 144, 80, 16, 48 )
 79/tile_mode = 0
