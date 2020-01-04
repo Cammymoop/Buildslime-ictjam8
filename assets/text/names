@@ -79,3 +79,22 @@
 
 78 broken_rock
 80 dirt AUTO_TILE
+
+# beach stuff
+81 palm_tree NO_WALK NO_GRAB
+82 starfish
+83 beach_ball
+84 shell
+85 umbrella NO_WALK
+94 castle
+
+# tech stuff
+86 radio NO_WALK
+87 portable_game 
+88 tv NO_WALK
+89 stove NO_WALK
+
+90 lightbulb 
+91 lamp NO_WALK 
+92 fridge NO_WALK 
+93 clock

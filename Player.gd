@@ -287,8 +287,11 @@ func _process(delta) -> void:
 			get_node("/root/WorldControl").load_map("Village")
 			set_my_position(tile_position.x, 39)
 		if cur_map == 'Village' and tile_position.y > 42:
-			get_node("/root/WorldControl").load_map("HomeMap")
-			set_my_position(9, 0)
+			get_node("/root/WorldControl").load_map("BeachMap")
+			set_my_position(9, 2)
+		if cur_map == 'BeachMap' and tile_position.y < 1:
+			get_node("/root/WorldControl").load_map("TestMap2")
+			set_my_position(9, 2)
 	else:
 		if Input.is_action_just_pressed("action_grab"):
 			holding_button = true
