@@ -63,7 +63,7 @@ func reset_screenshot():
 	screenshot_panel.reset()
 
 func fail_display():
-	$Label.text = 'Err\n\nx.x'
+	find_node('FileInfoLabel').text = 'Err\n\nx.x'
 
 func select():
 	#print('sn: ' + save_name)

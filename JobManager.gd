@@ -99,6 +99,7 @@ func check_job_completion(job_num : int, map : TileMap) -> bool:
 						tx = return_coord.x - 1
 						continue
 			if not searching and this_tile == first_tile and not (tx + width > MAX_TILE):
+				return_coord = false
 				search_origin_x = tx
 				search_origin_y = ty
 				if first_x == last_x and first_y == last_y: # job is only 1 tile

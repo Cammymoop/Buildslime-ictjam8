@@ -608,8 +608,8 @@ func _process(delta) -> void:
 					set_map_cellv(facing_t, ind)
 		elif Input.is_action_just_pressed("action_smack"):
 			smack()
-		elif Input.is_action_just_pressed("action_d_regen"):
-			regen_map()
+#		elif Input.is_action_just_pressed("action_d_regen"):
+#			regen_map()
 		elif Input.is_action_just_pressed("action_rewind"):
 			pop_modification()
 		elif Input.is_action_just_pressed("action_quick_job_view"):

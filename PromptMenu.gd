@@ -29,8 +29,8 @@ func set_main_value(value : String):
 func get_prompt_value():
 	return prompt_value
 
-func set_numbers_mode(main_value : String, n_start : int, n_max : int, n_min : int = 1) -> void:
-	set_main_value(main_value)
+func set_numbers_mode(main_val : String, n_start : int, n_max : int, n_min : int = 1) -> void:
+	set_main_value(main_val)
 	set_mode("numbers")
 	min_number = n_min
 	max_number = n_max
@@ -39,8 +39,8 @@ func set_numbers_mode(main_value : String, n_start : int, n_max : int, n_min : i
 	find_node('Numbers').visible = true
 	update_prompt()
 
-func set_confirm_mode(main_value : String, default : int = 0):
-	set_main_value(main_value)
+func set_confirm_mode(main_val : String, default : int = 0):
+	set_main_value(main_val)
 	set_mode("confirm")
 	prompt_value = 0 if default == 0 else 1
 	var buttons = find_node('ConfirmButtons')
@@ -48,10 +48,10 @@ func set_confirm_mode(main_value : String, default : int = 0):
 	find_node('Numbers').visible = false
 	
 	var yes = buttons.get_node('YesOption')
-	yes.set_value(main_value)
+	yes.set_value(main_val)
 	yes.set_extra(1)
 	var no = buttons.get_node('NoOption')
-	no.set_value(main_value)
+	no.set_value(main_val)
 	no.set_extra(0)
 	if default == 0:
 		no.set_active()

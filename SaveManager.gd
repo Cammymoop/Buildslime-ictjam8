@@ -116,7 +116,6 @@ func get_new_save_name(base_name : String) -> String:
 	
 	#dont put weird characters in the filename, nobody even needs to see it really
 	var allowed_symbols = "-_"
-	var i = 0
 	var new_name = ''
 	for i in base_name.length():
 		var c = base_name[i]
@@ -133,7 +132,7 @@ func get_new_save_name(base_name : String) -> String:
 
 func get_all_saves() -> Array:
 	var d : Directory = Directory.new()
-	var res = d.open("user://saves/")
+	d.open("user://saves/")
 	d.list_dir_begin(true, true)
 	
 	var saves = []

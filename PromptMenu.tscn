@@ -41,7 +41,6 @@ margin_right = 78.0
 margin_bottom = 22.0
 
 [node name="YesOption" parent="Contents/ConfirmButtons" instance=ExtResource( 3 )]
-editor/display_folded = true
 margin_right = 30.0
 margin_bottom = 9.0
 
@@ -59,7 +58,6 @@ margin_bottom = 9.0
 text = "Yes"
 
 [node name="NoOption" parent="Contents/ConfirmButtons" instance=ExtResource( 3 )]
-editor/display_folded = true
 margin_left = 34.0
 margin_right = 58.0
 margin_bottom = 9.0
@@ -114,6 +112,7 @@ margin_bottom = 54.0
 size_flags_horizontal = 4
 text = "Ok"
 icon = null
+
 [connection signal="mouse_entered_item" from="Contents/ConfirmButtons/YesOption" to="." method="_on_mouse_entered_item"]
 [connection signal="selected" from="Contents/ConfirmButtons/YesOption" to="." method="_on_option_selected"]
 [connection signal="mouse_entered_item" from="Contents/ConfirmButtons/NoOption" to="." method="_on_mouse_entered_item"]
@@ -123,5 +122,4 @@ icon = null
 [connection signal="pressed" from="Contents/Numbers/OkButton" to="." method="_on_OkButton_pressed"]
 
 [editable path="Contents/ConfirmButtons/YesOption"]
-
 [editable path="Contents/ConfirmButtons/NoOption"]

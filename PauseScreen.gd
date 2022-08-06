@@ -7,7 +7,7 @@ var btext_scn = preload("res://BetterTextPopup.tscn")
 
 var paused = false
 
-var r_main_menu : VBoxContainer = null
+var r_main_menu : PanelContainer = null
 var r_tutorial : Control = null
 
 var cur_menu = 'home'

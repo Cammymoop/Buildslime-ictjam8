@@ -157,6 +157,7 @@ margin_bottom = 243.0
 size_flags_horizontal = 4
 text = "Cancel"
 icon = null
+
 [connection signal="mouse_entered_panel" from="VBoxContainer/MarginContainer/FileContainer/LeftFile" to="." method="_on_mouse_entered_panel"]
 [connection signal="selected" from="VBoxContainer/MarginContainer/FileContainer/LeftFile" to="." method="_on_selected"]
 [connection signal="mouse_entered_panel" from="VBoxContainer/MarginContainer/FileContainer/RightFile" to="." method="_on_mouse_entered_panel"]
