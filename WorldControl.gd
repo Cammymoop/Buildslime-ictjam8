@@ -1,6 +1,6 @@
 extends Node
 
-var world_map : WorldMap = null
+var world_map : WorldMap  = null
 
 var unloaded_maps = {}
 
@@ -28,6 +28,7 @@ func load_map(target_map_name : String, spawn_entities : bool = true) -> void:
 		world_map.restore_save(save, save['save_version'])
 	
 	world_map.fix_all_big_tiles()
+	world_map.update_bitmask_region()
 	
 	var player = get_player()
 	if player:
@@ -58,6 +59,8 @@ func load_job(job_num : int) -> void:
 	load_map("JobMap")
 	
 	get_node("/root/MapGenerator").generate(world_map, job.get_spawn_params())
+	
+	world_map.update_bitmask_region()
 	
 	player.set_my_position(4, 4)
 

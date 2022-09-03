@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/Algo_Rhythm_Natural.mp3-19c6a465daa6ec46227f5a28e22fcf4b.mp3str"
+
+[deps]
+
+source_file="res://assets/music_temp/Algo_Rhythm_Natural.mp3"
+dest_files=[ "res://.import/Algo_Rhythm_Natural.mp3-19c6a465daa6ec46227f5a28e22fcf4b.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0
