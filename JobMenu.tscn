@@ -1,72 +1,79 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://assets/ui/fake_box_thick.tres" type="StyleBox" id=1]
 [ext_resource path="res://ThickButton.tscn" type="PackedScene" id=2]
+[ext_resource path="res://assets/images/thought-bubble.png" type="Texture" id=3]
 [ext_resource path="res://assets/ui/UITheme.tres" type="Theme" id=4]
-[ext_resource path="res://PromptMenu.gd" type="Script" id=5]
+[ext_resource path="res://JobMenu.gd" type="Script" id=5]
 [ext_resource path="res://assets/images/black_arrow_right.png" type="Texture" id=6]
 
-[node name="PromptMenu" type="PanelContainer"]
-margin_left = 144.0
-margin_top = 140.0
-margin_right = 234.0
-margin_bottom = 172.0
+[node name="JobMenu" type="PanelContainer"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -136.0
+margin_top = -136.0
+margin_right = 136.0
+margin_bottom = 136.0
 rect_min_size = Vector2( 0, 20 )
 theme = ExtResource( 4 )
 script = ExtResource( 5 )
 
-[node name="Label" type="Label" parent="."]
-visible = false
-margin_left = 6.0
-margin_top = 11.0
-margin_right = 84.0
-margin_bottom = 20.0
-text = "  1  "
-
 [node name="Contents" type="VBoxContainer" parent="."]
 margin_left = 6.0
 margin_top = 5.0
-margin_right = 100.0
-margin_bottom = 43.0
+margin_right = 266.0
+margin_bottom = 267.0
 
-[node name="Prefix" type="Label" parent="Contents"]
-margin_right = 94.0
+[node name="Title" type="Label" parent="Contents"]
+margin_right = 260.0
 margin_bottom = 9.0
 text = "Act 1"
 align = 1
 
-[node name="Numbers" type="VBoxContainer" parent="Contents"]
+[node name="JobShow" type="TextureRect" parent="Contents"]
 margin_top = 13.0
-margin_right = 94.0
-margin_bottom = 38.0
+margin_right = 260.0
+margin_bottom = 233.0
+rect_min_size = Vector2( 260, 220 )
+texture = ExtResource( 3 )
+
+[node name="GoalHere" type="Node2D" parent="Contents/JobShow"]
+position = Vector2( -20, -32 )
+
+[node name="Numbers" type="VBoxContainer" parent="Contents"]
+margin_top = 237.0
+margin_right = 260.0
+margin_bottom = 262.0
 
 [node name="NumberButtons" type="HBoxContainer" parent="Contents/Numbers"]
-margin_right = 94.0
+margin_right = 260.0
 margin_bottom = 25.0
 
 [node name="LeftButton" parent="Contents/Numbers/NumberButtons" instance=ExtResource( 2 )]
 custom_styles/focus = ExtResource( 1 )
 custom_styles/disabled = ExtResource( 1 )
 
-[node name="NumberLabel" type="Label" parent="Contents/Numbers/NumberButtons"]
+[node name="Job Name" type="Label" parent="Contents/Numbers/NumberButtons"]
 margin_left = 28.0
 margin_top = 8.0
-margin_right = 34.0
+margin_right = 200.0
 margin_bottom = 17.0
 size_flags_horizontal = 3
-text = "1"
+text = "Job A"
 align = 1
 
 [node name="RightButton" parent="Contents/Numbers/NumberButtons" instance=ExtResource( 2 )]
-margin_left = 38.0
-margin_right = 62.0
+margin_left = 204.0
+margin_right = 228.0
 custom_styles/focus = ExtResource( 1 )
 custom_styles/disabled = ExtResource( 1 )
 icon = ExtResource( 6 )
 
 [node name="OkButton" parent="Contents/Numbers/NumberButtons" instance=ExtResource( 2 )]
-margin_left = 66.0
-margin_right = 94.0
+margin_left = 232.0
+margin_right = 260.0
 size_flags_horizontal = 4
 text = "OK"
 icon = null

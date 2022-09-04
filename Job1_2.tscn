@@ -9,7 +9,6 @@ spawn_objects = [ "sheep", "tree", "rock", "puddle", "stick" ]
 spawn_frequencies = [ 3, 12, 8, 3, 6 ]
 spawn_mirrorable = [ true, false, false, false, true ]
 rewards = [ "tree", "stick", "puddle", "rock", "sticks", "grass", "cloth", "paper", "paper" ]
-forest = false
 
 [node name="JobGoal" type="TileMap" parent="."]
 tile_set = ExtResource( 2 )

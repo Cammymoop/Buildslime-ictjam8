@@ -20,7 +20,8 @@ func handle_item_selected(value, extra) -> bool:
 					show_popup_on_unpause()
 					return true
 				else:
-					r_menu.add_child_numbers_prompt('get-job', 'Choose a job:', max_job, 1, max_job)
+					#r_menu.add_child_numbers_prompt('get-job', 'Choose a job:', max_job, 1, max_job)
+					r_menu.add_child_job_menu("Act 1", ["jobs"])
 			else:
 				get_node("/root/WorldControl").load_job(extra)
 				show_popup_on_unpause()

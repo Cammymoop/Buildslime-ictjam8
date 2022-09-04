@@ -13,6 +13,7 @@ var prompt_menu_scn : PackedScene = preload("res://PromptMenu.tscn")
 var text_prompt_scn : PackedScene = preload("res://TextPrompt.tscn")
 var file_menu_scn : PackedScene = preload("res://FileMenu.tscn")
 var text_popup_scn : PackedScene = preload("res://TextPopup.tscn")
+var job_menu_scn : PackedScene = preload("res://JobMenu.tscn")
 var list_menu_scn_path = "res://ListMenu.tscn"
 
 var menu_item_count = 0
@@ -129,6 +130,12 @@ func add_child_numbers_prompt(prompt_value : String, prompt_text : String, start
 	var prompt = _add_child_prompt(prompt_text)
 	prompt.set_numbers_mode(prompt_value, start_number, max_num, min_num)
 	show_child_prompt(prompt)
+
+func add_child_job_menu(name: String, levels: Array) -> void:
+	var jmenu = job_menu_scn.instance()
+	get_parent().add_child(jmenu)
+	jmenu.set_title(name)
+	show_child_prompt(jmenu)
 
 func show_child_prompt(prompt):
 	prompt.connect("item_selected", self, "on_item_selected")
